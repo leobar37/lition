@@ -1,0 +1,17 @@
+{
+  "name": "chicken-app-spa",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev:complete": "pnpm run dev:bapp & pnpm run dev:frapp",
+    "dev:bapp": "turbo run dev --filter=bapp",
+    "dev:frapp": "turbo run dev --filter=frapp..."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "turbo": "^1.10.16"
+  }
+}

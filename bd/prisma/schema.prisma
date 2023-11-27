@@ -1,0 +1,118 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator zod {
+  provider = "prisma-zod-generator"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Client {
+  id                  Int       @id @default(autoincrement())
+  name                String
+  lastName            String    @map("last_name")
+  dni                 String?
+  email               String?
+  phone               String
+  direction           String?
+  direction_reference String?   @map("direction_reference")
+  note                String?
+  Sale                Sale[]
+  business            Business? @relation(fields: [businessId], references: [id])
+  businessId          Int?      @map("business_id")
+  createdAt           DateTime  @default(now()) @map("created_at")
+  deletedAt           DateTime? @map("deleted_at")
+}
+
+model Supplier {
+  id                  Int      @id @default(autoincrement())
+  name                String
+  lastName            String   @map("last_name")
+  dni                 String?
+  email               String?
+  phone               String
+  direction           String?
+  direction_reference String?  @map("direction_reference")
+  note                String?
+  business            Business @relation(fields: [businessId], references: [id])
+  businessId          Int      @map("business_id")
+}
+
+model Product {
+  id          Int         @id @default(autoincrement())
+  name        String
+  description String?
+  unitAlias   UnitAlias[]
+  Sale        Sale[]
+  business    Business    @relation(fields: [businessId], references: [id])
+  businessId  Int         @map("business_id")
+}
+
+model Sale {
+  id         Int      @id @default(autoincrement())
+  price      Float
+  amount     Float
+  product    Product  @relation(fields: [productId], references: [id])
+  productId  Int      @map("product_id")
+  client     Client?  @relation(fields: [clientId], references: [id])
+  clientId   Int?     @map("client_id")
+  business   Business @relation(fields: [businessId], references: [id])
+  businessId Int      @map("business_id")
+}
+
+enum TypeTransaction {
+  IN
+  OUT
+}
+
+model Transaction {
+  id    Int             @id @default(autoincrement())
+  total Float
+  paid  Boolean
+  type  TypeTransaction @default(IN)
+}
+
+model Unit {
+  id            Int         @id @default(autoincrement())
+  name          String      @unique
+  allow_decimal Boolean     @default(false) @map("allow_decimal")
+  unitAlias     UnitAlias[]
+}
+
+model User {
+  id         Int      @id @default(autoincrement())
+  username   String   @unique
+  name       String
+  lastName   String   @map("last_name")
+  password   String
+  roles      String[]
+  business   Business @relation(fields: [businessId], references: [id])
+  businessId Int      @map("business_id")
+}
+
+model Business {
+  id        Int        @id @default(autoincrement())
+  name      String
+  code      String?    @unique
+  users     User[]
+  clients   Client[]
+  suppliers Supplier[]
+  products  Product[]
+  sales     Sale[]
+}
+
+model UnitAlias {
+  id        Int     @id @default(autoincrement())
+  name      String
+  unit      Unit    @relation(fields: [unitId], references: [id])
+  unitId    Int     @map("unit_id")
+  productId Int     @map("product_id")
+  product   Product @relation(fields: [productId], references: [id])
+}

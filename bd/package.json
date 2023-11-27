@@ -1,0 +1,33 @@
+{
+  "name": "bd",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./dist/index.cjs.js",
+  "module": "./dist/index.esm.js",
+  "scripts": {
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push --skip-generate --force-reset",
+    "studio": "prisma studio",
+    "dev": "tsup",
+    "build": "tsup --env.NODE_ENV production",
+    "seed": "tsup --env.NODE_ENV seed"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@faker-js/faker": "^8.3.1",
+    "prisma": "^5.6.0",
+    "prisma-dbml-generator": "^0.10.0",
+    "tsup": "^8.0.1"
+  },
+  "dependencies": {
+    "@lition/common": "workspace:*",
+    "@prisma/client": "^5.6.0",
+    "@types/bcrypt": "^5.0.2",
+    "bcrypt": "^5.1.1",
+    "prisma-zod-generator": "^0.8.13",
+    "radash": "^11.0.0",
+    "zod": "^3.22.4"
+  }
+}

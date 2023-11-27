@@ -1,0 +1,23 @@
+{
+  "name": "@lition/common",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./dist/index.cjs.js",
+  "module": "./dist/index.esm.js",
+  "types": "src/index.ts",
+  "scripts": {
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push --skip-generate --force-reset",
+    "studio": "prisma studio",
+    "dev": "tsup"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "tsup": "^8.0.1"
+  },
+  "dependencies": {
+    "zod": "^3.22.4"
+  }
+}
