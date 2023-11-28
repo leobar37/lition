@@ -19,7 +19,12 @@ type FormInputProps = {
   inputProps?: InputProps;
 } & FormControlProps;
 
-export const FormInput: FC<FormInputProps> = ({ label, name, inputProps, ...props }) => {
+export const FormInput: FC<FormInputProps> = ({
+  label,
+  name,
+  inputProps,
+  ...props
+}) => {
   const { field, fieldState } = useController({ name: name ?? "" });
 
   return (
@@ -27,6 +32,7 @@ export const FormInput: FC<FormInputProps> = ({ label, name, inputProps, ...prop
       <FormLabel textColor={"blue.800"} fontWeight={"semibold"}>
         {label}
       </FormLabel>
+
       <Input
         borderColor={"blue.400"}
         borderWidth={"1px"}
@@ -42,7 +48,12 @@ export const FormInput: FC<FormInputProps> = ({ label, name, inputProps, ...prop
   );
 };
 
-export const FormInputPassword: FC<FormInputProps> = ({ label, name, inputProps, ...props }) => {
+export const FormInputPassword: FC<FormInputProps> = ({
+  label,
+  name,
+  inputProps,
+  ...props
+}) => {
   const { field, fieldState } = useController({ name: name ?? "" });
   const [ahow, setShow] = useState(false);
   return (
@@ -64,7 +75,11 @@ export const FormInputPassword: FC<FormInputProps> = ({ label, name, inputProps,
           type={ahow ? "text" : "password"}
         />
         <InputRightElement width={"2rem"} height={"full"}>
-          <Button onClick={() => setShow(!ahow)} variant={"unestyled"} textColor={"gray.600"}>
+          <Button
+            onClick={() => setShow(!ahow)}
+            variant={"unestyled"}
+            textColor={"gray.600"}
+          >
             {ahow ? <IoEyeOutline /> : <IoEyeOffOutline />}
           </Button>
         </InputRightElement>

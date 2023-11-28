@@ -8,6 +8,7 @@ const Schema: z.ZodType<Prisma.ProductCountAggregateInputType> = z
     name: z.literal(true).optional(),
     description: z.literal(true).optional(),
     businessId: z.literal(true).optional(),
+    createdAt: z.literal(true).optional(),
     _all: z.literal(true).optional(),
   })
   .strict();

@@ -7,4 +7,5 @@ export const SaleScalarFieldEnumSchema = z.enum([
   'productId',
   'clientId',
   'businessId',
+  'createdAt',
 ]);

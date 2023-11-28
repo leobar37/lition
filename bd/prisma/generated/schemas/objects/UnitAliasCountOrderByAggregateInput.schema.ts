@@ -7,8 +7,10 @@ const Schema: z.ZodType<Prisma.UnitAliasCountOrderByAggregateInput> = z
   .object({
     id: z.lazy(() => SortOrderSchema).optional(),
     name: z.lazy(() => SortOrderSchema).optional(),
+    amount: z.lazy(() => SortOrderSchema).optional(),
     unitId: z.lazy(() => SortOrderSchema).optional(),
     productId: z.lazy(() => SortOrderSchema).optional(),
+    createdAt: z.lazy(() => SortOrderSchema).optional(),
   })
   .strict();
 

@@ -7,13 +7,15 @@ export const NewProduct = () => {
   const form = useWrapperForm<CreateProductInput>({
     schema: createProductSchema,
   });
-  const productsQuery = api.products.create.useMutation();
+  const createProduct = api.products.create.useMutation();
   const navigate = useNavigate();
 
   const onSubmit = form.handleSubmit(async (values) => {
-    await productsQuery.mutateAsync(values);
+    await createProduct.mutateAsync(values);
     navigate("/products");
   });
+  const isDisabled = createProduct.isLoading || !form.formState.isValid;
+
   return (
     <Screen back="/products" title="Nuevo producto">
       <WrapperForm form={form}>
@@ -21,7 +23,11 @@ export const NewProduct = () => {
           <FormInput name="name" label="Nombre" />
           <FormInput name="description" label="Descripción" />
           <HStack w="full" spacing={4} justifyContent={"flex-end"} mt={3}>
-            <Button onClick={onSubmit} colorScheme="blue">
+            <Button
+              onClick={onSubmit}
+              colorScheme="blue"
+              isDisabled={isDisabled}
+            >
               Guardar
             </Button>
           </HStack>

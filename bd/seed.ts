@@ -1,10 +1,9 @@
-import { PrismaClient, Unit, User } from "@prisma/client";
-import * as bcrypt from "bcrypt";
-import { Roles } from "@lition/common";
 import { faker } from "@faker-js/faker";
+import { Roles } from "@lition/common";
+import { Client, PrismaClient, Unit, User } from "@prisma/client";
+import * as bcrypt from "bcrypt";
 import { range } from "radash";
 const prismaClient = new PrismaClient();
-import { Client } from "@prisma/client";
 const createClient = ({
   businessId,
   bussinessName,
@@ -26,10 +25,12 @@ const UNITS: Partial<Unit>[] = [
   {
     allow_decimal: true,
     name: "Kilogram",
+    symbol: "kg",
   },
   {
     allow_decimal: false,
     name: "Unit",
+    symbol: "u",
   },
 ];
 

@@ -29,6 +29,9 @@ const Schema: z.ZodType<Prisma.UnitScalarWhereWithAggregatesInput> = z
     name: z
       .union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()])
       .optional(),
+    symbol: z
+      .union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()])
+      .optional(),
     allow_decimal: z
       .union([z.lazy(() => BoolWithAggregatesFilterObjectSchema), z.boolean()])
       .optional(),

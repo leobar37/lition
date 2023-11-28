@@ -9,6 +9,7 @@ const Schema: z.ZodType<Prisma.ProductUncheckedCreateWithoutUnitAliasInput> = z
     name: z.string(),
     description: z.string().optional().nullable(),
     businessId: z.number(),
+    createdAt: z.coerce.date().optional(),
     Sale: z
       .lazy(() => SaleUncheckedCreateNestedManyWithoutProductInputObjectSchema)
       .optional(),

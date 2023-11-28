@@ -12,6 +12,7 @@ const Schema: z.ZodType<Prisma.UnitOrderByWithAggregationInput> = z
   .object({
     id: z.lazy(() => SortOrderSchema).optional(),
     name: z.lazy(() => SortOrderSchema).optional(),
+    symbol: z.lazy(() => SortOrderSchema).optional(),
     allow_decimal: z.lazy(() => SortOrderSchema).optional(),
     _count: z.lazy(() => UnitCountOrderByAggregateInputObjectSchema).optional(),
     _avg: z.lazy(() => UnitAvgOrderByAggregateInputObjectSchema).optional(),

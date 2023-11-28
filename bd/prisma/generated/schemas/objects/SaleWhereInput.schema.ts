@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { IntFilterObjectSchema } from './IntFilter.schema';
 import { FloatFilterObjectSchema } from './FloatFilter.schema';
 import { IntNullableFilterObjectSchema } from './IntNullableFilter.schema';
+import { DateTimeFilterObjectSchema } from './DateTimeFilter.schema';
 import { ProductRelationFilterObjectSchema } from './ProductRelationFilter.schema';
 import { ProductWhereInputObjectSchema } from './ProductWhereInput.schema';
 import { ClientRelationFilterObjectSchema } from './ClientRelationFilter.schema';
@@ -45,6 +46,9 @@ const Schema: z.ZodType<Prisma.SaleWhereInput> = z
       .nullable(),
     businessId: z
       .union([z.lazy(() => IntFilterObjectSchema), z.number()])
+      .optional(),
+    createdAt: z
+      .union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()])
       .optional(),
     product: z
       .union([

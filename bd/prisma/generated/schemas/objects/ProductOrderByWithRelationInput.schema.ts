@@ -18,6 +18,7 @@ const Schema: z.ZodType<Prisma.ProductOrderByWithRelationInput> = z
       ])
       .optional(),
     businessId: z.lazy(() => SortOrderSchema).optional(),
+    createdAt: z.lazy(() => SortOrderSchema).optional(),
     unitAlias: z
       .lazy(() => UnitAliasOrderByRelationAggregateInputObjectSchema)
       .optional(),

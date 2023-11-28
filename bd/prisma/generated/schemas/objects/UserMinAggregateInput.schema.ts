@@ -10,6 +10,7 @@ const Schema: z.ZodType<Prisma.UserMinAggregateInputType> = z
     lastName: z.literal(true).optional(),
     password: z.literal(true).optional(),
     businessId: z.literal(true).optional(),
+    createdAt: z.literal(true).optional(),
   })
   .strict();
 

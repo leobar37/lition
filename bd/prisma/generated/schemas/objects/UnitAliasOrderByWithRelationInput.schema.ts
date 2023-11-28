@@ -9,8 +9,10 @@ const Schema: z.ZodType<Prisma.UnitAliasOrderByWithRelationInput> = z
   .object({
     id: z.lazy(() => SortOrderSchema).optional(),
     name: z.lazy(() => SortOrderSchema).optional(),
+    amount: z.lazy(() => SortOrderSchema).optional(),
     unitId: z.lazy(() => SortOrderSchema).optional(),
     productId: z.lazy(() => SortOrderSchema).optional(),
+    createdAt: z.lazy(() => SortOrderSchema).optional(),
     unit: z.lazy(() => UnitOrderByWithRelationInputObjectSchema).optional(),
     product: z
       .lazy(() => ProductOrderByWithRelationInputObjectSchema)

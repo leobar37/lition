@@ -22,6 +22,7 @@ const Schema: z.ZodType<Prisma.SaleOrderByWithAggregationInput> = z
       ])
       .optional(),
     businessId: z.lazy(() => SortOrderSchema).optional(),
+    createdAt: z.lazy(() => SortOrderSchema).optional(),
     _count: z.lazy(() => SaleCountOrderByAggregateInputObjectSchema).optional(),
     _avg: z.lazy(() => SaleAvgOrderByAggregateInputObjectSchema).optional(),
     _max: z.lazy(() => SaleMaxOrderByAggregateInputObjectSchema).optional(),

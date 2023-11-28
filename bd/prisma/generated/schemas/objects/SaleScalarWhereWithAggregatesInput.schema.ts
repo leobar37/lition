@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { IntWithAggregatesFilterObjectSchema } from './IntWithAggregatesFilter.schema';
 import { FloatWithAggregatesFilterObjectSchema } from './FloatWithAggregatesFilter.schema';
 import { IntNullableWithAggregatesFilterObjectSchema } from './IntNullableWithAggregatesFilter.schema';
+import { DateTimeWithAggregatesFilterObjectSchema } from './DateTimeWithAggregatesFilter.schema';
 
 import type { Prisma } from '@prisma/client';
 
@@ -44,6 +45,12 @@ const Schema: z.ZodType<Prisma.SaleScalarWhereWithAggregatesInput> = z
       .nullable(),
     businessId: z
       .union([z.lazy(() => IntWithAggregatesFilterObjectSchema), z.number()])
+      .optional(),
+    createdAt: z
+      .union([
+        z.lazy(() => DateTimeWithAggregatesFilterObjectSchema),
+        z.coerce.date(),
+      ])
       .optional(),
   })
   .strict();

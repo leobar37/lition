@@ -6,6 +6,7 @@ const Schema: z.ZodType<Prisma.UnitCreateManyInput> = z
   .object({
     id: z.number().optional(),
     name: z.string(),
+    symbol: z.string(),
     allow_decimal: z.boolean().optional(),
   })
   .strict();

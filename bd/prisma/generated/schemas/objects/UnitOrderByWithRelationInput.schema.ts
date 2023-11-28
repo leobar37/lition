@@ -8,6 +8,7 @@ const Schema: z.ZodType<Prisma.UnitOrderByWithRelationInput> = z
   .object({
     id: z.lazy(() => SortOrderSchema).optional(),
     name: z.lazy(() => SortOrderSchema).optional(),
+    symbol: z.lazy(() => SortOrderSchema).optional(),
     allow_decimal: z.lazy(() => SortOrderSchema).optional(),
     unitAlias: z
       .lazy(() => UnitAliasOrderByRelationAggregateInputObjectSchema)

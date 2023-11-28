@@ -6,6 +6,7 @@ const Schema: z.ZodType<Prisma.UnitUncheckedCreateWithoutUnitAliasInput> = z
   .object({
     id: z.number().optional(),
     name: z.string(),
+    symbol: z.string(),
     allow_decimal: z.boolean().optional(),
   })
   .strict();

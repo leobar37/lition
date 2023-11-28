@@ -13,6 +13,12 @@ const Schema: z.ZodType<Prisma.UnitUpdateInput> = z
         z.lazy(() => StringFieldUpdateOperationsInputObjectSchema),
       ])
       .optional(),
+    symbol: z
+      .union([
+        z.string(),
+        z.lazy(() => StringFieldUpdateOperationsInputObjectSchema),
+      ])
+      .optional(),
     allow_decimal: z
       .union([
         z.boolean(),

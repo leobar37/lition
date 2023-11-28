@@ -11,6 +11,7 @@ const Schema: z.ZodType<Prisma.UserMinOrderByAggregateInput> = z
     lastName: z.lazy(() => SortOrderSchema).optional(),
     password: z.lazy(() => SortOrderSchema).optional(),
     businessId: z.lazy(() => SortOrderSchema).optional(),
+    createdAt: z.lazy(() => SortOrderSchema).optional(),
   })
   .strict();
 

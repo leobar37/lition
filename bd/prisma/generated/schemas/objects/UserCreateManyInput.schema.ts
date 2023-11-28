@@ -17,6 +17,7 @@ const Schema: z.ZodType<Prisma.UserCreateManyInput> = z
       ])
       .optional(),
     businessId: z.number(),
+    createdAt: z.coerce.date().optional(),
   })
   .strict();
 

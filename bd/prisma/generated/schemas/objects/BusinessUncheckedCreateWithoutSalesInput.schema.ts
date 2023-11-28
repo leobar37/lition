@@ -11,6 +11,7 @@ const Schema: z.ZodType<Prisma.BusinessUncheckedCreateWithoutSalesInput> = z
     id: z.number().optional(),
     name: z.string(),
     code: z.string().optional().nullable(),
+    createdAt: z.coerce.date().optional(),
     users: z
       .lazy(() => UserUncheckedCreateNestedManyWithoutBusinessInputObjectSchema)
       .optional(),

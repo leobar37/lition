@@ -7,6 +7,7 @@ const Schema: z.ZodType<Prisma.BusinessMaxAggregateInputType> = z
     id: z.literal(true).optional(),
     name: z.literal(true).optional(),
     code: z.literal(true).optional(),
+    createdAt: z.literal(true).optional(),
   })
   .strict();
 

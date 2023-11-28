@@ -9,6 +9,7 @@ const Schema: z.ZodType<Prisma.SaleCreateManyBusinessInput> = z
     amount: z.number(),
     productId: z.number(),
     clientId: z.number().optional().nullable(),
+    createdAt: z.coerce.date().optional(),
   })
   .strict();
 

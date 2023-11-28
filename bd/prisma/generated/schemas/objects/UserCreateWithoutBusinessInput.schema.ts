@@ -15,6 +15,7 @@ const Schema: z.ZodType<Prisma.UserCreateWithoutBusinessInput> = z
         z.string().array(),
       ])
       .optional(),
+    createdAt: z.coerce.date().optional(),
   })
   .strict();
 

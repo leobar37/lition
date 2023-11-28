@@ -53,6 +53,7 @@ model Product {
   Sale        Sale[]
   business    Business    @relation(fields: [businessId], references: [id])
   businessId  Int         @map("business_id")
+  createdAt   DateTime    @default(now()) @map("created_at")
 }
 
 model Sale {
@@ -65,6 +66,7 @@ model Sale {
   clientId   Int?     @map("client_id")
   business   Business @relation(fields: [businessId], references: [id])
   businessId Int      @map("business_id")
+  createdAt  DateTime @default(now()) @map("created_at")
 }
 
 enum TypeTransaction {
@@ -82,6 +84,7 @@ model Transaction {
 model Unit {
   id            Int         @id @default(autoincrement())
   name          String      @unique
+  symbol        String
   allow_decimal Boolean     @default(false) @map("allow_decimal")
   unitAlias     UnitAlias[]
 }
@@ -95,6 +98,7 @@ model User {
   roles      String[]
   business   Business @relation(fields: [businessId], references: [id])
   businessId Int      @map("business_id")
+  createdAt  DateTime @default(now()) @map("created_at")
 }
 
 model Business {
@@ -106,13 +110,16 @@ model Business {
   suppliers Supplier[]
   products  Product[]
   sales     Sale[]
+  createdAt DateTime   @default(now()) @map("created_at")
 }
 
 model UnitAlias {
-  id        Int     @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   name      String
-  unit      Unit    @relation(fields: [unitId], references: [id])
-  unitId    Int     @map("unit_id")
-  productId Int     @map("product_id")
-  product   Product @relation(fields: [productId], references: [id])
+  amount    Float
+  unit      Unit     @relation(fields: [unitId], references: [id])
+  unitId    Int      @map("unit_id")
+  productId Int      @map("product_id")
+  product   Product  @relation(fields: [productId], references: [id])
+  createdAt DateTime @default(now()) @map("created_at")
 }

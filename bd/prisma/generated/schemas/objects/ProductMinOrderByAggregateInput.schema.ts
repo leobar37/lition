@@ -9,6 +9,7 @@ const Schema: z.ZodType<Prisma.ProductMinOrderByAggregateInput> = z
     name: z.lazy(() => SortOrderSchema).optional(),
     description: z.lazy(() => SortOrderSchema).optional(),
     businessId: z.lazy(() => SortOrderSchema).optional(),
+    createdAt: z.lazy(() => SortOrderSchema).optional(),
   })
   .strict();
 

@@ -6,7 +6,9 @@ const Schema: z.ZodType<Prisma.UnitAliasCreateManyProductInput> = z
   .object({
     id: z.number().optional(),
     name: z.string(),
+    amount: z.number(),
     unitId: z.number(),
+    createdAt: z.coerce.date().optional(),
   })
   .strict();
 

@@ -8,6 +8,7 @@ const Schema: z.ZodType<Prisma.SaleCreateWithoutProductInput> = z
   .object({
     price: z.number(),
     amount: z.number(),
+    createdAt: z.coerce.date().optional(),
     client: z
       .lazy(() => ClientCreateNestedOneWithoutSaleInputObjectSchema)
       .optional(),

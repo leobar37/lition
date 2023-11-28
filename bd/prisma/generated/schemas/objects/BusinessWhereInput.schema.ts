@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { IntFilterObjectSchema } from './IntFilter.schema';
 import { StringFilterObjectSchema } from './StringFilter.schema';
 import { StringNullableFilterObjectSchema } from './StringNullableFilter.schema';
+import { DateTimeFilterObjectSchema } from './DateTimeFilter.schema';
 import { UserListRelationFilterObjectSchema } from './UserListRelationFilter.schema';
 import { ClientListRelationFilterObjectSchema } from './ClientListRelationFilter.schema';
 import { SupplierListRelationFilterObjectSchema } from './SupplierListRelationFilter.schema';
@@ -36,6 +37,9 @@ const Schema: z.ZodType<Prisma.BusinessWhereInput> = z
       .union([z.lazy(() => StringNullableFilterObjectSchema), z.string()])
       .optional()
       .nullable(),
+    createdAt: z
+      .union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()])
+      .optional(),
     users: z.lazy(() => UserListRelationFilterObjectSchema).optional(),
     clients: z.lazy(() => ClientListRelationFilterObjectSchema).optional(),
     suppliers: z.lazy(() => SupplierListRelationFilterObjectSchema).optional(),

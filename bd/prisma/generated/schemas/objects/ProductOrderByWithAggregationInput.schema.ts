@@ -20,6 +20,7 @@ const Schema: z.ZodType<Prisma.ProductOrderByWithAggregationInput> = z
       ])
       .optional(),
     businessId: z.lazy(() => SortOrderSchema).optional(),
+    createdAt: z.lazy(() => SortOrderSchema).optional(),
     _count: z
       .lazy(() => ProductCountOrderByAggregateInputObjectSchema)
       .optional(),

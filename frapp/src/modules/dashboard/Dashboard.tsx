@@ -14,6 +14,10 @@ export const Dashboard = () => {
       name: "Productos",
       path: "/products",
     },
+    {
+      name: "Ventas",
+      path: "/sales",
+    },
   ];
   const { authInfo } = useAuthInfo();
 

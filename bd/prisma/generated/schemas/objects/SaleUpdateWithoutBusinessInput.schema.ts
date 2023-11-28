@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { FloatFieldUpdateOperationsInputObjectSchema } from './FloatFieldUpdateOperationsInput.schema';
+import { DateTimeFieldUpdateOperationsInputObjectSchema } from './DateTimeFieldUpdateOperationsInput.schema';
 import { ProductUpdateOneRequiredWithoutSaleNestedInputObjectSchema } from './ProductUpdateOneRequiredWithoutSaleNestedInput.schema';
 import { ClientUpdateOneWithoutSaleNestedInputObjectSchema } from './ClientUpdateOneWithoutSaleNestedInput.schema';
 
@@ -17,6 +18,12 @@ const Schema: z.ZodType<Prisma.SaleUpdateWithoutBusinessInput> = z
       .union([
         z.number(),
         z.lazy(() => FloatFieldUpdateOperationsInputObjectSchema),
+      ])
+      .optional(),
+    createdAt: z
+      .union([
+        z.coerce.date(),
+        z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema),
       ])
       .optional(),
     product: z

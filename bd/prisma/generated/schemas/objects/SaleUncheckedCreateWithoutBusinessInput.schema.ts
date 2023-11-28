@@ -9,6 +9,7 @@ const Schema: z.ZodType<Prisma.SaleUncheckedCreateWithoutBusinessInput> = z
     amount: z.number(),
     productId: z.number(),
     clientId: z.number().optional().nullable(),
+    createdAt: z.coerce.date().optional(),
   })
   .strict();
 

@@ -8,4 +8,5 @@ export const UserScalarFieldEnumSchema = z.enum([
   'password',
   'roles',
   'businessId',
+  'createdAt',
 ]);

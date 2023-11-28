@@ -10,6 +10,7 @@ const Schema: z.ZodType<Prisma.SaleMaxAggregateInputType> = z
     productId: z.literal(true).optional(),
     clientId: z.literal(true).optional(),
     businessId: z.literal(true).optional(),
+    createdAt: z.literal(true).optional(),
   })
   .strict();
 

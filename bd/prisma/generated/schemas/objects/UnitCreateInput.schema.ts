@@ -6,6 +6,7 @@ import type { Prisma } from '@prisma/client';
 const Schema: z.ZodType<Prisma.UnitCreateInput> = z
   .object({
     name: z.string(),
+    symbol: z.string(),
     allow_decimal: z.boolean().optional(),
     unitAlias: z
       .lazy(() => UnitAliasCreateNestedManyWithoutUnitInputObjectSchema)

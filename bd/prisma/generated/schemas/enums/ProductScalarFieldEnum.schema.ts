@@ -5,4 +5,5 @@ export const ProductScalarFieldEnumSchema = z.enum([
   'name',
   'description',
   'businessId',
+  'createdAt',
 ]);

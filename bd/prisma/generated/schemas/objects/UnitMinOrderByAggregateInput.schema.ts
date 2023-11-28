@@ -7,6 +7,7 @@ const Schema: z.ZodType<Prisma.UnitMinOrderByAggregateInput> = z
   .object({
     id: z.lazy(() => SortOrderSchema).optional(),
     name: z.lazy(() => SortOrderSchema).optional(),
+    symbol: z.lazy(() => SortOrderSchema).optional(),
     allow_decimal: z.lazy(() => SortOrderSchema).optional(),
   })
   .strict();
