@@ -5,20 +5,34 @@ import {
   NumberInput,
   NumberInputField,
   NumberInputStepper,
+  NumberInputProps,
 } from "@chakra-ui/react";
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
 import { useSetupControl } from "./use-setup-control";
-
-type NumberInputProps = {
+import { isNumber } from "radash";
+type FormNumberInputProps = {
   label?: string;
   name?: string;
   inputProps?: NumberInputProps;
+  formatValue?: (value: string) => string;
+  parseValue?: (value: string) => string;
 } & FormControlProps;
 
-export const FormNumberInput: FC<NumberInputProps> = ({
+export const moneyStrategyFormat = {
+  format: (value: string) => {
+    return "S/" + value;
+  },
+  parse: (value: string) => {
+    return value.replace("S/", "");
+  },
+};
+
+export const FormNumberInput: FC<FormNumberInputProps> = ({
   label,
   name,
   inputProps,
+  formatValue,
+  parseValue,
   ...props
 }) => {
   const { Wrapper, field } = useSetupControl({
@@ -27,16 +41,32 @@ export const FormNumberInput: FC<NumberInputProps> = ({
     ...props,
   });
 
+  const [value, setValue] = useState("0");
+
+  useEffect(() => {
+    const parsedValue = Number(value);
+
+    if (!isNumber(parsedValue)) {
+      return;
+    }
+
+    field.onChange({
+      target: {
+        value: parsedValue,
+      },
+    });
+  }, [value]);
   return (
     <Wrapper>
       <NumberInput
         {...field}
+        value={value ?? 0}
+        format={formatValue as any}
+        parse={parseValue}
+        {...inputProps}
         onChange={(e) => {
-          field.onChange({
-            target: {
-              value: Number(e),
-            },
-          });
+          const value = parseValue ? parseValue(e) : e;
+          setValue(value.toString());
         }}
       >
         <NumberInputField

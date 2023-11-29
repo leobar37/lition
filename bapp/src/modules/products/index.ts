@@ -20,11 +20,8 @@ export const productsRouter = router({
       const product = ctx.bd.product.create({
         data: {
           ...input,
-          business: {
-            connect: {
-              id: ctx.bussiness?.id,
-            },
-          },
+          unitId: input.unitId,
+          businessId: ctx.bussiness?.id!,
         },
       });
       return product;

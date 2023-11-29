@@ -69,6 +69,9 @@ importers:
       bcrypt:
         specifier: ^5.1.1
         version: 5.1.1
+      dayjs:
+        specifier: ^1.11.10
+        version: 1.11.10
       prisma-zod-generator:
         specifier: ^0.8.13
         version: 0.8.13(prisma@5.6.0)
@@ -143,6 +146,9 @@ importers:
       '@trpc/react-query':
         specifier: ^10.44.1
         version: 10.44.1(@tanstack/react-query@4.36.1)(@trpc/client@10.44.1)(@trpc/server@10.44.1)(react-dom@18.2.0)(react@18.2.0)
+      dayjs:
+        specifier: ^1.11.10
+        version: 1.11.10
       framer-motion:
         specifier: ^10.16.5
         version: 10.16.5(react-dom@18.2.0)(react@18.2.0)
@@ -176,6 +182,9 @@ importers:
       tsconfig-paths:
         specifier: ^4.2.0
         version: 4.2.0
+      zod:
+        specifier: ^3.22.4
+        version: 3.22.4
     devDependencies:
       '@types/react':
         specifier: ^18.2.37
@@ -3390,6 +3399,10 @@ packages:
 
   /csstype@3.1.2:
     resolution: {integrity: sha512-I7K1Uu0MBPzaFKg4nI5Q7Vs2t+3gWWW648spaF+Rg7pI9ds18Ugn+lvg4SHczUdKlHI5LWBXyqfS8+DufyBsgQ==}
+
+  /dayjs@1.11.10:
+    resolution: {integrity: sha512-vjAczensTgRcqDERK0SR2XMwsF/tSvnvlv6VcF2GIhg6Sx4yOIt/irsr1RDJsKiIyBzJDpCoXiWWq28MqH2cnQ==}
+    dev: false
 
   /debug@4.3.4:
     resolution: {integrity: sha512-PRWFHuSU3eDtQJPvnNY7Jcket1j0t5OuOsFzPPzsekD52Zl8qUfFIPEiswXqIvHWGVHOgX+7G/vCNNhehwxfkQ==}

@@ -4,7 +4,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import { api } from "~/lib";
 import {
   FormInput,
-  FormInputSelect,
   FormNumberInput,
   Screen,
   WrapperForm,
@@ -34,14 +33,8 @@ export const UnitAliasUpdate = () => {
 
   const navigate = useNavigate();
   const backUrl = `/products/${productId}`;
-  const unitsQuery = api.products.units.useQuery();
 
   const updateUnitAliasMutation = api.products.updateUnitAlias.useMutation();
-
-  const units = (unitsQuery?.data ?? []).map((unit) => ({
-    label: unit.name,
-    value: unit.id,
-  }));
 
   useEffect(() => {
     if (unitAlias) {
@@ -79,7 +72,6 @@ export const UnitAliasUpdate = () => {
     <Screen back={backUrl} title={`Editar | ${unitAlias.name}`}>
       <WrapperForm form={form}>
         <FormInput label="Nombre" name="name" />
-        <FormInputSelect label="Unidad" name="unitId" options={units} />
         <FormNumberInput label="Cantidad" name="amount" />
         <HStack w="full" spacing={4} justifyContent={"flex-end"} mt={3}>
           <Button onClick={onSubmit} colorScheme="blue" isDisabled={isDisabled}>

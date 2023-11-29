@@ -7,7 +7,9 @@ export type UseWrapperFormProps<Values extends FieldValues> = Exclude<
 > & {
   schema: any;
 };
-export const useWrapperForm = <Values extends FieldValues>(props: UseWrapperFormProps<Values>) => {
+export const useWrapperForm = <Values extends FieldValues>(
+  props: UseWrapperFormProps<Values>
+) => {
   const result = useForm({
     ...props,
     mode: "onBlur",

@@ -1,6 +1,6 @@
 import { faker } from "@faker-js/faker";
 import { Roles } from "@lition/common";
-import { Client, PrismaClient, Unit, User } from "@prisma/client";
+import { Client, PrismaClient, Product, Unit, User } from "@prisma/client";
 import * as bcrypt from "bcrypt";
 import { range } from "radash";
 const prismaClient = new PrismaClient();
@@ -43,6 +43,21 @@ const USERS: Partial<User>[] = [
   },
 ];
 
+const PRODUCTS: Partial<
+  Product & {
+    unitName: string;
+  }
+>[] = [
+  {
+    name: "Pollo",
+    unitName: "Kilogram",
+  },
+  {
+    name: "Huevos",
+    unitName: "Unit",
+  },
+];
+
 async function main() {
   // create units
   for await (const unit of UNITS) {
@@ -54,9 +69,11 @@ async function main() {
       create: {
         name: unit.name ?? "",
         allow_decimal: unit.allow_decimal ?? false,
+        symbol: unit.symbol ?? "",
       },
     });
   }
+
   // create a business
   const businessResult = await prismaClient.business.upsert({
     where: {
@@ -68,6 +85,29 @@ async function main() {
     },
     update: {},
   });
+
+  // create products
+  for await (const product of PRODUCTS) {
+    const unit = await prismaClient.unit.findFirst({
+      where: {
+        name: product.unitName,
+      },
+    });
+    if (!unit) {
+      throw new Error("Unit not found");
+    }
+    await prismaClient.product.upsert({
+      where: {
+        name: product.name,
+      },
+      update: {},
+      create: {
+        name: product.name ?? "",
+        unitId: unit.id,
+        businessId: businessResult.id,
+      },
+    });
+  }
 
   for await (const _iter of range(0, 10)) {
     const fakeClient = createClient({

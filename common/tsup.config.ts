@@ -13,6 +13,7 @@ export default defineConfig((options) => {
     format: ["esm", "cjs"],
     silent: true,
     outDir: "dist",
+    tsconfig: "./tsconfig.json",
     outExtension: (ctx) => {
       return { js: `.${ctx.format}.js` };
     },

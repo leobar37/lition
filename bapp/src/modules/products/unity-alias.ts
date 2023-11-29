@@ -1,6 +1,7 @@
 import { publicProcedure } from "../../router";
 import { z } from "zod";
 import { createUnitAliasSchema, updateUnitAliasSchema } from "@lition/common";
+import { TRPCError } from "@trpc/server";
 
 export const unitAliasSub = {
   oneUnitAlias: publicProcedure
@@ -33,9 +34,22 @@ export const unitAliasSub = {
       })
     )
     .mutation(async ({ ctx, input }) => {
+      const product = await ctx.bd.product.findUnique({
+        where: {
+          id: input.productId,
+        },
+      });
+      if (!product) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Product not found",
+        });
+      }
+
       return await ctx.bd.unitAlias.create({
         data: {
           ...input.input,
+          unitId: product.unitId,
           productId: input.productId,
         },
       });

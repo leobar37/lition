@@ -4,6 +4,7 @@ import { UnitAlias } from "@server";
 import { FC, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { api } from "~/lib";
+import { UnitSelector } from "~/lib/selectors";
 import {
   DeleteIcon,
   EditIcon,
@@ -116,24 +117,15 @@ export const UpdateProduct = () => {
 
   useEffect(() => {
     if (product) {
-      console.log({
-        product,
-      });
-
       form.reset(product as UpdateProductInput);
     }
   }, [product]);
 
   const onSubmit = form.handleSubmit(async (values) => {
-    console.log("values", {
-      values,
-    });
-
     await updateProductMutation.mutateAsync({
       id: product?.id ?? -1,
       data: values,
     });
-
     navigate("/products");
   });
   const isDisabled =
@@ -150,6 +142,7 @@ export const UpdateProduct = () => {
         <VStack as="form" alignItems={"flex-start"} spacing={1}>
           <FormInput name="name" label="Nombre" />
           <FormInput name="description" label="Descripción" />
+          <UnitSelector name="unitId" label="Unidad" />
           <HStack w="full" spacing={4} justifyContent={"flex-end"} mt={3}>
             <Button
               onClick={onSubmit}

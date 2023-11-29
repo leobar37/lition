@@ -1,7 +1,7 @@
 import { FormInput, Screen, WrapperForm, useWrapperForm } from "~/ui";
 import { createProductSchema, CreateProductInput } from "@lition/common";
 import { Button, HStack, VStack } from "@chakra-ui/react";
-import { api } from "~/lib";
+import { api, UnitSelector } from "~/lib";
 import { useNavigate } from "react-router-dom";
 export const NewProduct = () => {
   const form = useWrapperForm<CreateProductInput>({
@@ -22,6 +22,7 @@ export const NewProduct = () => {
         <VStack as="form" alignItems={"flex-start"} spacing={1}>
           <FormInput name="name" label="Nombre" />
           <FormInput name="description" label="Descripción" />
+          <UnitSelector name="unitId" label="Unidad" />
           <HStack w="full" spacing={4} justifyContent={"flex-end"} mt={3}>
             <Button
               onClick={onSubmit}

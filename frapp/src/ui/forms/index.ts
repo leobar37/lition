@@ -5,3 +5,4 @@ export * from "./TextArea";
 export * from "./NumberInput";
 export * from "./FormInputSelect";
 export * from "./FormRadioGroup";
+export * from "./SwitchInput";

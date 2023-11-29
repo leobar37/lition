@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { api } from "~/lib";
 import {
   FormInput,
-  FormInputSelect,
   FormNumberInput,
   Screen,
   WrapperForm,
@@ -19,14 +18,8 @@ export const UnitAliasCreate = () => {
   });
   const navigate = useNavigate();
   const backUrl = `/products/${productId}`;
-  const unitsQuery = api.products.units.useQuery();
 
   const createUnitAliasMutation = api.products.createUnitAlias.useMutation();
-
-  const units = (unitsQuery?.data ?? []).map((unit) => ({
-    label: unit.name,
-    value: unit.id,
-  }));
 
   const onSubmit = form.handleSubmit(
     async (values) => {
@@ -47,7 +40,6 @@ export const UnitAliasCreate = () => {
     <Screen back={backUrl} title="Crear alias">
       <WrapperForm form={form}>
         <FormInput label="Nombre" name="name" />
-        <FormInputSelect label="Unidad" name="unitId" options={units} />
         <FormNumberInput label="Cantidad" name="amount" />
         <HStack w="full" spacing={4} justifyContent={"flex-end"} mt={3}>
           <Button onClick={onSubmit} colorScheme="blue">

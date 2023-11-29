@@ -4,6 +4,7 @@ import { createContext } from "./context";
 import { router } from "./router";
 import { clientsRouter } from "./modules/clients";
 import { authRouter } from "./modules/auth";
+import { sales } from "./modules/sales";
 import { productsRouter } from "./modules/products";
 import cors from "@fastify/cors";
 export type * from "bd";
@@ -14,6 +15,7 @@ const appRouter = router({
   clients: clientsRouter,
   auth: authRouter,
   products: productsRouter,
+  sales: sales,
 });
 
 const server = fastify({

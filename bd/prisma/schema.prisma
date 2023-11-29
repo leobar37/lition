@@ -5,9 +5,9 @@ generator client {
   provider = "prisma-client-js"
 }
 
-generator zod {
-  provider = "prisma-zod-generator"
-}
+// generator zod {
+//   provider = "prisma-zod-generator"
+// }
 
 datasource db {
   provider = "postgresql"
@@ -15,20 +15,21 @@ datasource db {
 }
 
 model Client {
-  id                  Int       @id @default(autoincrement())
+  id                  Int           @id @default(autoincrement())
   name                String
-  lastName            String    @map("last_name")
+  lastName            String        @map("last_name")
   dni                 String?
   email               String?
   phone               String
   direction           String?
-  direction_reference String?   @map("direction_reference")
+  direction_reference String?       @map("direction_reference")
   note                String?
   Sale                Sale[]
-  business            Business? @relation(fields: [businessId], references: [id])
-  businessId          Int?      @map("business_id")
-  createdAt           DateTime  @default(now()) @map("created_at")
-  deletedAt           DateTime? @map("deleted_at")
+  business            Business?     @relation(fields: [businessId], references: [id])
+  businessId          Int?          @map("business_id")
+  createdAt           DateTime      @default(now()) @map("created_at")
+  deletedAt           DateTime?     @map("deleted_at")
+  Transaction         Transaction[]
 }
 
 model Supplier {
@@ -47,38 +48,39 @@ model Supplier {
 
 model Product {
   id          Int         @id @default(autoincrement())
-  name        String
+  name        String      @unique
   description String?
   unitAlias   UnitAlias[]
   Sale        Sale[]
   business    Business    @relation(fields: [businessId], references: [id])
   businessId  Int         @map("business_id")
   createdAt   DateTime    @default(now()) @map("created_at")
+  unit        Unit        @relation(fields: [unitId], references: [id])
+  unitId      Int         @map("unit_id")
 }
 
 model Sale {
-  id         Int      @id @default(autoincrement())
-  price      Float
-  amount     Float
-  product    Product  @relation(fields: [productId], references: [id])
-  productId  Int      @map("product_id")
-  client     Client?  @relation(fields: [clientId], references: [id])
-  clientId   Int?     @map("client_id")
-  business   Business @relation(fields: [businessId], references: [id])
-  businessId Int      @map("business_id")
-  createdAt  DateTime @default(now()) @map("created_at")
-}
-
-enum TypeTransaction {
-  IN
-  OUT
+  id           Int      @id @default(autoincrement())
+  price        Float
+  amount       Float
+  total        Float
+  product      Product  @relation(fields: [productId], references: [id])
+  productId    Int      @map("product_id")
+  client       Client?  @relation(fields: [clientId], references: [id])
+  clientId     Int?     @map("client_id")
+  business     Business @relation(fields: [businessId], references: [id])
+  businessId   Int      @map("business_id")
+  createdAt    DateTime @default(now()) @map("created_at")
+  isDispatched Boolean  @default(false) @map("is_dispatched")
+  meta         Json
 }
 
 model Transaction {
-  id    Int             @id @default(autoincrement())
-  total Float
-  paid  Boolean
-  type  TypeTransaction @default(IN)
+  id       Int     @id @default(autoincrement())
+  total    Float
+  paid     Boolean
+  client   Client? @relation(fields: [clientId], references: [id])
+  clientId Int?    @map("client_id")
 }
 
 model Unit {
@@ -87,6 +89,7 @@ model Unit {
   symbol        String
   allow_decimal Boolean     @default(false) @map("allow_decimal")
   unitAlias     UnitAlias[]
+  Product       Product[]
 }
 
 model User {
