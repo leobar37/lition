@@ -12,19 +12,23 @@ export const clientsRouter = router({
       })
     )
     .query(async ({ ctx, input }) => {
-      const transactions = await ctx.bd.transaction.findMany({
+      const lastTransaction = await ctx.bd.transaction.findFirst({
         where: {
           clientId: input.clientId,
-          paid: false,
+        },
+        orderBy: {
+          createdAt: "desc",
         },
       });
-      const debt = transactions.reduce((acc, curr) => {
-        return acc + curr.total;
-      }, 0);
+      if (!lastTransaction) {
+        return {
+          debt: 0,
+        };
+      }
+      const debt = lastTransaction?.totalDebt - lastTransaction?.totalPaid;
 
       return {
-        transactions,
-        debt,
+        debt: debt,
       };
     }),
   one: publicProcedure.input(z.number()).query(async ({ ctx, input }) => {

@@ -5,10 +5,6 @@ generator client {
   provider = "prisma-client-js"
 }
 
-// generator zod {
-//   provider = "prisma-zod-generator"
-// }
-
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
@@ -47,40 +43,58 @@ model Supplier {
 }
 
 model Product {
-  id          Int         @id @default(autoincrement())
-  name        String      @unique
-  description String?
-  unitAlias   UnitAlias[]
-  Sale        Sale[]
-  business    Business    @relation(fields: [businessId], references: [id])
-  businessId  Int         @map("business_id")
-  createdAt   DateTime    @default(now()) @map("created_at")
-  unit        Unit        @relation(fields: [unitId], references: [id])
-  unitId      Int         @map("unit_id")
+  id           Int            @id @default(autoincrement())
+  name         String         @unique
+  description  String?
+  unitAlias    UnitAlias[]
+  Sale         Sale[]
+  business     Business       @relation(fields: [businessId], references: [id])
+  businessId   Int            @map("business_id")
+  createdAt    DateTime       @default(now()) @map("created_at")
+  unit         Unit           @relation(fields: [unitId], references: [id])
+  unitId       Int            @map("unit_id")
+  SaleLineItem SaleLineItem[]
 }
 
 model Sale {
-  id           Int      @id @default(autoincrement())
-  price        Float
-  amount       Float
+  id           Int            @id @default(autoincrement())
   total        Float
-  product      Product  @relation(fields: [productId], references: [id])
-  productId    Int      @map("product_id")
-  client       Client?  @relation(fields: [clientId], references: [id])
-  clientId     Int?     @map("client_id")
-  business     Business @relation(fields: [businessId], references: [id])
-  businessId   Int      @map("business_id")
-  createdAt    DateTime @default(now()) @map("created_at")
-  isDispatched Boolean  @default(false) @map("is_dispatched")
+  client       Client?        @relation(fields: [clientId], references: [id])
+  clientId     Int?           @map("client_id")
+  business     Business       @relation(fields: [businessId], references: [id])
+  businessId   Int            @map("business_id")
+  createdAt    DateTime       @default(now()) @map("created_at")
+  isDispatched Boolean        @default(false) @map("is_dispatched")
   meta         Json
+  lines        SaleLineItem[]
+  Product      Product?       @relation(fields: [productId], references: [id])
+  productId    Int?
+}
+
+model SaleLineItem {
+  id        Int     @id @default(autoincrement())
+  price     Float
+  amount    Float
+  productId Int     @map("product_id")
+  product   Product @relation(fields: [productId], references: [id])
+  Sale      Sale?   @relation(fields: [saleId], references: [id])
+  saleId    Int?
+
+  meta Json?
+
+  aliasId Int?       @map("alias_id")
+  alias   UnitAlias? @relation(fields: [aliasId], references: [id])
 }
 
 model Transaction {
-  id       Int     @id @default(autoincrement())
-  total    Float
-  paid     Boolean
-  client   Client? @relation(fields: [clientId], references: [id])
-  clientId Int?    @map("client_id")
+  id        Int      @id @default(autoincrement())
+  total     Float
+  paid      Boolean
+  client    Client?  @relation(fields: [clientId], references: [id])
+  clientId  Int?     @map("client_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  totalPaid Float    @map("total_paid")
+  totalDebt Float    @map("total_debt")
 }
 
 model Unit {
@@ -117,12 +131,13 @@ model Business {
 }
 
 model UnitAlias {
-  id        Int      @id @default(autoincrement())
-  name      String
-  amount    Float
-  unit      Unit     @relation(fields: [unitId], references: [id])
-  unitId    Int      @map("unit_id")
-  productId Int      @map("product_id")
-  product   Product  @relation(fields: [productId], references: [id])
-  createdAt DateTime @default(now()) @map("created_at")
+  id           Int            @id @default(autoincrement())
+  name         String
+  amount       Float
+  unit         Unit           @relation(fields: [unitId], references: [id])
+  unitId       Int            @map("unit_id")
+  productId    Int            @map("product_id")
+  product      Product        @relation(fields: [productId], references: [id])
+  createdAt    DateTime       @default(now()) @map("created_at")
+  SaleLineItem SaleLineItem[]
 }

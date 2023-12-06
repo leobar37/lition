@@ -5,9 +5,19 @@ import {
   Divider,
   Stack,
   StackDirection,
+  Box,
 } from "@chakra-ui/react";
 import { FC, ReactNode } from "react";
 import { isString } from "radash";
+
+export const item = (label: string, content: string | ReactNode) => {
+  return (
+    <HStack>
+      <Box fontWeight={"semibold"}>{label}:</Box>
+      <Box>{content}</Box>
+    </HStack>
+  );
+};
 
 type ListItemProps = {
   label: string | ReactNode;

@@ -2,6 +2,7 @@ import { api } from "~/lib";
 import { FormInputSelect } from "~/ui";
 import { FC, useMemo } from "react";
 import { FormInputOptions } from "~/ui/forms/use-setup-control";
+import { Option } from "@lition/common";
 
 export const useProductsSelectorHook = () => {
   const productsQuery = api.products.list.useQuery();
@@ -22,7 +23,17 @@ export const useProductsSelectorHook = () => {
     findById,
   };
 };
-export const ProductSelector: FC<FormInputOptions> = ({ ...props }) => {
+
+type ProductSelectorProps = {
+  interceptOptions?: (options: Option[]) => Option[];
+} & FormInputOptions;
+export const ProductSelector: FC<ProductSelectorProps> = ({
+  interceptOptions,
+  ...props
+}) => {
   const { options } = useProductsSelectorHook();
-  return <FormInputSelect {...props} options={options} />;
+  const optionsIntercepted = useMemo(() => {
+    return interceptOptions ? interceptOptions(options as any[]) : options;
+  }, [interceptOptions]);
+  return <FormInputSelect {...props} options={optionsIntercepted} />;
 };

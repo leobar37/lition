@@ -15,6 +15,7 @@ const Select = chakra(ReactSelect);
 
 export const FormInputSelect: FC<FormInputSelectProps> = ({
   options,
+  isDisabled,
   ...props
 }) => {
   const { Wrapper, field } = useSetupControl(props);
@@ -22,6 +23,7 @@ export const FormInputSelect: FC<FormInputSelectProps> = ({
   return (
     <Wrapper>
       <Select
+        isDisabled={isDisabled}
         options={options}
         {...field}
         value={value}

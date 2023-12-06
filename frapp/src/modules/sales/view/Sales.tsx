@@ -1,12 +1,11 @@
-import { Button, HStack, Box, VStack, Text, Switch } from "@chakra-ui/react";
-import { useNavigate } from "react-router-dom";
-import { List, ListItem, Screen } from "~/ui";
-import { api } from "~/lib";
-import { FC, ReactNode } from "react";
-import { Sale, Client, Product } from "@server";
+import { Box, Button, HStack, Switch, VStack } from "@chakra-ui/react";
 import { FORMAT_SIMPLE_DATE, MONEY_PEN_SYMBOL } from "@lition/common";
+import { Client, Product, Sale } from "@server";
 import dayjs from "dayjs";
-
+import { FC, ReactNode } from "react";
+import { useNavigate } from "react-router-dom";
+import { api } from "~/lib";
+import { List, ListItem, Screen } from "~/ui";
 const SaleItem: FC<{
   sale: (Sale & {
     client: Client;
@@ -14,6 +13,8 @@ const SaleItem: FC<{
     product: Product;
   };
 }> = ({ sale }) => {
+  const navigate = useNavigate();
+
   const item = (label: string, content: string | ReactNode) => {
     return (
       <HStack>
@@ -22,6 +23,7 @@ const SaleItem: FC<{
       </HStack>
     );
   };
+
   return (
     <ListItem
       label={
@@ -38,7 +40,7 @@ const SaleItem: FC<{
           <Button
             colorScheme="blue"
             onClick={() => {
-              // navigate(`/sales/1`);
+              navigate(`/sales/${sale.id}`);
             }}
           >
             Ver

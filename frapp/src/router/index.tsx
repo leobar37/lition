@@ -53,4 +53,8 @@ export const router = createBrowserRouter([
     path: "/sales/new",
     element: <fromSales.CreateSale />,
   },
+  {
+    path: "/sales/:id",
+    element: <fromSales.UpdateSale />,
+  },
 ]);

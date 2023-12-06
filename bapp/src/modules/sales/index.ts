@@ -1,6 +1,12 @@
-import { PaymentState, createSaleSchema } from "@lition/common";
-import { Transaction } from "bd";
+import {
+  PaymentState,
+  createSaleSchema,
+  updateSaleSchema,
+} from "@lition/common";
+import { SaleLineItem, Transaction } from "bd";
 import { publicProcedure, router } from "../../router";
+import { z } from "zod";
+import { TRPCError } from "@trpc/server";
 
 export const sales = router({
   list: publicProcedure.query(async ({ ctx }) => {
@@ -10,44 +16,146 @@ export const sales = router({
       },
       include: {
         client: true,
-        product: true,
+      },
+      orderBy: {
+        createdAt: "desc",
       },
     });
     return sales;
   }),
+  sale: publicProcedure
+    .input(
+      z.object({
+        id: z.number(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const sale = await ctx.bd.sale.findFirst({
+        where: {
+          id: input.id,
+        },
+        include: {
+          client: true,
+          lines: true,
+        },
+      });
+      return sale;
+    }),
+
+  update: publicProcedure
+    .input(
+      z.object({
+        id: z.number(),
+        input: updateSaleSchema,
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const bd = ctx.bd;
+      const {
+        id,
+        input: { isDispatched, lines, total, paymentSource },
+      } = input;
+      console.log("reach here");
+
+      const prevSale = await bd.sale.findFirst({
+        where: {
+          id: id,
+        },
+      });
+
+      if (!prevSale) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          cause: "Sale not found",
+        });
+      }
+
+      await bd.sale.update({
+        where: {
+          id: id,
+        },
+        data: {
+          isDispatched: isDispatched,
+          total: total,
+        },
+      });
+
+      for await (const line of lines) {
+        if (!line.id) {
+          await bd.saleLineItem.create({
+            data: {
+              amount: line.amount,
+              price: line.price,
+              aliasId: line.aliasId,
+              productId: line.productId,
+              saleId: prevSale.id,
+            },
+          });
+        } else
+          await bd.saleLineItem.update({
+            where: {
+              id: line.id,
+            },
+            data: {
+              amount: line.amount,
+              price: line.price,
+            },
+          });
+      }
+
+      if (paymentSource && paymentSource.toAccount > 0) {
+        await bd.transaction.insertAndCalculate([
+          {
+            clientId: prevSale.clientId,
+            paid: true,
+            total: paymentSource?.toAccount ?? 0,
+          },
+        ]);
+      }
+
+      return {
+        sale: prevSale,
+      };
+    }),
   create: publicProcedure
     .input(createSaleSchema)
     .mutation(async ({ ctx, input }) => {
       const bd = ctx.bd;
       const {
-        price,
-        amount,
         isDispatched = false,
-        usedAlias,
         total,
         clientId,
-        productId,
         paymentSource,
         paymentState,
       } = input;
+
       const createdSale = await bd.sale.create({
         data: {
-          amount: amount ?? 0,
-          price: price ?? 0,
           isDispatched: isDispatched,
-          meta: !!usedAlias
-            ? {
-                usedAlias,
-              }
-            : {},
+          meta: {},
           total: total ?? 0,
           clientId,
           businessId: ctx.bussiness?.id!,
-          productId: productId,
         },
       });
 
-      const transactions: Omit<Transaction, "id">[] = [];
+      // save line sales
+      let lines: Partial<SaleLineItem>[] = [];
+      for await (const saleLine of input.lines) {
+        lines.push({
+          amount: saleLine.amount,
+          price: saleLine.price,
+          productId: saleLine.productId,
+          saleId: createdSale.id,
+          aliasId: saleLine.aliasId,
+        });
+      }
+
+      await bd.saleLineItem.createMany({
+        data: lines as any[],
+      });
+
+      const transactions: Partial<Transaction>[] = [];
       // create transactions
       if (paymentState === PaymentState.PAY_ENTIRE) {
         transactions.push({
@@ -76,12 +184,10 @@ export const sales = router({
           clientId: clientId,
         });
       }
-      const createTransactions = await bd.transaction.createMany({
-        data: transactions,
-      });
+      await bd.transaction.insertAndCalculate(transactions);
+
       return {
         sale: createdSale,
-        transactions: createTransactions,
       };
     }),
 });

@@ -19,7 +19,7 @@ type FormNumberInputProps = {
 } & FormControlProps;
 
 export const moneyStrategyFormat = {
-  format: (value: string) => {
+  format: (value: string | number) => {
     return "S/" + value;
   },
   parse: (value: string) => {
@@ -44,18 +44,24 @@ export const FormNumberInput: FC<FormNumberInputProps> = ({
   const [value, setValue] = useState("0");
 
   useEffect(() => {
-    const parsedValue = Number(value);
+    setValue((field.value ?? "").toString());
+  }, []);
 
+  useEffect(() => {
+    const parsedValue = Number(value);
     if (!isNumber(parsedValue)) {
       return;
     }
-
+    if (parsedValue === field.value) {
+      return;
+    }
     field.onChange({
       target: {
         value: parsedValue,
       },
     });
   }, [value]);
+
   return (
     <Wrapper>
       <NumberInput
