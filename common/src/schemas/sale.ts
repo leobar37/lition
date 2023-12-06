@@ -27,20 +27,12 @@ export const createSaleSchema = z.object({
 });
 
 export const updateSaleSchema = createSaleSchema
-  .omit({
-    clientId: true,
-    paymentState: true,
-    lines: true,
+  .pick({
+    isDispatched: true,
   })
   .and(
     z.object({
-      lines: z.array(
-        lineSaleSchema.and(
-          z.object({
-            id: z.number().optional().nullable(),
-          })
-        )
-      ),
+      isCancelled: z.boolean().optional(),
     })
   );
 

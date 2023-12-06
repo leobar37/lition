@@ -4,6 +4,8 @@ import * as fromClints from "../modules/clients";
 import * as fromAuth from "../modules/auth";
 import * as products from "../modules/products";
 import * as fromSales from "../modules/sales";
+import * as fromSuppliers from "../modules/suppliers";
+import * as fromPurchases from "../modules/purchases";
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -56,5 +58,21 @@ export const router = createBrowserRouter([
   {
     path: "/sales/:id",
     element: <fromSales.UpdateSale />,
+  },
+  {
+    path: "/suppliers",
+    element: <fromSuppliers.Suppliers />,
+  },
+  {
+    path: "/suppliers/new",
+    element: <fromSuppliers.CreateSupplier />,
+  },
+  {
+    path: "/suppliers/:id",
+    element: <fromSuppliers.UpdateSupplier />,
+  },
+  {
+    path: "/purchases",
+    element: <fromPurchases.Purchases />,
   },
 ]);

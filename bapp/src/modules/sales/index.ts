@@ -1,12 +1,7 @@
-import {
-  PaymentState,
-  createSaleSchema,
-  updateSaleSchema,
-} from "@lition/common";
-import { SaleLineItem, Transaction } from "bd";
-import { publicProcedure, router } from "../../router";
+import { PaymentState, StatusSaleType, createSaleSchema } from "@lition/common";
+import { Sale, SaleLineItem, Transaction } from "bd";
 import { z } from "zod";
-import { TRPCError } from "@trpc/server";
+import { publicProcedure, router } from "../../router";
 
 export const sales = router({
   list: publicProcedure.query(async ({ ctx }) => {
@@ -42,80 +37,48 @@ export const sales = router({
       return sale;
     }),
 
-  update: publicProcedure
+  updateFlags: publicProcedure
     .input(
       z.object({
         id: z.number(),
-        input: updateSaleSchema,
+        type: z.nativeEnum(StatusSaleType),
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const bd = ctx.bd;
-      const {
-        id,
-        input: { isDispatched, lines, total, paymentSource },
-      } = input;
-      console.log("reach here");
-
-      const prevSale = await bd.sale.findFirst({
+      const type = input.type;
+      const sale = await ctx.bd.sale.findUnique({
         where: {
-          id: id,
+          id: input.id,
         },
       });
 
-      if (!prevSale) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          cause: "Sale not found",
-        });
-      }
-
-      await bd.sale.update({
-        where: {
-          id: id,
-        },
-        data: {
-          isDispatched: isDispatched,
-          total: total,
-        },
-      });
-
-      for await (const line of lines) {
-        if (!line.id) {
-          await bd.saleLineItem.create({
-            data: {
-              amount: line.amount,
-              price: line.price,
-              aliasId: line.aliasId,
-              productId: line.productId,
-              saleId: prevSale.id,
-            },
-          });
-        } else
-          await bd.saleLineItem.update({
+      let updatedSale: Sale | null = null;
+      switch (type) {
+        case StatusSaleType.CANCEL: {
+          updatedSale = await ctx.bd.sale.update({
             where: {
-              id: line.id,
+              id: input.id,
             },
             data: {
-              amount: line.amount,
-              price: line.price,
+              canceledAt: new Date(),
             },
           });
+          break;
+        }
+        case StatusSaleType.TOGGLE_DISPATCH: {
+          updatedSale = await ctx.bd.sale.update({
+            where: {
+              id: input.id,
+            },
+            data: {
+              isDispatched: !sale?.isDispatched,
+            },
+          });
+          break;
+        }
       }
 
-      if (paymentSource && paymentSource.toAccount > 0) {
-        await bd.transaction.insertAndCalculate([
-          {
-            clientId: prevSale.clientId,
-            paid: true,
-            total: paymentSource?.toAccount ?? 0,
-          },
-        ]);
-      }
-
-      return {
-        sale: prevSale,
-      };
+      return updatedSale;
     }),
   create: publicProcedure
     .input(createSaleSchema)

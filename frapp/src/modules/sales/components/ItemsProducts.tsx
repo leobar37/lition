@@ -13,6 +13,12 @@ import { makeDisclosure } from "~/utils";
 import { LineSale, saleItemAtom } from "../data";
 import { useHandleLineSale } from "../helpers/useHandleLineSale";
 import { MyDrawer } from "./MyDrawerItem";
+import {
+  ItemsProductContextProps,
+  ItemsProductProvider,
+} from "../helpers/ItemsProductContext";
+import { useItemsProductContext } from "../helpers/ItemsProductContext";
+
 const lineSaleAtomDrawer = atom(false);
 
 export const useSalelineDisclosure = makeDisclosure(lineSaleAtomDrawer);
@@ -25,6 +31,31 @@ const LineSaleItem: FC<{
   const setSaleItem = useSetAtom(saleItemAtom);
   const { deleteLine } = useHandleLineSale();
 
+  const itemsProducts = useItemsProductContext();
+
+  const actions = itemsProducts.isEdit ? (
+    <>
+      <Button
+        onClick={() => {
+          drawerState.onOpen();
+          setSaleItem(line);
+        }}
+        colorScheme="blue"
+      >
+        <EditIcon />
+      </Button>
+
+      <Button
+        colorScheme="red"
+        onClick={() => {
+          deleteLine(line.productId);
+        }}
+      >
+        <DeleteIcon />
+      </Button>
+    </>
+  ) : null;
+
   return (
     <ListItem
       label={
@@ -35,62 +66,51 @@ const LineSaleItem: FC<{
           {item("Precio", line.price)}
         </VStack>
       }
-      actions={
-        <>
-          <Button
-            onClick={() => {
-              drawerState.onOpen();
-              setSaleItem(line);
-            }}
-            colorScheme="blue"
-          >
-            <EditIcon />
-          </Button>
-
-          <Button
-            colorScheme="red"
-            onClick={() => {
-              deleteLine(line.productId);
-            }}
-          >
-            <DeleteIcon />
-          </Button>
-        </>
-      }
+      actions={actions}
     />
   );
 };
 
-export const ItemsProducts = () => {
+export const ItemsProducts: FC<Partial<ItemsProductContextProps>> = ({
+  isEdit = false,
+}) => {
   const drawerState = useSalelineDisclosure();
   const { lines } = useHandleLineSale();
   const setSaleItem = useSetAtom(saleItemAtom);
 
   return (
-    <Box>
-      <FormControl>
-        <FormLabel>Items</FormLabel>
-        <Box>
-          <HStack justifyContent={"flex-end"}>
-            <Button
-              onClick={() => {
-                drawerState.onOpen();
-                setSaleItem(null);
+    <ItemsProductProvider
+      value={{
+        isEdit,
+      }}
+    >
+      <Box mt={4}>
+        <FormControl>
+          <FormLabel>Items</FormLabel>
+          <Box>
+            {isEdit && (
+              <HStack justifyContent={"flex-end"}>
+                <Button
+                  onClick={() => {
+                    drawerState.onOpen();
+                    setSaleItem(null);
+                  }}
+                >
+                  Agregar
+                </Button>
+              </HStack>
+            )}
+            <List
+              data={lines}
+              renderItem={(line) => {
+                return <LineSaleItem line={line} />;
               }}
-            >
-              Agregar
-            </Button>
-          </HStack>
-          <List
-            data={lines}
-            renderItem={(line) => {
-              return <LineSaleItem line={line} />;
-            }}
-          />
-        </Box>
-        <MyDrawer />
-      </FormControl>
-    </Box>
+            />
+          </Box>
+          <MyDrawer />
+        </FormControl>
+      </Box>
+    </ItemsProductProvider>
   );
 };
 

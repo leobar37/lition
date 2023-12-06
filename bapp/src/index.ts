@@ -6,6 +6,8 @@ import { clientsRouter } from "./modules/clients";
 import { authRouter } from "./modules/auth";
 import { sales } from "./modules/sales";
 import { productsRouter } from "./modules/products";
+import { suppliersRouter } from "./modules/suppliers";
+
 import cors from "@fastify/cors";
 export type * from "bd";
 
@@ -16,6 +18,7 @@ const appRouter = router({
   auth: authRouter,
   products: productsRouter,
   sales: sales,
+  suppliers: suppliersRouter,
 });
 
 const server = fastify({

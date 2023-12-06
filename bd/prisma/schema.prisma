@@ -29,17 +29,18 @@ model Client {
 }
 
 model Supplier {
-  id                  Int      @id @default(autoincrement())
+  id                  Int       @id @default(autoincrement())
   name                String
-  lastName            String   @map("last_name")
+  lastName            String    @map("last_name")
   dni                 String?
   email               String?
   phone               String
   direction           String?
-  direction_reference String?  @map("direction_reference")
+  direction_reference String?   @map("direction_reference")
   note                String?
-  business            Business @relation(fields: [businessId], references: [id])
-  businessId          Int      @map("business_id")
+  business            Business? @relation(fields: [businessId], references: [id])
+  businessId          Int       @map("business_id")
+  deletedAt           DateTime? @map("deleted_at")
 }
 
 model Product {
@@ -69,6 +70,7 @@ model Sale {
   lines        SaleLineItem[]
   Product      Product?       @relation(fields: [productId], references: [id])
   productId    Int?
+  canceledAt   DateTime?      @map("canceled_at")
 }
 
 model SaleLineItem {

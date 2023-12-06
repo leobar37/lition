@@ -6,7 +6,7 @@
   "module": "./dist/index.esm.js",
   "scripts": {
     "db:generate": "prisma generate",
-    "db:push": "prisma db push --skip-generate --force-reset",
+    "db:push": "prisma db push --skip-generate",
     "studio": "prisma studio",
     "dev": "tsup",
     "build": "tsup --env.NODE_ENV production",

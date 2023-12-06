@@ -6,12 +6,13 @@ import { useParams } from "react-router-dom";
 import { z } from "zod";
 import { ClientsSelector, api } from "~/lib";
 import { useProductsSelectorHook } from "~/lib/selectors/ProductSelector";
-import { Screen, SwitchFormInput, WrapperForm, useWrapperForm } from "~/ui";
+import { Screen, WrapperForm, useWrapperForm } from "~/ui";
+import { StatusSaleType, isNill } from "@lition/common";
 import ItemsProducts from "../components/ItemsProducts";
-import { ToAccount } from "../components/ToAccount";
 import { useHandleLineSale } from "../helpers/useHandleLineSale";
-import { useNavigate } from "react-router-dom";
-const useProduct = () => {
+import { useQueryClient } from "@tanstack/react-query";
+import { getQueryKey } from "@trpc/react-query";
+const useCurrentSale = () => {
   const { id = "-1" } = useParams();
   const saleQuery = api.sales.sale.useQuery(
     {
@@ -40,8 +41,60 @@ const frEditSaleSchema = createSaleSchema
 
 type EditSaleForm = z.infer<typeof frEditSaleSchema>;
 
+const DispatchButton = () => {
+  const dispatchMutation = api.sales.updateFlags.useMutation();
+  const currentSale = useCurrentSale();
+
+  const queryClient = useQueryClient();
+
+  const queryKey = getQueryKey(api.sales.sale);
+
+  if (currentSale.data?.isDispatched) {
+    return null;
+  }
+
+  return (
+    <Button
+      colorScheme="blue"
+      onClick={async () => {
+        await dispatchMutation.mutateAsync({
+          id: currentSale.data?.id!,
+          type: StatusSaleType.TOGGLE_DISPATCH,
+        });
+        queryClient.invalidateQueries(queryKey);
+      }}
+    >
+      Despachar
+    </Button>
+  );
+};
+const CancelButton = () => {
+  const dispatchMutation = api.sales.updateFlags.useMutation();
+  const currentSale = useCurrentSale();
+  const queryClient = useQueryClient();
+  const queryKey = getQueryKey(api.sales.sale);
+  if (!isNill(currentSale.data?.canceledAt)) {
+    return null;
+  }
+
+  return (
+    <Button
+      colorScheme="blue"
+      onClick={async () => {
+        await dispatchMutation.mutateAsync({
+          id: currentSale.data?.id!,
+          type: StatusSaleType.CANCEL,
+        });
+        queryClient.invalidateQueries(queryKey);
+      }}
+    >
+      Cancelar venta
+    </Button>
+  );
+};
+
 export const UpdateSale = () => {
-  const saleQuery = useProduct();
+  const saleQuery = useCurrentSale();
 
   const form = useWrapperForm<EditSaleForm>({
     defaultValues: {
@@ -51,19 +104,12 @@ export const UpdateSale = () => {
     schema: frEditSaleSchema,
   });
 
-  const navigate = useNavigate();
-
-  const updateSaleMutation = api.sales.update.useMutation();
-
   const saleData = saleQuery.data;
   const { findById } = useProductsSelectorHook();
-
-  const { setLines, lines, getTotal } = useHandleLineSale();
-
+  const { setLines } = useHandleLineSale();
   useEffect(() => {
-    const data = saleQuery.data;
-    if (data) {
-      const lines = data.lines.map((line) => {
+    if (saleData) {
+      const lines: any[] = (saleData.lines as any[]).map((line) => {
         const product = findById(line.productId);
         return {
           productName: product?.name ?? "",
@@ -77,46 +123,11 @@ export const UpdateSale = () => {
       });
       setLines(lines);
       form.reset({
-        isDispatched: data.isDispatched,
-        clientId: data.clientId ?? 0,
+        isDispatched: saleData.isDispatched,
+        clientId: saleData.clientId ?? 0,
       });
     }
   }, [saleQuery.data]);
-
-  const onSubmit = form.handleSubmit(
-    async (values: EditSaleForm) => {
-      try {
-        await updateSaleMutation.mutateAsync({
-          id: saleData.id,
-          input: {
-            isDispatched: values.isDispatched,
-            lines: lines.map((line) => {
-              return {
-                id: line.id,
-                amount: line.amount,
-                price: line.price,
-                productId: line.productId,
-                total: line.total,
-                aliasId: line?.aliasId ?? undefined,
-              };
-            }),
-            paymentSource: {
-              toAccount: values.toAccount,
-            },
-            total: getTotal(),
-          },
-        });
-        console.log("updated saled");
-
-        navigate("/sales");
-      } catch (error) {
-        console.log("error", error);
-      }
-    },
-    (errs) => {
-      console.log("errors", errs);
-    }
-  );
 
   if (saleQuery.isLoading) return <Text>Cargando...</Text>;
 
@@ -128,16 +139,13 @@ export const UpdateSale = () => {
       )}`}
     >
       <WrapperForm form={form}>
-        <SwitchFormInput label="Despachado" name="isDispatched" />
         <ClientsSelector isDisabled label="Cliente" name="clientId" />
         <ItemsProducts />
-        <ToAccount ignorePaymentState />
+        <HStack>
+          <DispatchButton />
+          <CancelButton />
+        </HStack>
       </WrapperForm>
-      <HStack w="full" spacing={4} justifyContent={"flex-end"} mt={3}>
-        <Button colorScheme="blue" onClick={onSubmit}>
-          Editar
-        </Button>
-      </HStack>
     </Screen>
   );
 };

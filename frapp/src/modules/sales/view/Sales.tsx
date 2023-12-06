@@ -31,7 +31,10 @@ const SaleItem: FC<{
           {item("Cliente", sale?.client?.name + " " + sale?.client?.lastName)}
           {item("Fecha", dayjs(sale.createdAt).format(FORMAT_SIMPLE_DATE))}
           {item("Total", `${MONEY_PEN_SYMBOL} ${sale.total ?? 0}`)}
-          {item("Despachado", <Switch isChecked={sale.isDispatched} />)}
+          {item(
+            "Despachado",
+            <Switch disabled isChecked={sale.isDispatched} />
+          )}
         </VStack>
       }
       directionActions={"column"}
