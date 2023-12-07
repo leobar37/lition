@@ -75,4 +75,12 @@ export const router = createBrowserRouter([
     path: "/purchases",
     element: <fromPurchases.Purchases />,
   },
+  {
+    path: "/purchases/new",
+    element: <fromPurchases.CreatePurchase />,
+  },
+  {
+    path: "/purchases/:id",
+    element: <fromPurchases.UpdatePurchase />,
+  },
 ]);

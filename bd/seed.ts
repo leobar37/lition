@@ -1,10 +1,18 @@
 import { faker } from "@faker-js/faker";
 import { Roles } from "@lition/common";
-import { Client, PrismaClient, Product, Unit, User } from "@prisma/client";
+import {
+  Client,
+  PrismaClient,
+  Product,
+  Supplier,
+  Unit,
+  User,
+} from "@prisma/client";
 import * as bcrypt from "bcrypt";
 import { range } from "radash";
 
 const prismaClient = new PrismaClient();
+
 const createClient = ({
   businessId,
   bussinessName,
@@ -20,6 +28,22 @@ const createClient = ({
     phone: faker.string.numeric(9),
     businessId: businessId,
   } as Client;
+};
+const createSupplier = ({
+  businessId,
+  bussinessName,
+}: {
+  businessId: number;
+  bussinessName: string;
+}): Supplier => {
+  return {
+    name: faker.person.firstName() + bussinessName,
+    lastName: faker.person.lastName(),
+    dni: faker.string.alphanumeric(8),
+    email: faker.internet.email(),
+    phone: faker.string.numeric(9),
+    businessId: businessId,
+  } as Supplier;
 };
 
 const UNITS: Partial<Unit>[] = [
@@ -110,12 +134,24 @@ async function main() {
     });
   }
 
+  // clients
   for await (const _iter of range(0, 10)) {
     const fakeClient = createClient({
       businessId: businessResult.id,
       bussinessName: businessResult.name,
     });
     await prismaClient.client.create({
+      data: fakeClient,
+    });
+  }
+
+  // suppliers
+  for await (const _iter of range(0, 10)) {
+    const fakeClient = createSupplier({
+      businessId: businessResult.id,
+      bussinessName: businessResult.name,
+    });
+    await prismaClient.supplier.create({
       data: fakeClient,
     });
   }

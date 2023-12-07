@@ -5,6 +5,35 @@ import { pick } from "radash";
 import { z } from "zod";
 
 export const suppliersRouter = router({
+  myDebt: publicProcedure
+    .input(
+      z.object({
+        id: z.number(),
+      })
+    )
+    .query(async ({ ctx: { bd }, input: { id } }) => {
+      const lastTransation = await bd.transactionSupplier.findFirst({
+        where: {
+          supplierId: id,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+      });
+
+      if (!lastTransation) {
+        return {
+          debt: 0,
+        };
+      }
+
+      const totalDebt = lastTransation?.totalDebt ?? 0;
+      const totalPaid = lastTransation?.totalPaid ?? 0;
+
+      return {
+        debt: totalDebt - totalPaid,
+      };
+    }),
   delete: publicProcedure
     .input(
       z.object({
@@ -91,6 +120,9 @@ export const suppliersRouter = router({
       where: {
         businessId: bussiness?.id,
         deletedAt: null,
+      },
+      orderBy: {
+        createdAt: "desc",
       },
     });
     return suppliers;

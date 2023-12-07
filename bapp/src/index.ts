@@ -1,14 +1,15 @@
+import cors from "@fastify/cors";
 import { fastifyTRPCPlugin } from "@trpc/server/adapters/fastify";
 import fastify from "fastify";
 import { createContext } from "./context";
-import { router } from "./router";
-import { clientsRouter } from "./modules/clients";
 import { authRouter } from "./modules/auth";
-import { sales } from "./modules/sales";
+import { clientsRouter } from "./modules/clients";
+import { me } from "./modules/me";
 import { productsRouter } from "./modules/products";
+import { purchases } from "./modules/purchases";
+import { sales } from "./modules/sales";
 import { suppliersRouter } from "./modules/suppliers";
-
-import cors from "@fastify/cors";
+import { router } from "./router";
 export type * from "bd";
 
 // fastify cors
@@ -19,6 +20,8 @@ const appRouter = router({
   products: productsRouter,
   sales: sales,
   suppliers: suppliersRouter,
+  purchases: purchases,
+  me: me,
 });
 
 const server = fastify({
