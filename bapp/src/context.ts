@@ -3,10 +3,13 @@ import { prismaClient } from "./lib/bd";
 import { jwtHandleStrategy } from "./lib";
 import { isEmpty } from "radash";
 import { Business, User } from "bd";
+
 export async function createContext({ req, res }: CreateFastifyContextOptions) {
   const headerAuthorization = req.headers["authorization"];
+
   const token = headerAuthorization?.split(" ")[1];
   // verify token if this is valid
+
   const infoAuth = jwtHandleStrategy.decode(token ?? "");
   let user: User | null = null;
   let bussiness: Business | null = null;

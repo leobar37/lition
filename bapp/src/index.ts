@@ -36,9 +36,8 @@ server.register(fastifyTRPCPlugin, {
 const PORT: number = process.env?.PORT ? Number(process.env.PORT) : 3000;
 (async () => {
   try {
-    await server.register(cors, {});
+    await server.register(cors);
     await server.listen({ port: PORT });
-
     console.log(`server listening on ${PORT}`);
   } catch (err) {
     server.log.error(err);

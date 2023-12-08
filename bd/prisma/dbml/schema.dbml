@@ -1,0 +1,218 @@
+//// ------------------------------------------------------
+//// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+//// ------------------------------------------------------
+
+Table Client {
+  id Int [pk, increment]
+  name String [not null]
+  lastName String [not null]
+  dni String
+  email String
+  phone String [not null]
+  direction String
+  direction_reference String
+  note String
+  Sale Sale [not null]
+  business Business
+  businessId Int
+  createdAt DateTime [default: `now()`, not null]
+  deletedAt DateTime
+  Transaction Transaction [not null]
+}
+
+Table Supplier {
+  id Int [pk, increment]
+  name String [not null]
+  lastName String [not null]
+  dni String
+  email String
+  phone String [not null]
+  direction String
+  direction_reference String
+  note String
+  business Business
+  businessId Int [not null]
+  deletedAt DateTime
+  TransactionSupplier TransactionSupplier [not null]
+  Purchase Purchase [not null]
+  createdAt DateTime [default: `now()`, not null]
+}
+
+Table Product {
+  id Int [pk, increment]
+  name String [unique, not null]
+  description String
+  unitAlias UnitAlias [not null]
+  Sale Sale [not null]
+  business Business [not null]
+  businessId Int [not null]
+  createdAt DateTime [default: `now()`, not null]
+  unit Unit [not null]
+  unitId Int [not null]
+  SaleLineItem SaleLineItem [not null]
+  PurchaseLineItem PurchaseLineItem [not null]
+}
+
+Table Sale {
+  id Int [pk, increment]
+  total Float [not null]
+  client Client
+  clientId Int
+  business Business [not null]
+  businessId Int [not null]
+  createdAt DateTime [default: `now()`, not null]
+  isDispatched Boolean [not null, default: false]
+  meta Json [not null]
+  lines SaleLineItem [not null]
+  canceledAt DateTime
+  Product Product
+  productId Int
+}
+
+Table Purchase {
+  id Int [pk, increment]
+  total Float [not null]
+  supplier Supplier
+  supplierId Int
+  business Business [not null]
+  businessId Int [not null]
+  createdAt DateTime [default: `now()`, not null]
+  meta Json [not null]
+  lines PurchaseLineItem [not null]
+  canceledAt DateTime
+}
+
+Table SaleLineItem {
+  id Int [pk, increment]
+  price Float [not null]
+  amount Float [not null]
+  productId Int [not null]
+  product Product [not null]
+  Sale Sale
+  saleId Int
+  meta Json
+  aliasId Int
+  alias UnitAlias
+}
+
+Table PurchaseLineItem {
+  id Int [pk, increment]
+  price Float [not null]
+  amount Float [not null]
+  productId Int [not null]
+  product Product [not null]
+  purchaseId Int
+  purchase Purchase
+  meta Json
+  aliasId Int
+  alias UnitAlias
+}
+
+Table Transaction {
+  id Int [pk, increment]
+  total Float [not null]
+  paid Boolean [not null]
+  client Client
+  clientId Int
+  createdAt DateTime [default: `now()`, not null]
+  totalPaid Float [not null]
+  totalDebt Float [not null]
+}
+
+Table TransactionSupplier {
+  id Int [pk, increment]
+  total Float [not null]
+  paid Boolean [not null]
+  supplier Supplier
+  supplierId Int
+  createdAt DateTime [default: `now()`, not null]
+  totalPaid Float [not null]
+  totalDebt Float [not null]
+}
+
+Table Unit {
+  id Int [pk, increment]
+  name String [unique, not null]
+  symbol String [not null]
+  allow_decimal Boolean [not null, default: false]
+  unitAlias UnitAlias [not null]
+  Product Product [not null]
+}
+
+Table User {
+  id Int [pk, increment]
+  username String [unique, not null]
+  name String [not null]
+  lastName String [not null]
+  password String [not null]
+  roles String[] [not null]
+  business Business [not null]
+  businessId Int [not null]
+  createdAt DateTime [default: `now()`, not null]
+}
+
+Table Business {
+  id Int [pk, increment]
+  name String [not null]
+  code String [unique]
+  users User [not null]
+  clients Client [not null]
+  suppliers Supplier [not null]
+  products Product [not null]
+  sales Sale [not null]
+  createdAt DateTime [default: `now()`, not null]
+  Purchase Purchase [not null]
+}
+
+Table UnitAlias {
+  id Int [pk, increment]
+  name String [not null]
+  amount Float [not null]
+  unit Unit [not null]
+  unitId Int [not null]
+  productId Int [not null]
+  product Product [not null]
+  createdAt DateTime [default: `now()`, not null]
+  SaleLineItem SaleLineItem [not null]
+  PurchaseLineItem PurchaseLineItem [not null]
+}
+
+Ref: Client.businessId > Business.id
+
+Ref: Supplier.businessId > Business.id
+
+Ref: Product.businessId > Business.id
+
+Ref: Product.unitId > Unit.id
+
+Ref: Sale.clientId > Client.id
+
+Ref: Sale.businessId > Business.id
+
+Ref: Sale.productId > Product.id
+
+Ref: Purchase.supplierId > Supplier.id
+
+Ref: Purchase.businessId > Business.id
+
+Ref: SaleLineItem.productId > Product.id
+
+Ref: SaleLineItem.saleId > Sale.id
+
+Ref: SaleLineItem.aliasId > UnitAlias.id
+
+Ref: PurchaseLineItem.productId > Product.id
+
+Ref: PurchaseLineItem.purchaseId > Purchase.id
+
+Ref: PurchaseLineItem.aliasId > UnitAlias.id
+
+Ref: Transaction.clientId > Client.id
+
+Ref: TransactionSupplier.supplierId > Supplier.id
+
+Ref: User.businessId > Business.id
+
+Ref: UnitAlias.unitId > Unit.id
+
+Ref: UnitAlias.productId > Product.id
