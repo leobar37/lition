@@ -1,5 +1,5 @@
 import { defineConfig, Options } from "tsup";
-
+import { omit } from "radash";
 export default defineConfig((options) => {
   const isProduction =
     (options.env?.["NODE_ENV"] ?? "development") === "production";
@@ -14,7 +14,7 @@ export default defineConfig((options) => {
   };
   if (isProduction) {
     return {
-      ...commonConfig,
+      ...omit(commonConfig, ["onSuccess"]),
       watch: false,
       format: ["esm", "cjs"],
       dts: false,

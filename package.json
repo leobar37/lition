@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev:complete": "pnpm run dev:bapp & pnpm run dev:frapp",
-    "dev:bapp": "turbo run dev --filter=bapp",
+    "dev:bapp": "doppler run -- turbo run dev --filter=bapp",
     "dev:frapp": "turbo run dev --filter=frapp..."
   },
   "keywords": [],

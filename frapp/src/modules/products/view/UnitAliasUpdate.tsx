@@ -40,7 +40,6 @@ export const UnitAliasUpdate = () => {
     if (unitAlias) {
       form.reset({
         name: unitAlias.name,
-        unitId: unitAlias.unitId,
         amount: unitAlias.amount,
       });
     }

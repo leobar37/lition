@@ -7,7 +7,7 @@
   "scripts": {
     "db:generate": "prisma generate",
     "db:push": "prisma db push --skip-generate --force-reset",
-    "studio": "prisma studio",
+    "studio": "doppler run -- prisma studio",
     "reset": "pnpm run db:push && pnpm run db:generate && pnpm run seed",
     "dev": "tsup",
     "build": "tsup --env.NODE_ENV production",
