@@ -33,11 +33,15 @@ server.register(fastifyTRPCPlugin, {
   trpcOptions: { router: appRouter, createContext },
 });
 
-const PORT: number = process.env?.PORT ? Number(process.env.PORT) : 3000;
+server.get("/", async () => {
+  return { status: "ready, omar gay" };
+});
+
+const PORT: number = process.env?.PORT ? Number(process.env.PORT) : 5000;
 (async () => {
   try {
-    await server.register(cors);
-    await server.listen({ port: PORT });
+    await server.register(cors, {});
+    await server.listen({ port: PORT, host: "0.0.0.0" });
     console.log(`server listening on ${PORT}`);
   } catch (err) {
     server.log.error(err);

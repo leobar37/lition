@@ -8,7 +8,7 @@
     "db:generate": "prisma generate",
     "db:push": "prisma db push --skip-generate --force-reset",
     "studio": "doppler run -- prisma studio",
-    "reset": "pnpm run db:push && pnpm run db:generate && pnpm run seed",
+    "reset": "pnpm run db:push && pnpm run dkb:generate && pnpm run seed",
     "dev": "tsup",
     "build": "tsup --env.NODE_ENV production",
     "seed": "tsup --env.NODE_ENV seed"
@@ -30,6 +30,7 @@
     "dayjs": "^1.11.10",
     "prisma-zod-generator": "^0.8.13",
     "radash": "^11.0.0",
+    "typescript": "^5.2.2",
     "zod": "^3.22.4"
   }
 }

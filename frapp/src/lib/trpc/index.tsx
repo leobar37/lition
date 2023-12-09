@@ -5,7 +5,9 @@ import { createTRPCReact } from "@trpc/react-query";
 import { httpBatchLink } from "@trpc/client";
 import storage from "../storage";
 import { AUTH_INFO_KEY, AuthInfo } from "../auth";
+
 export const api = createTRPCReact<AppRouter>();
+
 export const TrpcIntegration: FC<{
   children: React.ReactNode;
 }> = ({ children }) => {
@@ -15,10 +17,9 @@ export const TrpcIntegration: FC<{
     api.createClient({
       links: [
         httpBatchLink({
-          url: "http://localhost:3000/trpc",
+          url: "http://localhost:5000/trpc",
           headers: () => {
             const authInfo = storage.get<AuthInfo>(AUTH_INFO_KEY);
-
             if (authInfo) {
               return {
                 authorization: `Bearer ${authInfo.token}`,
