@@ -10,7 +10,7 @@ import * as fromPurchases from "../modules/purchases";
 export const router = createBrowserRouter(
   [
     {
-      path: "/",
+      path: "",
       element: <Dashboard />,
     },
     {

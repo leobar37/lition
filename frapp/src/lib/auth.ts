@@ -9,9 +9,9 @@ export const authAtom = atomWithStorage<AuthInfo | null>(AUTH_INFO_KEY, null);
 
 export const useAuthInfo = () => {
   const [authInfo, setAuthInfo] = useAtom(authAtom);
-
   return {
     authInfo,
     setAuthInfo,
+    isAuthenticated: authInfo !== null,
   };
 };

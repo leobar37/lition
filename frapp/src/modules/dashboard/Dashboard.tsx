@@ -5,6 +5,8 @@ import { useAuthInfo } from "~/lib/auth";
 import { LogoutIcon } from "~/ui/icons";
 import { AUTH_INFO_KEY } from "~/lib/auth";
 import storage from "~/lib/storage";
+import { useEffect } from "react";
+
 export const useLogout = () => {
   const navigate = useNavigate();
   return () => {
@@ -15,6 +17,8 @@ export const useLogout = () => {
 
 export const Dashboard = () => {
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuthInfo();
+
   const items = [
     {
       name: "Clientes",
@@ -39,7 +43,14 @@ export const Dashboard = () => {
   ];
 
   const { authInfo } = useAuthInfo();
+
   const logout = useLogout();
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate("/auth/login");
+    }
+  }, [isAuthenticated]);
 
   return (
     <Screen
