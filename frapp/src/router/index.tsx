@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createHashRouter } from "react-router-dom";
 import { Dashboard } from "../modules/dashboard";
 import * as fromClints from "../modules/clients";
 import * as fromAuth from "../modules/auth";
@@ -7,7 +7,7 @@ import * as fromSales from "../modules/sales";
 import * as fromSuppliers from "../modules/suppliers";
 import * as fromPurchases from "../modules/purchases";
 
-export const router = createBrowserRouter(
+export const router = createHashRouter(
   [
     {
       path: "/",
