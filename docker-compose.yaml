@@ -1,20 +1,23 @@
 version: "3"
 services:
-  back:
+  # back:
+  #   env_file:
+  #     - .env
+  #   build:
+  #     context: .
+  #     dockerfile: ./docker/Dockerfile.bapp
+  #     args:
+  #       - DOPPLER_TOKEN=dp.st.dev.GE5Du4fglZXraBoWQoe5itF3NnHkqBE33t0LjSWb8mN
+  #   ports:
+  #     - 3000:5000
+  front:
     env_file:
       - .env
     build:
       context: .
-      dockerfile: ./docker/Dockerfile.bapp
+      dockerfile: ./docker/Dockerfile.frapp
       args:
         - DOPPLER_TOKEN=dp.st.dev.GE5Du4fglZXraBoWQoe5itF3NnHkqBE33t0LjSWb8mN
     ports:
-      - 3000:5000
-      # - ./:/app
-      # - /app/node_modules
-      # - /app/packages/bd/node_modules
-      # - /app/apps/colossus/node_modules
-      # - /app/packages/tsconfig/node_modules
-      # - /app/packages/eslint-config-custom/node_modules
-      # - /app/packages/gen-pris-graph/node_modules
-    # command: /bin/sh -c "while sleep 1000; do :; done"
+      - 5000:80
+   

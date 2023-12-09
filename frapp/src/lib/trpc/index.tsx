@@ -1,4 +1,4 @@
-import { AppRouter } from "@server";
+import type { AppRouter } from "@server";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState, FC } from "react";
 import { createTRPCReact } from "@trpc/react-query";
@@ -17,7 +17,7 @@ export const TrpcIntegration: FC<{
     api.createClient({
       links: [
         httpBatchLink({
-          url: "http://localhost:5000/trpc",
+          url: "https://lition-back.gymspace.fit/trpc",
           headers: () => {
             const authInfo = storage.get<AuthInfo>(AUTH_INFO_KEY);
             if (authInfo) {

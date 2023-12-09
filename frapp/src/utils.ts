@@ -13,3 +13,7 @@ export const makeDisclosure = (atom: PrimitiveAtom<boolean>) => () => {
     },
   });
 };
+
+// create isDev utility using env variable
+
+// export const isDev = process.env?.NODE_ENV === "development";

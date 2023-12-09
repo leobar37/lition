@@ -1,0 +1,46 @@
+FROM node:20 as base
+# Update apt-get and install the necessary libraries
+# This is mainly so that the `canvas` package can be installed
+
+RUN apt-get update && \
+    apt-get install -y build-essential libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev
+
+ARG DOPPLER_TOKEN
+ENV DOPPLER_TOKEN=${DOPPLER_TOKEN}
+
+# Install Doppler CLI
+RUN apt-get update && apt-get install -y apt-transport-https ca-certificates curl gnupg && \
+    curl -sLf --retry 3 --tlsv1.2 --proto "=https" 'https://packages.doppler.com/public/cli/gpg.DE2A7741A397C129.key' | gpg --dearmor -o /usr/share/keyrings/doppler-archive-keyring.gpg && \
+    echo "deb [signed-by=/usr/share/keyrings/doppler-archive-keyring.gpg] https://packages.doppler.com/public/cli/deb/debian any-version main" | tee /etc/apt/sources.list.d/doppler-cli.list && \
+    apt-get update && \
+    apt-get -y install doppler
+
+
+
+FROM base as installer
+
+WORKDIR /app
+
+RUN npm install -g pnpm
+RUN npm install -g turbo
+
+# First install dependencies (as they change less often)
+COPY . .
+
+RUN cd frapp && pnpm install
+
+COPY turbo.json turbo.json
+
+ENTRYPOINT [ "doppler", "run", "--" ]
+
+RUN cd common && pnpm install && pnpm build
+RUN cd bd && pnpm install && pnpm db:generate
+RUN cd frapp && pnpm build
+
+FROM nginx
+
+EXPOSE 80
+
+
+COPY --from=installer /app/frapp/dist /usr/share/nginx/html
+
