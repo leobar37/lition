@@ -24,7 +24,7 @@ export const router = createBrowserRouter([
     element: <fromClints.UpdateClient />,
   },
   {
-    path: "/login",
+    path: "/auth/login",
     element: <fromAuth.Login />,
   },
   {

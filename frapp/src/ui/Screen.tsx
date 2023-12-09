@@ -23,7 +23,8 @@ export const Screen: FC<{
   children: React.ReactNode;
   title?: ReactNode | string;
   back?: string;
-}> = ({ children, back, title }) => {
+  actionRight?: ReactNode;
+}> = ({ children, back, title, actionRight }) => {
   const navigate = useNavigate();
   const backButton = back ? (
     <BackButton
@@ -34,12 +35,15 @@ export const Screen: FC<{
   ) : null;
   const titleNode = title ? (
     <VStack alignItems={"flex-start"} spacing={1}>
-      <Text textAlign={"start"} fontSize="2xl" fontWeight="bold">
-        {backButton}
-        <Box as="span" pl="1">
-          {title}
-        </Box>
-      </Text>
+      <HStack w="full" justifyContent={"space-between"}>
+        <Text textAlign={"start"} fontSize="2xl" fontWeight="bold">
+          {backButton}
+          <Box as="span" pl="1">
+            {title}
+          </Box>
+        </Text>
+        {actionRight}
+      </HStack>
       <Divider borderWidth={"2px"} borderColor={"blue.500"} />
     </VStack>
   ) : null;
