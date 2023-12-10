@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { List, ListItem, Screen } from "~/ui";
 import { DeleteIcon, EditIcon } from "~/ui/icons";
 import { api } from "../../../lib";
-
+import { Eye } from "~/ui";
 const LisItemClient: FC<{
   client: Client;
 }> = ({ client }) => {
@@ -21,6 +21,15 @@ const LisItemClient: FC<{
       actions={
         <>
           <Button
+            size={"xs"}
+            onClick={() => {
+              navigate(`/clients/see/${client.id}`);
+            }}
+          >
+            <Eye />
+          </Button>
+          <Button
+            size={"xs"}
             colorScheme="blue"
             onClick={() => {
               navigate(`/clients/${client.id}`);
@@ -28,7 +37,9 @@ const LisItemClient: FC<{
           >
             <EditIcon />
           </Button>
+
           <Button
+            size={"xs"}
             onClick={async () => {
               await deleteClient.mutateAsync(client.id);
               queryClient.invalidateQueries(listQueryKey);
@@ -60,6 +71,7 @@ export const Clients = () => {
         </Button>
       </HStack>
       <List
+        isLoading={clientsQuery.isLoading}
         data={clientsQuery.data ?? []}
         renderItem={(client) => (
           <LisItemClient key={client.id} client={client as any} />

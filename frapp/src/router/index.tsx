@@ -22,6 +22,10 @@ export const router = createHashRouter(
       element: <fromClints.NewClient />,
     },
     {
+      path: "/clients/see/:id",
+      element: <fromClints.SeeClient />,
+    },
+    {
       path: "/clients/:id",
       element: <fromClints.UpdateClient />,
     },

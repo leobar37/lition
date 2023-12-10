@@ -1,24 +1,17 @@
-import { VStack, HStack, Button } from "@chakra-ui/react";
+import { Button, HStack, VStack } from "@chakra-ui/react";
+import { UpdateClientInput, updateClientSchema } from "@lition/common";
 import { FC, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { api } from "~/lib/trpc";
 import {
   FormInput,
+  FormTextArea,
   Screen,
   WrapperForm,
   useWrapperForm,
-  FormTextArea,
+  ScreenLoading,
 } from "~/ui";
-import { updateClientSchema, UpdateClientInput } from "@lition/common";
-import { api } from "~/lib/trpc";
-import { useNavigate, useParams } from "react-router-dom";
-
-const useClient = () => {
-  const { id = null } = useParams();
-  const safeId = id ? Number(id) : -1;
-  const clientQuery = api.clients.one.useQuery(safeId, {
-    enabled: safeId > 0,
-  });
-  return clientQuery;
-};
+import { useClient } from "../helpers";
 
 export const UpdateClient: FC = () => {
   const form = useWrapperForm<UpdateClientInput>({
@@ -50,7 +43,7 @@ export const UpdateClient: FC = () => {
   }, [client]);
 
   if (clientQuery.isLoading) {
-    return <div>Loading...</div>;
+    return <ScreenLoading />;
   }
 
   return (

@@ -88,7 +88,7 @@ export const ItemsProducts: FC<Partial<ItemsProductContextProps>> = ({
         <FormControl>
           <FormLabel>Items</FormLabel>
           <Box>
-            {isEdit && (
+            {!isEdit && (
               <HStack justifyContent={"flex-end"}>
                 <Button
                   onClick={() => {

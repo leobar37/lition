@@ -12,6 +12,6 @@ export const useAuthInfo = () => {
   return {
     authInfo,
     setAuthInfo,
-    isAuthenticated: authInfo !== null,
+    isAuthenticated: !!authInfo?.token,
   };
 };

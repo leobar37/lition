@@ -11,6 +11,7 @@ import { loginSchema, LoginInput } from "@lition/common";
 import { api } from "~/lib/trpc";
 import { useAuthInfo } from "~/lib/auth";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 export const Login = () => {
   const form = useWrapperForm<LoginInput>({
@@ -18,7 +19,14 @@ export const Login = () => {
   });
   const navigate = useNavigate();
   const loginMutation = api.auth.login.useMutation();
-  const { setAuthInfo } = useAuthInfo();
+  const { setAuthInfo, isAuthenticated } = useAuthInfo();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/");
+    }
+  }, [isAuthenticated]);
+
   const onSubmit = form.handleSubmit(
     async (data) => {
       const result = await loginMutation.mutateAsync(data);

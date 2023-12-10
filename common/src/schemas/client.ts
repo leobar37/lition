@@ -22,5 +22,10 @@ export const updateClientSchema = z.object({
   note: z.string().optional().nullable(),
 });
 
+export const addPaymentSchema = z.object({
+  amount: z.number().positive().min(1),
+});
+
+export type AddPaymentInput = z.infer<typeof addPaymentSchema>;
 export type UpdateClientInput = z.infer<typeof updateClientSchema>;
 export type CreateClientInput = z.infer<typeof createClientSchema>;

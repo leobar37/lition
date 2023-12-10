@@ -1,10 +1,22 @@
 import { createClientSchema } from "@lition/common";
 import { publicProcedure, router } from "../../router";
-import { updateClientSchema } from "@lition/common";
+import { updateClientSchema, addPaymentSchema } from "@lition/common";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
+import { Transaction } from "bd";
 
 export const clientsRouter = router({
+  addPayment: publicProcedure
+    .input(addPaymentSchema.and(z.object({ clientId: z.number() })))
+    .mutation(async ({ ctx, input: { amount, clientId } }) => {
+      const transaction: Partial<Transaction> = {
+        clientId: clientId,
+        paid: true,
+        total: amount,
+      };
+      await ctx.bd.transaction.insertAndCalculate([transaction]);
+      return true;
+    }),
   myDebt: publicProcedure
     .input(
       z.object({
