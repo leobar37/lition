@@ -1,12 +1,10 @@
 import {
   Button,
   HStack,
-  StatArrow,
+  Stat,
   StatGroup,
-  StatHelpText,
   StatLabel,
   StatNumber,
-  Stat,
 } from "@chakra-ui/react";
 import {
   FORMAT_SIMPLE_DATE,

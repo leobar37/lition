@@ -3,7 +3,6 @@ import {
   Button,
   Divider,
   FormControl,
-  FormLabel,
   HStack,
   Stat,
   StatLabel,
@@ -22,13 +21,13 @@ import {
 } from "~/ui";
 import { makeDisclosure } from "~/utils";
 import { LineSale, saleItemAtom } from "../data";
-import { useHandleLineSale } from "../helpers/useHandleLineSale";
-import { MyDrawer } from "./MyDrawerItem";
 import {
   ItemsProductContextProps,
   ItemsProductProvider,
+  useItemsProductContext,
 } from "../helpers/ItemsProductContext";
-import { useItemsProductContext } from "../helpers/ItemsProductContext";
+import { useHandleLineSale } from "../helpers/useHandleLineSale";
+import { MyDrawer } from "./MyDrawerItem";
 
 const lineSaleAtomDrawer = atom(false);
 
