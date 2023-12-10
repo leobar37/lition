@@ -6,8 +6,8 @@ import { FC } from "react";
 import { useNavigate } from "react-router-dom";
 import { List, ListItem, Screen } from "~/ui";
 import { DeleteIcon, EditIcon } from "~/ui/icons";
-import { api } from "../../../lib";
-
+import { api, useLitionFeedback } from "../../../lib";
+import { useConfirmDialog } from "~/ui";
 const LisItemSupplier: FC<{
   supplier: Supplier;
 }> = ({ supplier }) => {
@@ -15,6 +15,8 @@ const LisItemSupplier: FC<{
   const queryClient = useQueryClient();
   const listQueryKey = getQueryKey(api.suppliers.list, undefined);
   const navigate = useNavigate();
+  const confirm = useConfirmDialog();
+  const { wrapAsync } = useLitionFeedback();
 
   return (
     <ListItem
@@ -31,10 +33,19 @@ const LisItemSupplier: FC<{
           </Button>
           <Button
             onClick={async () => {
-              await deleteClient.mutateAsync({
-                id: supplier.id,
+              const action = async () => {
+                await deleteClient.mutateAsync({
+                  id: supplier.id,
+                });
+                queryClient.invalidateQueries(listQueryKey);
+              };
+              confirm.open({
+                title: "Eliminar proveedor",
+                description: "¿Está seguro que desea eliminar este proveedor?",
+                onConfirm: async () => {
+                  wrapAsync(action());
+                },
               });
-              queryClient.invalidateQueries(listQueryKey);
             }}
             colorScheme="red"
             textColor={"white"}
@@ -64,6 +75,7 @@ export const Suppliers = () => {
         </Button>
       </HStack>
       <List
+        isLoading={suppliersQuery.isLoading}
         data={suppliersQuery.data ?? []}
         renderItem={(supplier) => (
           <LisItemSupplier key={supplier.id} supplier={supplier as any} />

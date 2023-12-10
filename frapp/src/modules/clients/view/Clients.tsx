@@ -6,8 +6,9 @@ import { FC } from "react";
 import { useNavigate } from "react-router-dom";
 import { List, ListItem, Screen } from "~/ui";
 import { DeleteIcon, EditIcon } from "~/ui/icons";
-import { api } from "../../../lib";
-import { Eye } from "~/ui";
+import { api, useLitionFeedback } from "../../../lib";
+import { Eye, useConfirmDialog } from "~/ui";
+
 const LisItemClient: FC<{
   client: Client;
 }> = ({ client }) => {
@@ -15,6 +16,9 @@ const LisItemClient: FC<{
   const queryClient = useQueryClient();
   const listQueryKey = getQueryKey(api.clients.list, undefined);
   const navigate = useNavigate();
+  const confirm = useConfirmDialog();
+  const { wrapAsync } = useLitionFeedback();
+
   return (
     <ListItem
       label={client.name + " " + client.lastName}
@@ -41,8 +45,17 @@ const LisItemClient: FC<{
           <Button
             size={"xs"}
             onClick={async () => {
-              await deleteClient.mutateAsync(client.id);
-              queryClient.invalidateQueries(listQueryKey);
+              const action = async () => {
+                await deleteClient.mutateAsync(client.id);
+                queryClient.invalidateQueries(listQueryKey);
+              };
+              confirm.open({
+                title: "Eliminar cliente",
+                description: "¿Está seguro que desea eliminar este cliente?",
+                onConfirm: async () => {
+                  await wrapAsync(action());
+                },
+              });
             }}
             colorScheme="red"
             textColor={"white"}
@@ -58,6 +71,7 @@ const LisItemClient: FC<{
 export const Clients = () => {
   const navigate = useNavigate();
   const clientsQuery = api.clients.list.useQuery();
+
   return (
     <Screen back="/" title="Clientes">
       <HStack spacing={4} justifyContent={"flex-end"} mt={3}>

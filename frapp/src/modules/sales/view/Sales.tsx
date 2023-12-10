@@ -6,6 +6,7 @@ import { FC, ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "~/lib";
 import { List, ListItem, Screen } from "~/ui";
+
 const SaleItem: FC<{
   sale: (Sale & {
     client: Client;
@@ -48,7 +49,6 @@ const SaleItem: FC<{
           >
             Ver
           </Button>
-          <Button>Editar</Button>
         </>
       }
     />
@@ -72,6 +72,7 @@ export const Sales = () => {
       </HStack>
       <List
         data={salesQuery.data ?? []}
+        isLoading={salesQuery.isLoading}
         renderItem={(sale) => {
           return <SaleItem sale={sale as any} />;
         }}

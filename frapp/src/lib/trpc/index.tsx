@@ -5,7 +5,7 @@ import { createTRPCReact } from "@trpc/react-query";
 import { httpBatchLink } from "@trpc/client";
 import storage from "../storage";
 import { AUTH_INFO_KEY, AuthInfo } from "../auth";
-
+import { isDev } from "~/utils";
 export const api = createTRPCReact<AppRouter>();
 
 export const TrpcIntegration: FC<{
@@ -17,7 +17,9 @@ export const TrpcIntegration: FC<{
     api.createClient({
       links: [
         httpBatchLink({
-          url: "https://lition-back.gymspace.fit/trpc",
+          url: isDev
+            ? "http://localhost:5000/trpc"
+            : "https://lition-back.gymspace.fit/trpc",
           headers: () => {
             const authInfo = storage.get<AuthInfo>(AUTH_INFO_KEY);
             if (authInfo) {

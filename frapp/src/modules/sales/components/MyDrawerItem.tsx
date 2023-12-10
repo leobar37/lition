@@ -10,6 +10,10 @@ import { useHandleLineSale } from "../helpers/useHandleLineSale";
 import { useSalelineDisclosure } from "./ItemsProducts";
 import PriceTabsSelector from "./PriceTabsSelector";
 
+const lineSaleSchemaInput = lineSaleSchema.omit({
+  total: true,
+  aliasId: true,
+});
 export const MyDrawer = () => {
   const modalDisclousure = useSalelineDisclosure();
   const [index, setTabIndex] = useState(0);
@@ -25,14 +29,20 @@ export const MyDrawer = () => {
       price: 0,
     },
     schema: useMemo(() => {
-      if (index === 0) return lineSaleSchema;
-      return lineSaleSchema.and(
+      if (index === 0) return lineSaleSchemaInput;
+      return lineSaleSchemaInput.and(
         z.object({
           aliasId: z.number(),
         })
       );
     }, [index]),
   });
+
+  useEffect(() => {
+    if (modalDisclousure.isOpen && !saleItem) {
+      form.reset();
+    }
+  }, [modalDisclousure.isOpen]);
 
   useEffect(() => {
     if (saleItem && modalDisclousure.isOpen) {
@@ -89,12 +99,16 @@ export const MyDrawer = () => {
     [lines, isEdit]
   );
 
+  const buttonIsDisabled = !form.formState.isValid;
+
   return (
     <CustomDrawer
       title="Item"
       footer={
         <HStack>
-          <Button onClick={handle}>{isEdit ? "Editar" : "Agregar"}</Button>
+          <Button isDisabled={buttonIsDisabled} onClick={handle}>
+            {isEdit ? "Editar" : "Agregar"}
+          </Button>
         </HStack>
       }
       {...modalDisclousure}

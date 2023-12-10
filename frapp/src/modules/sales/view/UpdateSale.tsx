@@ -1,17 +1,37 @@
-import { Button, HStack, Text } from "@chakra-ui/react";
-import { FORMAT_SIMPLE_DATE, createSaleSchema } from "@lition/common";
+import {
+  Button,
+  HStack,
+  StatArrow,
+  StatGroup,
+  StatHelpText,
+  StatLabel,
+  StatNumber,
+  Stat,
+} from "@chakra-ui/react";
+import {
+  FORMAT_SIMPLE_DATE,
+  StatusSaleType,
+  createSaleSchema,
+  isNill,
+} from "@lition/common";
+import { useQueryClient } from "@tanstack/react-query";
+import { getQueryKey } from "@trpc/react-query";
 import dayjs from "dayjs";
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { z } from "zod";
 import { ClientsSelector, api } from "~/lib";
 import { useProductsSelectorHook } from "~/lib/selectors/ProductSelector";
-import { Screen, WrapperForm, useWrapperForm } from "~/ui";
-import { StatusSaleType, isNill } from "@lition/common";
+import {
+  Screen,
+  ScreenLoading,
+  WrapperForm,
+  moneyStrategyFormat,
+  useWrapperForm,
+} from "~/ui";
 import ItemsProducts from "../components/ItemsProducts";
 import { useHandleLineSale } from "../helpers/useHandleLineSale";
-import { useQueryClient } from "@tanstack/react-query";
-import { getQueryKey } from "@trpc/react-query";
+
 const useCurrentSale = () => {
   const { id = "-1" } = useParams();
   const saleQuery = api.sales.sale.useQuery(
@@ -55,6 +75,7 @@ const DispatchButton = () => {
 
   return (
     <Button
+      isLoading={dispatchMutation.isLoading}
       colorScheme="blue"
       onClick={async () => {
         await dispatchMutation.mutateAsync({
@@ -68,6 +89,7 @@ const DispatchButton = () => {
     </Button>
   );
 };
+
 const CancelButton = () => {
   const dispatchMutation = api.sales.updateFlags.useMutation();
   const currentSale = useCurrentSale();
@@ -76,10 +98,10 @@ const CancelButton = () => {
   if (!isNill(currentSale.data?.canceledAt)) {
     return null;
   }
-
   return (
     <Button
       colorScheme="blue"
+      isLoading={dispatchMutation.isLoading}
       onClick={async () => {
         await dispatchMutation.mutateAsync({
           id: currentSale.data?.id!,
@@ -129,7 +151,7 @@ export const UpdateSale = () => {
     }
   }, [saleQuery.data]);
 
-  if (saleQuery.isLoading) return <Text>Cargando...</Text>;
+  if (saleQuery.isLoading) return <ScreenLoading />;
 
   return (
     <Screen
@@ -139,9 +161,17 @@ export const UpdateSale = () => {
       )}`}
     >
       <WrapperForm form={form}>
+        <StatGroup mt="2">
+          <Stat>
+            <StatLabel>Total:</StatLabel>
+            <StatNumber>
+              {moneyStrategyFormat.format(saleData?.total)}
+            </StatNumber>
+          </Stat>
+        </StatGroup>
         <ClientsSelector isDisabled label="Cliente" name="clientId" />
-        <ItemsProducts />
-        <HStack>
+        <ItemsProducts isEdit={false} />
+        <HStack mt="2">
           <DispatchButton />
           <CancelButton />
         </HStack>

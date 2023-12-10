@@ -8,12 +8,14 @@ import {
   TabPanel,
   HStack,
   Button,
+  Spinner,
 } from "@chakra-ui/react";
 import {
   Screen,
   moneyStrategyFormat,
   CustomDrawer,
   FormNumberInput,
+  ScreenLoading,
 } from "~/ui";
 import { useClient } from "../helpers";
 import { api } from "~/lib";
@@ -25,7 +27,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { getQueryKey } from "@trpc/react-query";
 import { useLitionFeedback } from "~/lib";
 
-const isOpenPaymentDrawer = atom(true);
+const isOpenPaymentDrawer = atom(false);
 
 const useOpenPaymentDrawer = makeDisclosure(isOpenPaymentDrawer);
 
@@ -60,6 +62,7 @@ const PaymentsTab = () => {
       if (values.amount > (debtClientQuery?.data?.debt ?? 0)) {
         toast({
           title: "El monto a cuenta no puede ser mayor a la deuda",
+          icon: "warning",
         });
         return;
       }
@@ -83,6 +86,9 @@ const PaymentsTab = () => {
       <Text>{moneyStrategyFormat.format(debtClientQuery.data?.debt)}</Text>
     </HStack>
   );
+  if (debtClientQuery.isLoading) {
+    return <Spinner />;
+  }
   return (
     <VStack alignItems={"flex-start"}>
       {debtElement}
@@ -111,7 +117,7 @@ export const SeeClient = () => {
 
   const client = clientQuery.data;
   if (clientQuery.isLoading) {
-    return <div>Loading...</div>;
+    return <ScreenLoading />;
   }
   return (
     <Screen back="/clients" title={`${client?.name}`}>

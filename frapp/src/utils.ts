@@ -16,4 +16,8 @@ export const makeDisclosure = (atom: PrimitiveAtom<boolean>) => () => {
 
 // create isDev utility using env variable
 
-// export const isDev = process.env?.NODE_ENV === "development";
+console.log({
+  process: process.env,
+});
+
+export const isDev = process.env?.NODE_ENV === "development";

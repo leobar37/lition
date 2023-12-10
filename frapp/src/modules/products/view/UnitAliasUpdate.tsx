@@ -8,6 +8,7 @@ import {
   Screen,
   WrapperForm,
   useWrapperForm,
+  ScreenLoading,
 } from "~/ui";
 import { useProductIdUnitAlias } from "../helpers";
 
@@ -64,7 +65,7 @@ export const UnitAliasUpdate = () => {
     !form.formState.isValid ||
     !form.formState.isDirty;
   if (!unitAlias) {
-    return <div>loading...</div>;
+    return <ScreenLoading />;
   }
 
   return (

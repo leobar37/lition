@@ -1,11 +1,19 @@
 import { Button, HStack } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
-import { Screen, ListItem, List, EditIcon, DeleteIcon } from "~/ui";
+import {
+  Screen,
+  ListItem,
+  List,
+  EditIcon,
+  DeleteIcon,
+  useConfirmDialog,
+} from "~/ui";
 import { Product } from "@server";
-import { api } from "~/lib";
+import { api, useLitionFeedback } from "~/lib";
 import { FC } from "react";
 import { getQueryKey } from "@trpc/react-query";
 import { useQueryClient } from "@tanstack/react-query";
+
 const ListItemProduct: FC<{
   product: Product;
 }> = ({ product }) => {
@@ -13,6 +21,9 @@ const ListItemProduct: FC<{
   const deleteMutation = api.products.delete.useMutation();
   const deleteQueryKey = getQueryKey(api.products.list, undefined);
   const queryClient = useQueryClient();
+  const confirm = useConfirmDialog();
+  const { wrapAsync } = useLitionFeedback();
+
   return (
     <ListItem
       label={product.name}
@@ -28,10 +39,19 @@ const ListItemProduct: FC<{
           </Button>
           <Button
             onClick={async () => {
-              await deleteMutation.mutateAsync({
-                id: product.id,
+              const action = async () => {
+                await deleteMutation.mutateAsync({
+                  id: product.id,
+                });
+                queryClient.invalidateQueries(deleteQueryKey);
+              };
+              confirm.open({
+                title: "Eliminar producto",
+                description: "¿Está seguro que desea eliminar este producto?",
+                onConfirm: async () => {
+                  await wrapAsync(action());
+                },
               });
-              queryClient.invalidateQueries(deleteQueryKey);
             }}
             colorScheme="red"
             textColor={"white"}
@@ -63,6 +83,7 @@ export const Products = () => {
 
       <List
         data={productsQuery?.data ?? []}
+        isLoading={productsQuery.isLoading}
         renderItem={(product) => (
           <ListItemProduct key={product.id} product={product as any} />
         )}

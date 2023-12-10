@@ -1,14 +1,25 @@
 import {
   Box,
   Button,
+  Divider,
   FormControl,
   FormLabel,
   HStack,
+  Stat,
+  StatLabel,
+  StatNumber,
   VStack,
 } from "@chakra-ui/react";
 import { atom, useSetAtom } from "jotai";
 import { FC } from "react";
-import { DeleteIcon, EditIcon, List, ListItem, item } from "~/ui";
+import {
+  DeleteIcon,
+  EditIcon,
+  List,
+  ListItem,
+  item,
+  moneyStrategyFormat,
+} from "~/ui";
 import { makeDisclosure } from "~/utils";
 import { LineSale, saleItemAtom } from "../data";
 import { useHandleLineSale } from "../helpers/useHandleLineSale";
@@ -61,9 +72,9 @@ const LineSaleItem: FC<{
       label={
         <VStack alignItems={"flex-start"}>
           {item("Producto", line.productName)}
-          {item("Total", line.total)}
-          {item("Cantidad", line.amount)}
-          {item("Precio", line.price)}
+          {item("Total", moneyStrategyFormat.format(line.total))}
+          {item("Cantidad", moneyStrategyFormat.format(line.amount))}
+          {item("Precio", moneyStrategyFormat.format(line.price))}
         </VStack>
       }
       actions={actions}
@@ -72,10 +83,10 @@ const LineSaleItem: FC<{
 };
 
 export const ItemsProducts: FC<Partial<ItemsProductContextProps>> = ({
-  isEdit = false,
+  isEdit = true,
 }) => {
   const drawerState = useSalelineDisclosure();
-  const { lines } = useHandleLineSale();
+  const { lines, getTotal } = useHandleLineSale();
   const setSaleItem = useSetAtom(saleItemAtom);
 
   return (
@@ -84,12 +95,17 @@ export const ItemsProducts: FC<Partial<ItemsProductContextProps>> = ({
         isEdit,
       }}
     >
-      <Box mt={4}>
+      <Box mt={4} borderWidth={"1px"} borderColor={"gray.200"} p="2">
         <FormControl>
-          <FormLabel>Items</FormLabel>
           <Box>
-            {!isEdit && (
-              <HStack justifyContent={"flex-end"}>
+            {isEdit && (
+              <HStack justifyContent={"space-between"}>
+                <Stat>
+                  <StatLabel>Total:</StatLabel>
+                  <StatNumber>
+                    {moneyStrategyFormat.format(getTotal())}
+                  </StatNumber>
+                </Stat>
                 <Button
                   onClick={() => {
                     drawerState.onOpen();
@@ -100,6 +116,7 @@ export const ItemsProducts: FC<Partial<ItemsProductContextProps>> = ({
                 </Button>
               </HStack>
             )}
+            <Divider borderWidth={"1px"} mt="2" borderColor={"gray.300"} />
             <List
               data={lines}
               renderItem={(line) => {

@@ -3,7 +3,7 @@ import { Screen, FormInput, FormTextArea } from "~/ui";
 import { useWrapperForm, WrapperForm } from "~/ui";
 import { createSupplierSchema, CreateSupplierInput } from "@lition/common";
 import { HStack, Button } from "@chakra-ui/react";
-import { api } from "~/lib";
+import { api, useLitionFeedback } from "~/lib";
 import { getQueryKey } from "@trpc/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
@@ -16,12 +16,17 @@ export const CreateSupplier = () => {
   const listQueryKey = getQueryKey(api.suppliers.list, undefined);
   const queryClient = useQueryClient();
 
+  const { wrapAsync } = useLitionFeedback();
+
   const onSubmit = form.handleSubmit(
     async (values) => {
-      await createSupplierMutation.mutateAsync(values);
-      form.reset();
-      queryClient.invalidateQueries(listQueryKey);
-      navigate("/suppliers");
+      const action = async () => {
+        await createSupplierMutation.mutateAsync(values);
+        form.reset();
+        queryClient.invalidateQueries(listQueryKey);
+        navigate("/suppliers");
+      };
+      wrapAsync(action());
     },
     (errors) => {
       console.log("erors", errors);

@@ -65,27 +65,22 @@ export const clientsRouter = router({
       const client = await ctx.bd.client.create({
         data: {
           ...input,
-          business: {
-            connect: {
-              id: ctx.bussiness?.id,
-            },
-          },
+          businessId: ctx.bussiness?.id,
         },
       });
       return client;
     }),
   list: publicProcedure.query(async ({ ctx }) => {
     const business = ctx.bussiness;
-    const clients = await ctx.bd.client.findMany({
+    return await ctx.bd.client.findMany({
       where: {
         businessId: business?.id,
         deletedAt: null,
       },
       orderBy: {
-        createdAt: "asc",
+        createdAt: "desc",
       },
     });
-    return clients;
   }),
   update: publicProcedure
     .input(

@@ -1,4 +1,4 @@
-import { FormInput, Screen } from "~/ui";
+import { FormInput, Screen, ScreenLoading } from "~/ui";
 import { useParams, useNavigate } from "react-router-dom";
 import { api } from "~/lib";
 import { UpdateSupplierInput, updateSupplierSchema } from "@lition/common";
@@ -36,8 +36,6 @@ export const UpdateSupplier = () => {
   }, [supplierQuery.data]);
 
   const onSubmit = form.handleSubmit(async (values) => {
-    console.log("values", values);
-
     await updateSupplierMutation.mutateAsync({
       id: supplier?.id!,
       input: values,
@@ -45,8 +43,10 @@ export const UpdateSupplier = () => {
     navigate("/suppliers");
     form.reset();
   });
-  if (supplierQuery.isLoading || !supplierQuery.data)
-    return <div>Loading...</div>;
+
+  const isDisabledButton =
+    form.formState.isSubmitting || !form.formState.isValid;
+  if (supplierQuery.isLoading || !supplierQuery.data) return <ScreenLoading />;
 
   return (
     <Screen back="/suppliers" title={supplier?.name}>
@@ -67,7 +67,11 @@ export const UpdateSupplier = () => {
           <FormInput name="direction_reference" label="Referencia" />
           <FormTextArea name="note" label="Nota" />
           <HStack mt="4" justifyContent={"flex-end"} w="full">
-            <Button type="button" onClick={onSubmit}>
+            <Button
+              type="button"
+              onClick={onSubmit}
+              isDisabled={isDisabledButton}
+            >
               Actualizar
             </Button>
           </HStack>

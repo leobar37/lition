@@ -1,11 +1,11 @@
 import { z } from "zod";
 
 export const createSupplierSchema = z.object({
-  name: z.string(),
-  lastName: z.string(),
+  name: z.string().min(3),
+  lastName: z.string().min(3),
   dni: z.string().optional().nullable(),
   email: z.string().optional().nullable(),
-  phone: z.string(),
+  phone: z.string().min(9),
   direction: z.string().optional().nullable(),
   direction_reference: z.string().optional().nullable(),
   note: z.string().optional().nullable(),

@@ -12,6 +12,7 @@ import {
   Screen,
   WrapperForm,
   useWrapperForm,
+  ScreenLoading,
 } from "~/ui";
 import { List, ListItem } from "~/ui/components";
 const useProduct = () => {
@@ -134,7 +135,7 @@ export const UpdateProduct = () => {
     !form.formState.isDirty;
 
   if (productQuery.isLoading) {
-    return <div>Loading...</div>;
+    return <ScreenLoading />;
   }
   return (
     <Screen back="/products" title={`Editar | ${product?.name}`}>

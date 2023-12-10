@@ -126,6 +126,12 @@ export const sales = router({
           total: total,
           clientId: clientId,
         });
+
+        transactions.push({
+          paid: false,
+          total: total,
+          clientId: clientId,
+        });
       }
       if (paymentState === PaymentState.PAY_PARTIAL && paymentSource) {
         const { toAccount } = paymentSource;

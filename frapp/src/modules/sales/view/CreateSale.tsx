@@ -23,7 +23,7 @@ import {
 import ItemsProducts from "../components/ItemsProducts";
 import { ToAccount } from "../components/ToAccount";
 import { useHandleLineSale } from "../helpers/useHandleLineSale";
-
+import { useLitionFeedback } from "~/lib";
 const frCreateSaleSchema = createSaleSchema
   .omit({
     paymentSource: true,
@@ -54,6 +54,8 @@ export const CreateSale = () => {
   const createdSale = api.sales.create.useMutation();
   const { lines, clear, getTotal } = useHandleLineSale();
 
+  const { wrapAsync } = useLitionFeedback();
+
   const form = useWrapperForm<CreateSaleForm>({
     defaultValues: {
       isDispatched: false,
@@ -65,35 +67,37 @@ export const CreateSale = () => {
 
   const onSubmit = form.handleSubmit(
     async (data: CreateSaleForm) => {
-      let finalData: any = {
-        isDispatched: data.isDispatched,
-        clientId: data.clientId,
-        total: getTotal(),
-        paymentState: data.paymentState,
-        lines: lines.map((line) => {
-          return {
-            amount: line.amount,
-            price: line.price,
-            productId: line.productId,
-            total: line.total,
-            aliasId: line.aliasId,
-          };
-        }),
-      };
-
-      if (data.paymentState === PaymentState.PAY_PARTIAL) {
-        finalData = {
-          ...finalData,
-          paymentSource: {
-            toAccount: (data as any).toAccount,
-          },
+      const action = async () => {
+        let finalData: any = {
+          isDispatched: data.isDispatched,
+          clientId: data.clientId,
+          total: getTotal(),
+          paymentState: data.paymentState,
+          lines: lines.map((line) => {
+            return {
+              amount: line.amount,
+              price: line.price,
+              productId: line.productId,
+              total: line.total,
+              aliasId: line.aliasId,
+            };
+          }),
         };
-      }
 
-      await createdSale.mutateAsync(finalData);
-      navigate("/sales");
-      form.reset();
-      clear();
+        if (data.paymentState === PaymentState.PAY_PARTIAL) {
+          finalData = {
+            ...finalData,
+            paymentSource: {
+              toAccount: (data as any).toAccount,
+            },
+          };
+        }
+        await createdSale.mutateAsync(finalData);
+        navigate("/sales");
+        form.reset();
+        clear();
+      };
+      await wrapAsync(action());
     },
     (errors) => {
       console.log("error", {
@@ -101,6 +105,9 @@ export const CreateSale = () => {
       });
     }
   );
+
+  const isDisabled =
+    !lines.length || !form.formState.isValid || createdSale.isLoading;
 
   return (
     <Screen back="/sales" title="Nueva Venta">
@@ -127,7 +134,11 @@ export const CreateSale = () => {
             </FormRadioGroup>
           </FormControl>
           <HStack w="full" spacing={4} justifyContent={"flex-end"} mt={3}>
-            <Button colorScheme="blue" onClick={onSubmit}>
+            <Button
+              colorScheme="blue"
+              onClick={onSubmit}
+              isDisabled={isDisabled}
+            >
               Guardar
             </Button>
           </HStack>

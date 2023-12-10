@@ -12,23 +12,34 @@ import {
   ScreenLoading,
 } from "~/ui";
 import { useClient } from "../helpers";
+import { useLitionFeedback } from "~/lib";
+import { getQueryKey } from "@trpc/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 
 export const UpdateClient: FC = () => {
   const form = useWrapperForm<UpdateClientInput>({
     schema: updateClientSchema,
   });
-
+  const { wrapAsync } = useLitionFeedback();
   const clientQuery = useClient();
+
+  const clientsQueryKey = getQueryKey(api.clients.list);
+
+  const queryClient = useQueryClient();
 
   const navigate = useNavigate();
   const updateClientMutation = api.clients.update.useMutation();
-  const createClient = form.handleSubmit(async (input: UpdateClientInput) => {
-    await updateClientMutation.mutateAsync({
-      data: input,
-      id: clientQuery.data?.id ?? 0,
-    });
-    form.reset();
-    navigate("/clients");
+  const updateClient = form.handleSubmit(async (input: UpdateClientInput) => {
+    const action = async () => {
+      await updateClientMutation.mutateAsync({
+        data: input,
+        id: clientQuery.data?.id ?? 0,
+      });
+      form.reset();
+      navigate("/clients");
+    };
+    await wrapAsync(action());
+    queryClient.invalidateQueries(clientsQueryKey);
   });
   const isDisabled =
     !form.formState.isValid ||
@@ -59,7 +70,7 @@ export const UpdateClient: FC = () => {
           <FormTextArea name="note" label="Notas" />
           <HStack w="full" spacing={4} justifyContent={"flex-end"} mt={3}>
             <Button
-              onClick={createClient}
+              onClick={updateClient}
               isDisabled={isDisabled}
               colorScheme="blue"
             >

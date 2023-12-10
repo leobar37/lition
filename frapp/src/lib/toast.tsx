@@ -1,5 +1,9 @@
-import { useToast as useChakraToast, UseToastOptions } from "@chakra-ui/react";
-
+import {
+  AlertDialog,
+  useToast as useChakraToast,
+  UseToastOptions,
+} from "@chakra-ui/react";
+import { atom, useAtomValue } from "jotai";
 import { isPromise } from "radash";
 import { useCallback, useMemo } from "react";
 
@@ -24,7 +28,17 @@ export const useLitionFeedback = () => {
   const wrapAsync = useCallback(
     async <T extends any>(
       callback: Promise<T>,
-      options: MapAsyncOptions
+      options: MapAsyncOptions = {
+        loadingConfig: {
+          description: "Cargando...",
+        },
+        successConfig: {
+          description: "Operación exitosa",
+        },
+        errorConfig: {
+          description: "Ocurrió un error",
+        },
+      }
     ): Promise<T> => {
       try {
         if (isPromise(callback)) {

@@ -8,6 +8,9 @@ export const ClientsSelector: FC<FormInputOptions> = ({ ...props }) => {
   return (
     <FormInputSelect
       {...props}
+      inputProps={{
+        isLoading: clientsQuery.isLoading,
+      }}
       options={(clientsQuery?.data ?? []).map((client) => ({
         label: client.name,
         value: client.id,

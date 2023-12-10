@@ -10,18 +10,30 @@ import {
 import { createClientSchema, CreateClientInput } from "@lition/common";
 import { api } from "~/lib/trpc";
 import { useNavigate } from "react-router-dom";
+import { useLitionFeedback } from "~/lib";
+import { getQueryKey } from "@trpc/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 
 export const NewClient: FC = () => {
   const form = useWrapperForm<CreateClientInput>({
     schema: createClientSchema,
   });
 
+  const { wrapAsync } = useLitionFeedback();
+  const clientsQueryKey = getQueryKey(api.clients.list);
+
+  const queryClient = useQueryClient();
+
   const navigate = useNavigate();
   const createClientMutation = api.clients.create.useMutation();
   const createClient = form.handleSubmit(async (input: CreateClientInput) => {
-    await createClientMutation.mutateAsync(input);
-    form.reset();
-    navigate("/clients");
+    const action = async () => {
+      await createClientMutation.mutateAsync(input);
+      form.reset();
+      navigate("/clients");
+    };
+    await wrapAsync(action());
+    queryClient.invalidateQueries(clientsQueryKey);
   });
   const isDisabled = !form.formState.isValid || form.formState.isSubmitting;
 

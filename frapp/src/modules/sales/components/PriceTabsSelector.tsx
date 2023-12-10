@@ -13,8 +13,11 @@ import {
   TabPanels,
   TabPanel,
   HStack,
+  Center,
+  VStack,
 } from "@chakra-ui/react";
 import { FormInputSelect, FormNumberInput, moneyStrategyFormat } from "~/ui";
+import { Spinner } from "~/ui";
 
 type PriceTabsSelectorProps = {
   index: number;
@@ -58,7 +61,19 @@ export const PriceTabsSelector: FC<PriceTabsSelectorProps> = ({
 
   const unit = unitQuery.data;
 
-  if (!selectedProduct || unitQuery.isLoading || !unitQuery.data) return null;
+  if (!selectedProduct) {
+    return null;
+  }
+
+  if (!selectedProduct || unitQuery.isLoading || !unitQuery.data)
+    return (
+      <Center mt="4">
+        <VStack>
+          <Spinner />
+          <Text>Cargando unidades</Text>
+        </VStack>
+      </Center>
+    );
 
   return (
     <FormControl mt="2">
@@ -88,7 +103,7 @@ export const PriceTabsSelector: FC<PriceTabsSelectorProps> = ({
               name="amount"
             />
             <FormNumberInput
-              formatValue={moneyStrategyFormat.format}
+              formatValue={moneyStrategyFormat.format as any}
               parseValue={moneyStrategyFormat.parse}
               label="Precio por unidad"
               name="price"

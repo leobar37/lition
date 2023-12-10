@@ -14,13 +14,13 @@ type FormNumberInputProps = {
   label?: string;
   name?: string;
   inputProps?: NumberInputProps;
-  formatValue?: (value: string) => string;
-  parseValue?: (value: string) => string;
+  formatValue?: (value?: any) => any;
+  parseValue?: (value?: any) => string;
 } & FormControlProps;
 
 export const moneyStrategyFormat = {
   format: (value?: string | number) => {
-    return "S/" + value ?? 0;
+    return "S/" + value || 0;
   },
   parse: (value: string) => {
     return value.replace("S/", "");
