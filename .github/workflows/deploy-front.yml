@@ -13,7 +13,7 @@ env:
 
 #3
 jobs:
-  build_and_push:
+  build_and_push_frapp:
     runs-on: ubuntu-latest
     env:
       DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}

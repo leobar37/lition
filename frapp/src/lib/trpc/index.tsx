@@ -17,7 +17,7 @@ export const TrpcIntegration: FC<{
     api.createClient({
       links: [
         httpBatchLink({
-          url: "http://localhost:3000/trpc",
+          url: "https://lition-back.gymspace.fit/trpc",
           headers: () => {
             const authInfo = storage.get<AuthInfo>(AUTH_INFO_KEY);
             if (authInfo) {
