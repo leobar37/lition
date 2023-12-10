@@ -19,8 +19,8 @@ type FormNumberInputProps = {
 } & FormControlProps;
 
 export const moneyStrategyFormat = {
-  format: (value?: string | number = 0) => {
-    return "S/" + value;
+  format: (value?: string | number) => {
+    return "S/" + value ?? 0;
   },
   parse: (value: string) => {
     return value.replace("S/", "");

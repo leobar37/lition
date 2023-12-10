@@ -41,5 +41,6 @@ FROM nginx
 
 EXPOSE 80
 
+
 COPY --from=installer /app/frapp/dist /usr/share/nginx/html
 
