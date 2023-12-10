@@ -4,20 +4,29 @@ import { z } from "zod";
 import { publicProcedure, router } from "../../router";
 
 export const sales = router({
-  list: publicProcedure.query(async ({ ctx }) => {
-    const sales = await ctx.bd.sale.findMany({
-      where: {
-        businessId: ctx.bussiness?.id,
-      },
-      include: {
-        client: true,
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
-    return sales;
-  }),
+  list: publicProcedure
+    .input(
+      z
+        .object({
+          clientId: z.number().optional(),
+        })
+        .optional()
+    )
+    .query(async ({ ctx, input }) => {
+      const sales = await ctx.bd.sale.findMany({
+        where: {
+          businessId: ctx.bussiness?.id,
+          clientId: input?.clientId,
+        },
+        include: {
+          client: true,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+      });
+      return sales;
+    }),
   sale: publicProcedure
     .input(
       z.object({

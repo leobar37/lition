@@ -1,117 +1,82 @@
 import {
+  Box,
+  Button,
   Tab,
   TabList,
+  TabPanel,
+  TabPanels,
   Tabs,
   VStack,
-  Text,
-  TabPanels,
-  TabPanel,
-  HStack,
-  Button,
-  Spinner,
 } from "@chakra-ui/react";
 import {
   Screen,
-  moneyStrategyFormat,
-  CustomDrawer,
-  FormNumberInput,
   ScreenLoading,
+  List,
+  ListItem,
+  item,
+  moneyStrategyFormat,
+  Eye,
 } from "~/ui";
 import { useClient } from "../helpers";
+import PaymentTab from "../components/PaymentTab";
 import { api } from "~/lib";
-import { atom } from "jotai";
-import { makeDisclosure } from "~/utils";
-import { useWrapperForm, WrapperForm } from "~/ui";
-import { addPaymentSchema, AddPaymentInput } from "@lition/common";
-import { useQueryClient } from "@tanstack/react-query";
-import { getQueryKey } from "@trpc/react-query";
-import { useLitionFeedback } from "~/lib";
+import { FC } from "react";
+import { Sale } from "@server";
+import dayjs from "dayjs";
+import { FORMAT_SIMPLE_DATE } from "@lition/common";
+import { useNavigate, createSearchParams, useLocation } from "react-router-dom";
 
-const isOpenPaymentDrawer = atom(false);
-
-const useOpenPaymentDrawer = makeDisclosure(isOpenPaymentDrawer);
-
-const PaymentsTab = () => {
-  const clientQuery = useClient();
-  const addPaymentMutation = api.clients.addPayment.useMutation();
-  const debtClientQuery = api.clients.myDebt.useQuery(
-    {
-      clientId: Number(clientQuery.data?.id),
-    },
-    {
-      enabled: !!clientQuery.data?.id,
-    }
-  );
-
-  const { toast } = useLitionFeedback();
-
-  const debtClientQueryQueryKey = getQueryKey(api.clients.myDebt, undefined);
-  const queryClient = useQueryClient();
-
-  const openPaymentDrawer = useOpenPaymentDrawer();
-
-  const form = useWrapperForm<AddPaymentInput>({
-    defaultValues: {
-      amount: 0,
-    },
-    schema: addPaymentSchema,
-  });
-
-  const pay = form.handleSubmit(
-    async (values: AddPaymentInput) => {
-      if (values.amount > (debtClientQuery?.data?.debt ?? 0)) {
-        toast({
-          title: "El monto a cuenta no puede ser mayor a la deuda",
-          icon: "warning",
-        });
-        return;
-      }
-
-      await addPaymentMutation.mutateAsync({
-        clientId: clientQuery.data?.id!,
-        amount: values.amount,
-      });
-      form.reset();
-      queryClient.invalidateQueries(debtClientQueryQueryKey);
-      openPaymentDrawer.onClose();
-    },
-    (err) => {
-      console.log("err", err);
-    }
-  );
-
-  const debtElement = (
-    <HStack>
-      <Text fontWeight={"semibold"}>Deuda:</Text>
-      <Text>{moneyStrategyFormat.format(debtClientQuery.data?.debt)}</Text>
-    </HStack>
-  );
-  if (debtClientQuery.isLoading) {
-    return <Spinner />;
-  }
+const SaleLine: FC<{
+  sale: Sale;
+}> = ({ sale }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
   return (
-    <VStack alignItems={"flex-start"}>
-      {debtElement}
-      <Button
-        onClick={() => {
-          openPaymentDrawer.onOpen();
-        }}
-      >
-        Agregar pago
-      </Button>
-      <CustomDrawer title="Agregar pago" {...openPaymentDrawer}>
-        <WrapperForm form={form}>
-          {debtElement}
-          <FormNumberInput label="Monto a cuenta(S/.)" name="amount" />
-          <HStack mt={4} justifyContent={"flex-end"}>
-            <Button onClick={pay}>Agregar pago</Button>
-          </HStack>
-        </WrapperForm>
-      </CustomDrawer>
-    </VStack>
+    <ListItem
+      label={
+        <VStack alignItems={"flex-start"}>
+          {item("Fecha", dayjs(sale.createdAt).format(FORMAT_SIMPLE_DATE))}
+          {item("Monto", moneyStrategyFormat.format(sale.total))}
+        </VStack>
+      }
+      actions={
+        <>
+          <Button
+            colorScheme="orange"
+            onClick={() => {
+              navigate({
+                pathname: `/sales/${sale.id}`,
+                search: createSearchParams({
+                  back: location.pathname + location.search,
+                }).toString(),
+              });
+            }}
+          >
+            <Eye />
+          </Button>
+        </>
+      }
+    />
   );
 };
 
+const SalesTab = () => {
+  const clientQuery = useClient();
+  const salesQuery = api.sales.list.useQuery({
+    clientId: clientQuery.data?.id,
+  });
+  return (
+    <Box>
+      <List
+        isLoading={salesQuery.isLoading}
+        data={salesQuery.data ?? []}
+        renderItem={(item) => {
+          return <SaleLine sale={item as any} />;
+        }}
+      />
+    </Box>
+  );
+};
 export const SeeClient = () => {
   const clientQuery = useClient();
 
@@ -124,10 +89,14 @@ export const SeeClient = () => {
       <Tabs mt="2">
         <TabList>
           <Tab>Pagos</Tab>
+          <Tab>Ventas</Tab>
         </TabList>
         <TabPanels>
           <TabPanel>
-            <PaymentsTab />
+            <PaymentTab />
+          </TabPanel>
+          <TabPanel>
+            <SalesTab />
           </TabPanel>
         </TabPanels>
       </Tabs>

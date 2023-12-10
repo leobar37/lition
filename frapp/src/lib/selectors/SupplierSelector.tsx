@@ -39,6 +39,7 @@ export const SupplierSelector: FC<SupplierSelectorProps> = ({
   ...props
 }) => {
   const { options } = useSupplierSelectorHook();
+
   const optionsIntercepted = useMemo(() => {
     return interceptOptions ? interceptOptions(options as any[]) : options;
   }, [interceptOptions, options]);

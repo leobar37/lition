@@ -74,6 +74,7 @@ export const FormNumberInput: FC<FormNumberInputProps> = ({
           const value = parseValue ? parseValue(e) : e;
           setValue(value.toString());
         }}
+        precision={2}
       >
         <NumberInputField
           borderColor={"blue.400"}

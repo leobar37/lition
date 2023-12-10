@@ -6,7 +6,7 @@ import { FC, ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "~/lib";
 import { List, ListItem, Screen } from "~/ui";
-
+import { useHandleLineSale } from "../helpers/useHandleLineSale";
 const PurchaseItem: FC<{
   purchase: (Purchase & {
     supplier: Supplier;
@@ -48,7 +48,6 @@ const PurchaseItem: FC<{
           >
             Ver
           </Button>
-          <Button>Editar</Button>
         </>
       }
     />
@@ -59,12 +58,15 @@ export const Purchases = () => {
   const navigate = useNavigate();
   const purchasesQuery = api.purchases.list.useQuery();
 
+  const { clear } = useHandleLineSale();
+
   return (
     <Screen back="/" title="Compras">
       <HStack spacing={4} justifyContent={"flex-end"} mt={3}>
         <Button
           colorScheme="blue"
           onClick={() => {
+            clear();
             navigate("/purchases/new");
           }}
         >
@@ -72,6 +74,7 @@ export const Purchases = () => {
         </Button>
       </HStack>
       <List
+        isLoading={purchasesQuery.isLoading}
         data={purchasesQuery.data ?? []}
         renderItem={(purchase) => {
           return <PurchaseItem purchase={purchase as any} />;

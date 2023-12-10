@@ -6,7 +6,7 @@
   "module": "./dist/index.esm.js",
   "scripts": {
     "db:generate": "prisma generate",
-    "db:push": "prisma db push --skip-generate --force-reset",
+    "db:push": "doppler run -- prisma db push --skip-generate",
     "studio": "doppler run -- prisma studio",
     "reset": "pnpm run db:push && pnpm run dkb:generate && pnpm run seed",
     "dev": "tsup",

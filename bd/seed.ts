@@ -29,6 +29,7 @@ const createClient = ({
     businessId: businessId,
   } as Client;
 };
+
 const createSupplier = ({
   businessId,
   bussinessName,
@@ -54,7 +55,7 @@ const UNITS: Partial<Unit>[] = [
   },
   {
     allow_decimal: false,
-    name: "Unit",
+    name: "Unidad",
     symbol: "u",
   },
 ];

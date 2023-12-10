@@ -11,6 +11,7 @@ import {
 import { ReactNode, FC } from "react";
 import { IoIosArrowBack } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 const BackButton: FC<ButtonProps> = ({ ...props }) => {
   return (
     <Button fontSize={"medium"} colorScheme="blue" {...props}>
@@ -26,13 +27,17 @@ export const Screen: FC<{
   actionRight?: ReactNode;
 }> = ({ children, back, title, actionRight }) => {
   const navigate = useNavigate();
-  const backButton = back ? (
-    <BackButton
-      onClick={() => {
-        navigate(back);
-      }}
-    />
-  ) : null;
+  const [searchParams] = useSearchParams();
+  const backUrl = searchParams.get("back");
+  const backButton =
+    back || backUrl ? (
+      <BackButton
+        onClick={() => {
+          if (backUrl) return navigate(backUrl);
+          if (back) navigate(back);
+        }}
+      />
+    ) : null;
   const titleNode = title ? (
     <VStack alignItems={"flex-start"} spacing={1}>
       <HStack w="full" justifyContent={"space-between"}>

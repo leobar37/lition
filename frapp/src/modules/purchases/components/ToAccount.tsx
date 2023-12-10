@@ -1,11 +1,17 @@
-import { useFormContext } from "react-hook-form";
-import { useHandleLineSale } from "../helpers/useHandleLineSale";
-import { api } from "~/lib";
+import {
+  Box,
+  Stat,
+  StatGroup,
+  StatHelpText,
+  StatLabel,
+  StatNumber,
+} from "@chakra-ui/react";
 import { PaymentState } from "@lition/common";
-import { Box, VStack } from "@chakra-ui/react";
-import { FormNumberInput, moneyStrategyFormat } from "~/ui";
-import { Text } from "@chakra-ui/react";
 import { FC } from "react";
+import { useFormContext } from "react-hook-form";
+import { api } from "~/lib";
+import { FormNumberInput, moneyStrategyFormat } from "~/ui";
+import { useHandleLineSale } from "../helpers/useHandleLineSale";
 
 type ToAccountProps = {
   ignorePaymentState?: boolean;
@@ -41,14 +47,17 @@ export const ToAccount: FC<ToAccountProps> = ({
 
   return (
     <Box>
-      <VStack alignItems={"flex-start"}>
-        <Text fontSize={"small"}>
-          Debo : {moneyStrategyFormat.format(debtClientQuery.data.debt + "")}`
-        </Text>
-        <Text fontSize={"small"}>
-          Valor de esta venta : {moneyStrategyFormat.format(getTotal())}`
-        </Text>
-      </VStack>
+      <StatGroup>
+        <Stat>
+          <StatLabel>Deuda</StatLabel>
+          <StatNumber>
+            {moneyStrategyFormat.format(debtClientQuery.data.debt + getTotal())}
+          </StatNumber>
+          <StatHelpText>
+            Compra actual {moneyStrategyFormat.format(getTotal())}
+          </StatHelpText>
+        </Stat>
+      </StatGroup>
       <FormNumberInput
         inputProps={{
           min: 0,

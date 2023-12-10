@@ -144,6 +144,8 @@ Table User {
   username String [unique, not null]
   name String [not null]
   lastName String [not null]
+  phone String
+  meta Json
   password String [not null]
   roles String[] [not null]
   business Business [not null]

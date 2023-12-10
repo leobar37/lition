@@ -199,7 +199,7 @@ export const buttonTheme = defineStyleConfig({
   sizes,
   defaultProps: {
     variant: "solid",
-    size: "xs",
+    size: "sm",
     colorScheme: "orange",
   },
 });

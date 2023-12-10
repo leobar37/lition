@@ -37,8 +37,9 @@ export const useLitionFeedback = () => {
     ): Promise<T> => {
       try {
         if (isPromise(callback)) {
+          let loadingId: any | null = null;
           if (options.loadingConfig) {
-            toast({
+            loadingId = toast({
               ...commonConfig,
               status: "loading",
               ...options.loadingConfig,
@@ -51,6 +52,7 @@ export const useLitionFeedback = () => {
               status: "success",
               ...options.successConfig,
             });
+            toast.close(loadingId);
             options.successConfig.callBack?.();
           }
           return result as any;

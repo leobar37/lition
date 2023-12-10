@@ -14,6 +14,7 @@ const lineSaleSchemaInput = lineSaleSchema.omit({
   total: true,
   aliasId: true,
 });
+
 export const MyDrawer = () => {
   const modalDisclousure = useSalelineDisclosure();
   const [index, setTabIndex] = useState(0);

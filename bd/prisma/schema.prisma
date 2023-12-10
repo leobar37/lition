@@ -158,6 +158,8 @@ model User {
   username   String   @unique
   name       String
   lastName   String   @map("last_name")
+  phone      String?
+  meta       Json?
   password   String
   roles      String[]
   business   Business @relation(fields: [businessId], references: [id])

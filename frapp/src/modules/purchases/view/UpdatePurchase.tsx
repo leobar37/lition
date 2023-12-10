@@ -1,4 +1,4 @@
-import { Button, HStack, Text } from "@chakra-ui/react";
+import { Button, HStack } from "@chakra-ui/react";
 import {
   FORMAT_SIMPLE_DATE,
   StatusSaleType,
@@ -13,13 +13,13 @@ import { useParams } from "react-router-dom";
 import { z } from "zod";
 import { SupplierSelector, api } from "~/lib";
 import { useProductsSelectorHook } from "~/lib/selectors/ProductSelector";
-import { Screen, WrapperForm, useWrapperForm } from "~/ui";
+import { Screen, ScreenLoading, WrapperForm, useWrapperForm } from "~/ui";
 import ItemsProducts from "../components/ItemsProducts";
 import { useHandleLineSale } from "../helpers/useHandleLineSale";
 
 const useCurrentPurchase = () => {
   const { id = "-1" } = useParams();
-  const saleQuery = api.purchases.one.useQuery(
+  const purchaseQuery = api.purchases.one.useQuery(
     {
       id: Number(id),
     },
@@ -27,7 +27,7 @@ const useCurrentPurchase = () => {
       enabled: Number(id) > 0,
     }
   );
-  return saleQuery;
+  return purchaseQuery;
 };
 
 const frEditPurchaseSchema = createPurchaseSchema
@@ -48,19 +48,21 @@ type EditPurchaseForm = z.infer<typeof frEditPurchaseSchema>;
 
 const CancelButton = () => {
   const dispatchMutation = api.purchases.updateFlags.useMutation();
-  const currentSale = useCurrentPurchase();
+  const currentPurchase = useCurrentPurchase();
   const queryClient = useQueryClient();
-  const queryKey = getQueryKey(api.sales.sale);
-  if (!isNill(currentSale.data?.canceledAt)) {
+  const queryKey = getQueryKey(api.purchases.one);
+
+  if (!isNill(currentPurchase.data?.canceledAt)) {
     return null;
   }
 
   return (
     <Button
       colorScheme="blue"
+      isLoading={dispatchMutation.isLoading}
       onClick={async () => {
         await dispatchMutation.mutateAsync({
-          id: currentSale.data?.id!,
+          id: currentPurchase.data?.id!,
           type: StatusSaleType.CANCEL,
         });
         queryClient.invalidateQueries(queryKey);
@@ -100,13 +102,14 @@ export const UpdatePurchase = () => {
         };
       });
       setLines(lines);
+
       form.reset({
         supplierId: purchaseData.supplierId ?? 0,
       });
     }
   }, [purchaseQuery.data]);
 
-  if (purchaseQuery.isLoading) return <Text>Cargando...</Text>;
+  if (purchaseQuery.isLoading) return <ScreenLoading />;
 
   return (
     <Screen
@@ -117,8 +120,8 @@ export const UpdatePurchase = () => {
     >
       <WrapperForm form={form}>
         <SupplierSelector isDisabled label="Proveedor" name="supplierId" />
-        <ItemsProducts />
-        <HStack>
+        <ItemsProducts isEdit={false} />
+        <HStack mt={"4"}>
           <CancelButton />
         </HStack>
       </WrapperForm>
