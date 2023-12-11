@@ -70,9 +70,13 @@ export const SimpleModal = () => {
   const alertDisclosure = useSimpleModalDisclousure();
 
   return (
-    <Modal isOpen={simpleModalInfo.isOpen} onClose={alertDisclosure.onClose}>
+    <Modal
+      size={"sm"}
+      isOpen={simpleModalInfo.isOpen}
+      onClose={alertDisclosure.onClose}
+    >
       <ModalOverlay />
-      <ModalContent>
+      <ModalContent maxWidth={"80vw"}>
         <ModalHeader>{simpleModalInfo.title}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>{simpleModalInfo.content}</ModalBody>

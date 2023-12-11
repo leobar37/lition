@@ -110,7 +110,7 @@ const ListItemPayment: FC<{
   return (
     <ListItem
       label={
-        <Text fontSize={"medium"} minWidth={"18rem"}>
+        <Text fontSize={"medium"} minWidth={"30%"}>
           {text}
         </Text>
       }

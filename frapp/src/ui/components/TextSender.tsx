@@ -1,7 +1,7 @@
 import {
   Button,
   InputGroup,
-  InputRightElement,
+  Text,
   Textarea,
   VStack,
   useClipboard,
@@ -45,6 +45,16 @@ export const TextSender: FC<TextSenderProps> = ({ text, phone = "" }) => {
       >
         Enviar a WhatsApp
       </Button>
+      <Button
+        variant={"unestyled"}
+        _active={{
+          transform: "scale(1.1)",
+        }}
+        onClick={onCopy}
+      >
+        <Text pr="2">Copiar texto</Text> <CopyIcon fontSize={"lg"} />
+      </Button>
+
       <InputGroup>
         <Textarea
           value={value}
@@ -52,18 +62,6 @@ export const TextSender: FC<TextSenderProps> = ({ text, phone = "" }) => {
             setValue(e.target.value);
           }}
         />
-        <InputRightElement>
-          <Button
-            variant={"unestyled"}
-            _active={{
-              transform: "scale(1.1)",
-            }}
-            onClick={onCopy}
-            fontSize={"xx-large"}
-          >
-            <CopyIcon />
-          </Button>
-        </InputRightElement>
       </InputGroup>
     </VStack>
   );
