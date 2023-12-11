@@ -49,6 +49,11 @@ import { useClient } from "../helpers";
 type MenuItemsProps = {
   items: { label: string; action: () => void }[];
 };
+
+const formatPhone = (phone?: string) => {
+  return phone ? (phone.startsWith("+51") ? phone : "+51" + phone) : "";
+};
+
 const MenuItems: FC<MenuItemsProps> = ({ items }) => {
   return (
     <Popover>
@@ -101,11 +106,8 @@ const ListItemPayment: FC<{
   )}`;
 
   const { data: client } = useClient();
-  const phone = client?.phone
-    ? client.phone.startsWith("+51")
-      ? client.phone
-      : "+51" + client.phone
-    : "";
+
+  const phone = formatPhone(client?.phone);
 
   return (
     <ListItem
@@ -258,7 +260,10 @@ export const PaymentsTab = () => {
                 </HStack>
               </AccordionButton>
               <AccordionPanel>
-                <TextSender text={textDebt} />
+                <TextSender
+                  text={textDebt}
+                  phone={formatPhone(clientQuery.data?.phone ?? "")}
+                />
               </AccordionPanel>
             </AccordionItem>
           </Accordion>
