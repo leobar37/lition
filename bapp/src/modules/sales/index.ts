@@ -17,6 +17,7 @@ export const sales = router({
         where: {
           businessId: ctx.bussiness?.id,
           clientId: input?.clientId,
+          canceledAt: null,
         },
         include: {
           client: true,

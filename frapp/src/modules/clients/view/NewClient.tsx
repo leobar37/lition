@@ -1,18 +1,19 @@
-import { VStack, HStack, Button } from "@chakra-ui/react";
+import { Button, HStack, VStack } from "@chakra-ui/react";
+import { CreateClientInput, createClientSchema } from "@lition/common";
+import { useQueryClient } from "@tanstack/react-query";
+import { getQueryKey } from "@trpc/react-query";
 import { FC } from "react";
+import { useNavigate } from "react-router-dom";
+import { useLitionFeedback } from "~/lib";
+import { api } from "~/lib/trpc";
 import {
   FormInput,
+  FormTextArea,
   Screen,
   WrapperForm,
   useWrapperForm,
-  FormTextArea,
 } from "~/ui";
-import { createClientSchema, CreateClientInput } from "@lition/common";
-import { api } from "~/lib/trpc";
-import { useNavigate } from "react-router-dom";
-import { useLitionFeedback } from "~/lib";
-import { getQueryKey } from "@trpc/react-query";
-import { useQueryClient } from "@tanstack/react-query";
+import { transform } from "~/utils";
 
 export const NewClient: FC = () => {
   const form = useWrapperForm<CreateClientInput>({
@@ -28,7 +29,11 @@ export const NewClient: FC = () => {
   const createClientMutation = api.clients.create.useMutation();
   const createClient = form.handleSubmit(async (input: CreateClientInput) => {
     const action = async () => {
-      await createClientMutation.mutateAsync(input);
+      await createClientMutation.mutateAsync(
+        transform(input, {
+          phone: (phone) => phone.replace(/\s/g, ""),
+        })
+      );
       form.reset();
       navigate("/clients");
     };

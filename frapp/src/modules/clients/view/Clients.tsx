@@ -4,10 +4,9 @@ import { useQueryClient } from "@tanstack/react-query";
 import { getQueryKey } from "@trpc/react-query";
 import { FC } from "react";
 import { useNavigate } from "react-router-dom";
-import { List, ListItem, Screen } from "~/ui";
+import { Eye, List, ListItem, Screen, useConfirmDialog } from "~/ui";
 import { DeleteIcon, EditIcon } from "~/ui/icons";
 import { api, useLitionFeedback } from "../../../lib";
-import { Eye, useConfirmDialog } from "~/ui";
 
 const LisItemClient: FC<{
   client: Client;
@@ -84,7 +83,24 @@ export const Clients = () => {
           Nuevo
         </Button>
       </HStack>
+
       <List
+        search={{
+          props: {
+            name: {
+              label: "Nombre",
+            },
+            dni: {
+              label: "DNI",
+            },
+            lastName: {
+              label: "Apellido",
+            },
+            phone: {
+              label: "Celular",
+            },
+          },
+        }}
         isLoading={clientsQuery.isLoading}
         data={clientsQuery.data ?? []}
         renderItem={(client) => (

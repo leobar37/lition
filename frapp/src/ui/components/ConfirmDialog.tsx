@@ -79,7 +79,7 @@ export const ConfirmDialog = () => {
       onClose={alertDisclosure.onClose}
     >
       <AlertDialogOverlay>
-        <AlertDialogContent>
+        <AlertDialogContent maxWidth={"80vw"}>
           <AlertDialogHeader fontSize="lg" fontWeight="bold">
             {alertInfo.title}
           </AlertDialogHeader>

@@ -15,6 +15,7 @@ export type LineSale = z.infer<typeof lineSaleSchema> & {
   productName?: string;
   aliasId?: number;
   id?: number;
+  symbol?: string;
 };
 
 export const linesSaleAtoms = atom<LineSale[]>([]);

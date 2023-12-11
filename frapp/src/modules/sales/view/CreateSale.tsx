@@ -8,11 +8,9 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
-import { PaymentState, createSaleSchema } from "@lition/common";
-import { omit } from "radash";
+import { PaymentState } from "@lition/common";
 import { useNavigate } from "react-router-dom";
-import { z } from "zod";
-import { ClientsSelector, api } from "~/lib";
+import { ClientsSelector, api, useLitionFeedback } from "~/lib";
 import {
   FormRadioGroup,
   Screen,
@@ -23,32 +21,8 @@ import {
 import ItemsProducts from "../components/ItemsProducts";
 import { ToAccount } from "../components/ToAccount";
 import { useHandleLineSale } from "../helpers/useHandleLineSale";
-import { useLitionFeedback } from "~/lib";
-const frCreateSaleSchema = createSaleSchema
-  .omit({
-    paymentSource: true,
-    total: true,
-    usedAlias: true,
-    lines: true,
-  })
-  .and(
-    z.object({
-      toAccount: z.number().optional().nullable(),
-      paymentState: z.nativeEnum(PaymentState),
-    })
-  )
-  .refine((data) => {
-    return data.paymentState === PaymentState.PAY_PARTIAL
-      ? (data?.toAccount ?? 0) > 0
-      : true;
-  })
-  .transform((data) => {
-    return data.paymentState !== PaymentState.PAY_PARTIAL
-      ? omit(data, ["toAccount"])
-      : data;
-  });
 
-type CreateSaleForm = z.infer<typeof frCreateSaleSchema>;
+import { CreateSaleForm, frCreateSaleSchema } from "../domain";
 
 export const CreateSale = () => {
   const createdSale = api.sales.create.useMutation();

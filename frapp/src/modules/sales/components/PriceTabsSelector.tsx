@@ -1,23 +1,30 @@
-import { SetStateAction } from "jotai";
-import { FC } from "react";
-import { api } from "~/lib";
-import { useFormContext } from "react-hook-form";
-import { useUnitAliasSourceInForm } from "../helpers/useUnitAliasSourceInForm";
 import {
+  Center,
   FormControl,
   FormLabel,
-  Text,
-  Tabs,
-  TabList,
+  Stat,
+  StatLabel,
+  StatNumber,
   Tab,
-  TabPanels,
+  TabList,
   TabPanel,
-  HStack,
-  Center,
+  TabPanels,
+  Tabs,
+  Text,
   VStack,
 } from "@chakra-ui/react";
-import { FormInputSelect, FormNumberInput, moneyStrategyFormat } from "~/ui";
-import { Spinner } from "~/ui";
+import { SetStateAction } from "jotai";
+import { FC } from "react";
+import { useFormContext } from "react-hook-form";
+import { api } from "~/lib";
+import {
+  FormInputSelect,
+  FormNumberInput,
+  Spinner,
+  moneyStrategyFormat,
+} from "~/ui";
+import { useUnitAliasSourceInForm } from "../helpers/useUnitAliasSourceInForm";
+import { validId } from "@lition/common";
 
 type PriceTabsSelectorProps = {
   index: number;
@@ -33,13 +40,12 @@ const PriceDisplay: FC = () => {
   const { watch } = useFormContext();
   const [amount, price] = watch(["amount", "price", "aliasId"]);
 
+  const total = amount * price;
   return (
-    <HStack w="full" justifyContent={"space-between"}>
-      <Text fontSize={"large"} fontWeight={"semibold"}>
-        Precio
-      </Text>
-      <Text fontSize={"large"}>{amount * price} s/.</Text>
-    </HStack>
+    <Stat>
+      <StatLabel>Precio</StatLabel>
+      <StatNumber>{moneyStrategyFormat.format(total)}</StatNumber>
+    </Stat>
   );
 };
 
@@ -49,23 +55,25 @@ export const PriceTabsSelector: FC<PriceTabsSelectorProps> = ({
 }) => {
   const { watch } = useFormContext();
   const selectedProduct = watch("productId");
-  const unitQuery = api.products.unitOne.useQuery(
+
+  const productQuery = api.products.one.useQuery(
     {
       id: Number(selectedProduct),
     },
     {
-      enabled: !!selectedProduct,
+      enabled: validId(selectedProduct),
     }
   );
+
   const { options } = useUnitAliasSourceInForm();
 
-  const unit = unitQuery.data;
+  const unit = productQuery.data?.unit;
 
-  if (!selectedProduct) {
+  if (!selectedProduct || selectedProduct === -1) {
     return null;
   }
 
-  if (!selectedProduct || unitQuery.isLoading || !unitQuery.data)
+  if (productQuery.isLoading || !productQuery.data)
     return (
       <Center mt="4">
         <VStack>

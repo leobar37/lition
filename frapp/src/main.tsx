@@ -6,13 +6,14 @@ import { router } from "./router";
 import { theme } from "./ui/theme";
 import { TrpcIntegration } from "./lib";
 import "./assets/scrollbar.css";
-import { ConfirmDialog } from "./ui/components";
+import { ConfirmDialog, SimpleModal } from "./ui/components";
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <ChakraProvider theme={theme}>
       <TrpcIntegration>
         <RouterProvider router={router} />
         <ConfirmDialog />
+        <SimpleModal />
       </TrpcIntegration>
     </ChakraProvider>
   </React.StrictMode>

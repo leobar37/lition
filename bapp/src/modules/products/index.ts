@@ -11,6 +11,10 @@ export const productsRouter = router({
       where: {
         businessId: ctx.bussiness?.id,
       },
+      include: {
+        unit: true,
+        unitAlias: true,
+      },
     });
     return products;
   }),
@@ -46,6 +50,10 @@ export const productsRouter = router({
       const product = await ctx.bd.product.findUnique({
         where: {
           id: input.id,
+        },
+        include: {
+          unit: true,
+          unitAlias: true,
         },
       });
       return product;

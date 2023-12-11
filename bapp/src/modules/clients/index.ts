@@ -6,6 +6,21 @@ import { TRPCError } from "@trpc/server";
 import { Transaction } from "bd";
 
 export const clientsRouter = router({
+  myPayments: publicProcedure
+    .input(
+      z.object({
+        clientId: z.number(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const transactions = await ctx.bd.transaction.findMany({
+        where: {
+          clientId: input.clientId,
+          paid: true,
+        },
+      });
+      return transactions;
+    }),
   addPayment: publicProcedure
     .input(addPaymentSchema.and(z.object({ clientId: z.number() })))
     .mutation(async ({ ctx, input: { amount, clientId } }) => {
@@ -107,6 +122,15 @@ export const clientsRouter = router({
       },
       data: {
         deletedAt: new Date(),
+      },
+    });
+    // update sales to canceled
+    await ctx.bd.sale.updateMany({
+      where: {
+        clientId: id,
+      },
+      data: {
+        canceledAt: new Date(),
       },
     });
     return client;

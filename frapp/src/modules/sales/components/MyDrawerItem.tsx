@@ -1,6 +1,6 @@
 import { Button, HStack } from "@chakra-ui/react";
 import { Option, lineSaleSchema } from "@lition/common";
-import { useAtomValue } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { z } from "zod";
 import { ProductSelector, useProductsSelectorHook } from "~/lib";
@@ -15,20 +15,23 @@ const lineSaleSchemaInput = lineSaleSchema.omit({
   aliasId: true,
 });
 
+const DEFAULT_VALUES = {
+  amount: 1,
+  price: 0,
+  productId: -1,
+};
+
 export const MyDrawer = () => {
   const modalDisclousure = useSalelineDisclosure();
   const [index, setTabIndex] = useState(0);
   const saleItem = useAtomValue(saleItemAtom);
+  const setSaleItem = useSetAtom(saleItemAtom);
   const isEdit = !!saleItem;
   const { add, update, lines } = useHandleLineSale();
-
   const { findById: findByIdPr } = useProductsSelectorHook();
 
   const form = useWrapperForm<LineSale>({
-    defaultValues: {
-      amount: 1,
-      price: 0,
-    },
+    defaultValues: DEFAULT_VALUES,
     schema: useMemo(() => {
       if (index === 0) return lineSaleSchemaInput;
       return lineSaleSchemaInput.and(
@@ -38,12 +41,6 @@ export const MyDrawer = () => {
       );
     }, [index]),
   });
-
-  useEffect(() => {
-    if (modalDisclousure.isOpen && !saleItem) {
-      form.reset();
-    }
-  }, [modalDisclousure.isOpen]);
 
   useEffect(() => {
     if (saleItem && modalDisclousure.isOpen) {
@@ -66,25 +63,32 @@ export const MyDrawer = () => {
   const handle = () => {
     const values = form.getValues();
     const total = values.amount * values.price;
+    const pr = findByIdPr(values.productId);
+    const aliasName = !values?.aliasId
+      ? null
+      : pr?.unitAlias.find((alias) => alias.id === values.aliasId)?.name;
+
     if (!isEdit) {
-      const pr = findByIdPr(values.productId);
       add({
         ...values,
         total: total,
         productName: pr?.name,
+        symbol: aliasName ? aliasName : pr?.unit.symbol,
       });
       modalDisclousure.onClose();
-      form.reset();
+      form.reset(DEFAULT_VALUES);
+      setTabIndex(0);
     } else {
       update(
         {
           ...values,
           total: total,
+          symbol: aliasName ? aliasName : pr?.unit.symbol,
         },
         saleItem.productId
       );
       modalDisclousure.onClose();
-      form.reset();
+      form.reset(DEFAULT_VALUES);
     }
   };
 
@@ -105,6 +109,10 @@ export const MyDrawer = () => {
   return (
     <CustomDrawer
       title="Item"
+      beforeClose={() => {
+        form.reset(DEFAULT_VALUES);
+        setSaleItem(null);
+      }}
       footer={
         <HStack>
           <Button isDisabled={buttonIsDisabled} onClick={handle}>

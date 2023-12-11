@@ -9,17 +9,18 @@ export const useUnitAliasSourceInForm = (
   const { watch } = form ? form : useFormContext();
   const productId = watch("productId");
   const safeProductId = Number(productId ?? "-1");
-  const unitAliasQuery = api.products.unitAlias.useQuery(
+  const unitAliasQuery = api.products.one.useQuery(
     {
-      productId: safeProductId,
+      id: safeProductId,
     },
     {
       enabled: safeProductId > 0,
     }
   );
+
   const options = useMemo(
     () =>
-      (unitAliasQuery.data ?? []).map((alias) => {
+      (unitAliasQuery.data?.unitAlias ?? []).map((alias) => {
         return {
           label: alias.name,
           value: alias.id,
@@ -28,7 +29,9 @@ export const useUnitAliasSourceInForm = (
     [unitAliasQuery.data]
   );
   const findUnitAliasById = (id: number) => {
-    return unitAliasQuery.data?.find((alias) => alias.id === id);
+    return (unitAliasQuery.data?.unitAlias ?? [])?.find(
+      (alias) => alias.id === id
+    );
   };
   return {
     options,

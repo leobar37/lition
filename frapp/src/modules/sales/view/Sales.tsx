@@ -6,6 +6,7 @@ import { FC, ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "~/lib";
 import { List, ListItem, Screen } from "~/ui";
+import { useHandleLineSale } from "../helpers/useHandleLineSale";
 
 const SaleItem: FC<{
   sale: (Sale & {
@@ -58,6 +59,8 @@ const SaleItem: FC<{
 export const Sales = () => {
   const navigate = useNavigate();
   const salesQuery = api.sales.list.useQuery();
+  const { clear } = useHandleLineSale();
+
   return (
     <Screen back="/" title="Ventas">
       <HStack spacing={4} justifyContent={"flex-end"} mt={3}>
@@ -65,6 +68,7 @@ export const Sales = () => {
           colorScheme="blue"
           onClick={() => {
             navigate("/sales/new");
+            clear();
           }}
         >
           Nuevo

@@ -28,6 +28,7 @@ import {
 } from "../helpers/ItemsProductContext";
 import { useHandleLineSale } from "../helpers/useHandleLineSale";
 import { MyDrawer } from "./MyDrawerItem";
+import pluralize from "pluralize";
 
 const lineSaleAtomDrawer = atom(false);
 
@@ -40,7 +41,6 @@ const LineSaleItem: FC<{
 
   const setSaleItem = useSetAtom(saleItemAtom);
   const { deleteLine } = useHandleLineSale();
-
   const itemsProducts = useItemsProductContext();
 
   const actions = itemsProducts.isEdit ? (
@@ -54,7 +54,6 @@ const LineSaleItem: FC<{
       >
         <EditIcon />
       </Button>
-
       <Button
         colorScheme="red"
         onClick={() => {
@@ -66,13 +65,17 @@ const LineSaleItem: FC<{
     </>
   ) : null;
 
+  const amountLabel = line.aliasId
+    ? pluralize(line?.symbol ?? "", line.amount, true)
+    : line.amount + (line?.symbol ?? "");
+
   return (
     <ListItem
       label={
         <VStack alignItems={"flex-start"}>
           {item("Producto", line.productName)}
           {item("Total", moneyStrategyFormat.format(line.total))}
-          {item("Cantidad", moneyStrategyFormat.format(line.amount))}
+          {item("Cantidad", amountLabel)}
           {item("Precio", moneyStrategyFormat.format(line.price))}
         </VStack>
       }
@@ -86,7 +89,6 @@ export const ItemsProducts: FC<Partial<ItemsProductContextProps>> = ({
 }) => {
   const drawerState = useSalelineDisclosure();
   const { lines, getTotal } = useHandleLineSale();
-  const setSaleItem = useSetAtom(saleItemAtom);
 
   return (
     <ItemsProductProvider
@@ -108,7 +110,6 @@ export const ItemsProducts: FC<Partial<ItemsProductContextProps>> = ({
                 <Button
                   onClick={() => {
                     drawerState.onOpen();
-                    setSaleItem(null);
                   }}
                 >
                   Agregar
