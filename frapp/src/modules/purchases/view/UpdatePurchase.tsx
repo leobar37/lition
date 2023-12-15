@@ -11,12 +11,19 @@ import dayjs from "dayjs";
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { z } from "zod";
-import { SupplierSelector, api } from "~/lib";
+import { SupplierSelector, api, useLitionFeedback } from "~/lib";
 import { useProductsSelectorHook } from "~/lib/selectors/ProductSelector";
-import { Screen, ScreenLoading, WrapperForm, useWrapperForm } from "~/ui";
+import {
+  Screen,
+  ScreenLoading,
+  WrapperForm,
+  useConfirmDialog,
+  useWrapperForm,
+  useBackUrl,
+} from "~/ui";
 import ItemsProducts from "../components/ItemsProducts";
 import { useHandleLineSale } from "../helpers/useHandleLineSale";
-
+import { useNavigate } from "react-router-dom";
 const useCurrentPurchase = () => {
   const { id = "-1" } = useParams();
   const purchaseQuery = api.purchases.one.useQuery(
@@ -50,7 +57,13 @@ const CancelButton = () => {
   const dispatchMutation = api.purchases.updateFlags.useMutation();
   const currentPurchase = useCurrentPurchase();
   const queryClient = useQueryClient();
-  const queryKey = getQueryKey(api.purchases.one);
+  const queryKeyOne = getQueryKey(api.purchases.one);
+  const queryKeyList = getQueryKey(api.purchases.list);
+  const confirm = useConfirmDialog();
+  const withBackUrl = useBackUrl();
+
+  const navigate = useNavigate();
+  const { wrapAsync } = useLitionFeedback();
 
   if (!isNill(currentPurchase.data?.canceledAt)) {
     return null;
@@ -61,11 +74,26 @@ const CancelButton = () => {
       colorScheme="blue"
       isLoading={dispatchMutation.isLoading}
       onClick={async () => {
-        await dispatchMutation.mutateAsync({
-          id: currentPurchase.data?.id!,
-          type: StatusSaleType.CANCEL,
+        const action = async () => {
+          await dispatchMutation.mutateAsync({
+            id: currentPurchase.data?.id!,
+            type: StatusSaleType.CANCEL,
+          });
+          queryClient.invalidateQueries(queryKeyOne);
+          queryClient.invalidateQueries(queryKeyList);
+          navigate(withBackUrl("/purchases"));
+        };
+        confirm.open({
+          title: "Cancelar compra",
+          description: "¿Estas seguro de cancelar esta compra?",
+          onConfirm: () =>
+            wrapAsync(action(), {
+              successConfig: {
+                title: "Compra cancelada",
+                description: "La compra se cancelo correctamente",
+              },
+            }),
         });
-        queryClient.invalidateQueries(queryKey);
       }}
     >
       Cancelar Compra

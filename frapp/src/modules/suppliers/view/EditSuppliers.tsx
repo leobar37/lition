@@ -1,24 +1,17 @@
-import { FormInput, Screen, ScreenLoading } from "~/ui";
-import { useParams, useNavigate } from "react-router-dom";
-import { api } from "~/lib";
+import { Button, HStack, Stack } from "@chakra-ui/react";
 import { UpdateSupplierInput, updateSupplierSchema } from "@lition/common";
-import { useWrapperForm, WrapperForm, FormTextArea } from "~/ui";
-import { Stack, HStack, Button } from "@chakra-ui/react";
 import { useEffect } from "react";
-
-export const useSupplier = () => {
-  const { id = "-1" } = useParams();
-  const safeId = Number(id);
-
-  return api.suppliers.one.useQuery(
-    {
-      id: safeId,
-    },
-    {
-      enabled: safeId > 0,
-    }
-  );
-};
+import { useNavigate } from "react-router-dom";
+import { api } from "~/lib";
+import {
+  FormInput,
+  FormTextArea,
+  Screen,
+  ScreenLoading,
+  WrapperForm,
+  useWrapperForm,
+} from "~/ui";
+import { useSupplier } from "../helpers/use-supplier";
 
 export const UpdateSupplier = () => {
   const supplierQuery = useSupplier();

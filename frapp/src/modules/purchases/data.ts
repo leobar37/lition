@@ -1,4 +1,6 @@
+import { PaymentState, createPurchaseSchema } from "@lition/common";
 import { atom } from "jotai";
+import { omit } from "radash";
 
 export const saleItemAtom = atom<LineSale | null>(null);
 
@@ -18,3 +20,29 @@ export type LineSale = z.infer<typeof lineSaleSchema> & {
 };
 
 export const linesSaleAtoms = atom<LineSale[]>([]);
+
+export const frCreatePurchaseSchema = createPurchaseSchema
+  .omit({
+    paymentSource: true,
+    total: true,
+    usedAlias: true,
+    lines: true,
+  })
+  .and(
+    z.object({
+      toAccount: z.number().optional().nullable(),
+      paymentState: z.nativeEnum(PaymentState),
+    })
+  )
+  .refine((data) => {
+    return data.paymentState === PaymentState.PAY_PARTIAL
+      ? (data?.toAccount ?? 0) > 0
+      : true;
+  })
+  .transform((data) => {
+    return data.paymentState !== PaymentState.PAY_PARTIAL
+      ? omit(data, ["toAccount"])
+      : data;
+  });
+
+export type CreatePurchaseForm = z.infer<typeof frCreatePurchaseSchema>;

@@ -3,7 +3,11 @@ import { prismaClient } from "./lib/bd";
 import { jwtHandleStrategy } from "./lib";
 import { isEmpty } from "radash";
 import { Business, User } from "bd";
+import * as fromSuppliers from "./modules/suppliers";
 
+export const shared = {
+  suppliers: fromSuppliers.shared,
+};
 export async function createContext({ req, res }: CreateFastifyContextOptions) {
   const headerAuthorization = req.headers["authorization"];
 
@@ -33,6 +37,7 @@ export async function createContext({ req, res }: CreateFastifyContextOptions) {
     jwt: jwtHandleStrategy,
     user,
     bussiness,
+    shared,
   };
 }
 export type Context = Awaited<ReturnType<typeof createContext>>;

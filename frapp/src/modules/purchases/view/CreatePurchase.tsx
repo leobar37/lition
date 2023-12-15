@@ -8,51 +8,39 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
-import { PaymentState, createPurchaseSchema } from "@lition/common";
-import { omit } from "radash";
+import { PaymentState } from "@lition/common";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { z } from "zod";
 import { SupplierSelector, api, useLitionFeedback } from "~/lib";
-import { FormRadioGroup, Screen, WrapperForm, useWrapperForm } from "~/ui";
+import {
+  FormRadioGroup,
+  Screen,
+  WrapperForm,
+  useWrapperForm,
+  useBackUrl,
+} from "~/ui";
 import ItemsProducts from "../components/ItemsProducts";
 import { ToAccount } from "../components/ToAccount";
+import { CreatePurchaseForm, frCreatePurchaseSchema } from "../data";
 import { useHandleLineSale } from "../helpers/useHandleLineSale";
-
-const frCreatePurchaseSchema = createPurchaseSchema
-  .omit({
-    paymentSource: true,
-    total: true,
-    usedAlias: true,
-    lines: true,
-  })
-  .and(
-    z.object({
-      toAccount: z.number().optional().nullable(),
-      paymentState: z.nativeEnum(PaymentState),
-    })
-  )
-  .refine((data) => {
-    return data.paymentState === PaymentState.PAY_PARTIAL
-      ? (data?.toAccount ?? 0) > 0
-      : true;
-  })
-  .transform((data) => {
-    return data.paymentState !== PaymentState.PAY_PARTIAL
-      ? omit(data, ["toAccount"])
-      : data;
-  });
-
-type CreatePurchaseForm = z.infer<typeof frCreatePurchaseSchema>;
+import { useResolveSupplieId } from "../helpers/useResolveSupplierId";
 
 export const CreatePurchase = () => {
   const createdPurchase = api.purchases.create.useMutation();
   const { lines, clear, getTotal } = useHandleLineSale();
-
   const form = useWrapperForm<CreatePurchaseForm>({
     schema: frCreatePurchaseSchema,
   });
-
   const { wrapAsync } = useLitionFeedback();
+  const withBackUrl = useBackUrl();
+
+  useEffect(() => {
+    clear();
+  }, []);
+
+  useResolveSupplieId((supplierId) => {
+    form.setValue("supplierId", parseInt(supplierId));
+  });
 
   const navigate = useNavigate();
 
@@ -83,7 +71,7 @@ export const CreatePurchase = () => {
           };
         }
         await createdPurchase.mutateAsync(finalData);
-        navigate("/purchases");
+        navigate(withBackUrl("/purchases"));
         form.reset();
         clear();
       };

@@ -5,9 +5,10 @@ import { getQueryKey } from "@trpc/react-query";
 import { FC } from "react";
 import { useNavigate } from "react-router-dom";
 import { List, ListItem, Screen } from "~/ui";
-import { DeleteIcon, EditIcon } from "~/ui/icons";
+import { DeleteIcon, EditIcon, Eye } from "~/ui/icons";
 import { api, useLitionFeedback } from "../../../lib";
 import { useConfirmDialog } from "~/ui";
+
 const LisItemSupplier: FC<{
   supplier: Supplier;
 }> = ({ supplier }) => {
@@ -24,6 +25,15 @@ const LisItemSupplier: FC<{
       actions={
         <>
           <Button
+            size="xs"
+            onClick={() => {
+              navigate(`/suppliers/see/${supplier.id}`);
+            }}
+          >
+            <Eye />
+          </Button>
+          <Button
+            size="xs"
             colorScheme="blue"
             onClick={() => {
               navigate(`/suppliers/${supplier.id}`);
@@ -32,6 +42,7 @@ const LisItemSupplier: FC<{
             <EditIcon />
           </Button>
           <Button
+            size="xs"
             onClick={async () => {
               const action = async () => {
                 await deleteClient.mutateAsync({

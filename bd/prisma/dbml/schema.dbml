@@ -117,6 +117,7 @@ Table Transaction {
   createdAt DateTime [default: `now()`, not null]
   totalPaid Float [not null]
   totalDebt Float [not null]
+  isSilent Boolean [default: false]
 }
 
 Table TransactionSupplier {
@@ -128,6 +129,7 @@ Table TransactionSupplier {
   createdAt DateTime [default: `now()`, not null]
   totalPaid Float [not null]
   totalDebt Float [not null]
+  isSilent Boolean [default: false]
 }
 
 Table Unit {

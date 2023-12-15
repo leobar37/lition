@@ -9,7 +9,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { PaymentState } from "@lition/common";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { ClientsSelector, api, useLitionFeedback } from "~/lib";
 import {
   FormRadioGroup,
@@ -22,12 +22,22 @@ import ItemsProducts from "../components/ItemsProducts";
 import { ToAccount } from "../components/ToAccount";
 import { useHandleLineSale } from "../helpers/useHandleLineSale";
 
+import { useEffect } from "react";
 import { CreateSaleForm, frCreateSaleSchema } from "../domain";
+
+const useResolveClientId = (callback: (clientId: string) => void) => {
+  const [params] = useSearchParams();
+  const clientId = params.get("client");
+  useEffect(() => {
+    if (clientId) {
+      callback(clientId);
+    }
+  }, [clientId]);
+};
 
 export const CreateSale = () => {
   const createdSale = api.sales.create.useMutation();
   const { lines, clear, getTotal } = useHandleLineSale();
-
   const { wrapAsync } = useLitionFeedback();
 
   const form = useWrapperForm<CreateSaleForm>({
@@ -35,6 +45,13 @@ export const CreateSale = () => {
       isDispatched: false,
     },
     schema: frCreateSaleSchema,
+  });
+
+  useEffect(() => {
+    clear();
+  }, []);
+  useResolveClientId((clientId) => {
+    form.setValue("clientId", parseInt(clientId));
   });
 
   const navigate = useNavigate();
@@ -57,7 +74,6 @@ export const CreateSale = () => {
             };
           }),
         };
-
         if (data.paymentState === PaymentState.PAY_PARTIAL) {
           finalData = {
             ...finalData,

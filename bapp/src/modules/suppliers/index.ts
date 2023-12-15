@@ -1,10 +1,50 @@
-import { router, publicProcedure } from "../../router";
-import { createSupplierSchema, updateSupplierSchema } from "@lition/common";
+import {
+  addPaymentSchema,
+  createSupplierSchema,
+  updateSupplierSchema,
+} from "@lition/common";
 import { TRPCError } from "@trpc/server";
+import { TransactionSupplier } from "bd";
 import { pick } from "radash";
 import { z } from "zod";
+import { publicProcedure, router } from "../../router";
+import { getDebt } from "./helpers";
+
+export const shared = {
+  getDebt,
+};
 
 export const suppliersRouter = router({
+  myPayments: publicProcedure
+    .input(
+      z.object({
+        supplierId: z.number(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const transactions = await ctx.bd.transactionSupplier.findMany({
+        where: {
+          supplierId: input.supplierId,
+          paid: true,
+          isSilent: false,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+      });
+      return transactions;
+    }),
+  addPayment: publicProcedure
+    .input(addPaymentSchema.and(z.object({ supplierId: z.number() })))
+    .mutation(async ({ ctx, input: { amount, supplierId } }) => {
+      const transaction: Partial<TransactionSupplier> = {
+        supplierId: supplierId,
+        paid: true,
+        total: amount,
+      };
+      await ctx.bd.transactionSupplier.insertAndCalculate([transaction]);
+      return true;
+    }),
   myDebt: publicProcedure
     .input(
       z.object({
@@ -12,27 +52,7 @@ export const suppliersRouter = router({
       })
     )
     .query(async ({ ctx: { bd }, input: { id } }) => {
-      const lastTransation = await bd.transactionSupplier.findFirst({
-        where: {
-          supplierId: id,
-        },
-        orderBy: {
-          createdAt: "desc",
-        },
-      });
-
-      if (!lastTransation) {
-        return {
-          debt: 0,
-        };
-      }
-
-      const totalDebt = lastTransation?.totalDebt ?? 0;
-      const totalPaid = lastTransation?.totalPaid ?? 0;
-
-      return {
-        debt: totalDebt - totalPaid,
-      };
+      return getDebt(id, bd);
     }),
   delete: publicProcedure
     .input(

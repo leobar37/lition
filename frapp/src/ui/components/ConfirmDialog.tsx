@@ -11,11 +11,12 @@ import {
 import { atom, useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useRef } from "react";
 
+import { AnyFunction } from "~/utils";
 type AlertConfirmState = {
   isOpen: boolean;
   title: string;
   description: string;
-  onConfirm: () => void;
+  onConfirm: AnyFunction;
   onCancel?: () => void;
 };
 

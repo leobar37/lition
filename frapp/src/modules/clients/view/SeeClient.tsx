@@ -8,23 +8,29 @@ import {
   Tabs,
   VStack,
 } from "@chakra-ui/react";
-import {
-  Screen,
-  ScreenLoading,
-  List,
-  ListItem,
-  item,
-  moneyStrategyFormat,
-  Eye,
-} from "~/ui";
-import { useClient } from "../helpers";
-import PaymentTab from "../components/PaymentTab";
-import { api } from "~/lib";
-import { FC } from "react";
+import { FORMAT_SIMPLE_DATE } from "@lition/common";
 import { Sale } from "@server";
 import dayjs from "dayjs";
-import { FORMAT_SIMPLE_DATE } from "@lition/common";
-import { useNavigate, createSearchParams, useLocation } from "react-router-dom";
+import { FC } from "react";
+import {
+  createSearchParams,
+  useLocation,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
+import { api } from "~/lib";
+import {
+  Eye,
+  List,
+  ListItem,
+  Screen,
+  ScreenLoading,
+  item,
+  moneyStrategyFormat,
+} from "~/ui";
+
+import PaymentTab from "../components/PaymentTab";
+import { useClient } from "../helpers";
 
 const SaleLine: FC<{
   sale: Sale;
@@ -65,8 +71,25 @@ const SalesTab = () => {
   const salesQuery = api.sales.list.useQuery({
     clientId: clientQuery.data?.id,
   });
+  const navigate = useNavigate();
+  const location = useLocation();
+
   return (
     <Box>
+      <Button
+        colorScheme={"blue"}
+        onClick={() => {
+          navigate({
+            pathname: `/sales/new`,
+            search: createSearchParams({
+              back: location.pathname + location.search,
+              client: clientQuery.data?.id + "",
+            }).toString(),
+          });
+        }}
+      >
+        Nueva venta
+      </Button>
       <List
         isLoading={salesQuery.isLoading}
         data={salesQuery.data ?? []}
@@ -77,16 +100,28 @@ const SalesTab = () => {
     </Box>
   );
 };
+
 export const SeeClient = () => {
   const clientQuery = useClient();
-
   const client = clientQuery.data;
+  const [params, setSearch] = useSearchParams();
+  const tab = params.get("tab") ? parseInt(params.get("tab") as string) : 0;
+
   if (clientQuery.isLoading) {
     return <ScreenLoading />;
   }
+
   return (
     <Screen back="/clients" title={`${client?.name}`}>
-      <Tabs mt="2">
+      <Tabs
+        mt="2"
+        index={tab}
+        onChange={(idx) => {
+          setSearch({
+            tab: idx + "",
+          });
+        }}
+      >
         <TabList>
           <Tab>Pagos</Tab>
           <Tab>Ventas</Tab>

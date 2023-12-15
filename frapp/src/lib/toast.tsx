@@ -17,28 +17,35 @@ const commonConfig: UseToastOptions = {
   position: "top-right",
   duration: 1500,
 };
+
+const DEFAULT_CONFIG = {
+  loadingConfig: {
+    description: "Cargando...",
+  },
+  successConfig: {
+    description: "Operación exitosa",
+  },
+  errorConfig: {
+    description: "Ocurrió un error",
+  },
+};
 export const useLitionFeedback = () => {
   const toast = useChakraToast();
 
   const wrapAsync = useCallback(
     async <T extends any>(
       callback: Promise<T>,
-      options: MapAsyncOptions = {
-        loadingConfig: {
-          description: "Cargando...",
-        },
-        successConfig: {
-          description: "Operación exitosa",
-        },
-        errorConfig: {
-          description: "Ocurrió un error",
-        },
-      }
+      options: MapAsyncOptions = {}
     ): Promise<T> => {
+      options = {
+        ...DEFAULT_CONFIG,
+        ...options,
+      };
       try {
         if (isPromise(callback)) {
           let loadingId: any | null = null;
           if (options.loadingConfig) {
+            console.log("is promise");
             loadingId = toast({
               ...commonConfig,
               status: "loading",
@@ -58,8 +65,10 @@ export const useLitionFeedback = () => {
           return result as any;
         }
       } catch (err) {
-        console.error(err);
         if (options.errorConfig) {
+          console.log("error", {
+            err,
+          });
           toast({
             ...commonConfig,
             status: "error",

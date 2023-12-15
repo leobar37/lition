@@ -1,5 +1,9 @@
 import { Box, Button, HStack, VStack } from "@chakra-ui/react";
-import { FORMAT_SIMPLE_DATE, MONEY_PEN_SYMBOL } from "@lition/common";
+import {
+  FORMAT_SIMPLE_DATE,
+  FORMAT_TIME,
+  MONEY_PEN_SYMBOL,
+} from "@lition/common";
 import { Product, Purchase, Supplier } from "@server";
 import dayjs from "dayjs";
 import { FC, ReactNode } from "react";
@@ -33,7 +37,12 @@ const PurchaseItem: FC<{
             "Cliente",
             purchase?.supplier?.name + " " + purchase?.supplier?.lastName
           )}
-          {item("Fecha", dayjs(purchase.createdAt).format(FORMAT_SIMPLE_DATE))}
+          {item(
+            "Fecha",
+            dayjs(purchase.createdAt).format(FORMAT_SIMPLE_DATE) +
+              ":" +
+              dayjs(purchase.createdAt).format(FORMAT_TIME)
+          )}
           {item("Total", `${MONEY_PEN_SYMBOL} ${purchase.total ?? 0}`)}
         </VStack>
       }

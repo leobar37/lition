@@ -74,6 +74,10 @@ export const router = createHashRouter(
       element: <fromSuppliers.CreateSupplier />,
     },
     {
+      path: "/suppliers/see/:id",
+      element: <fromSuppliers.SeeSupplier />,
+    },
+    {
       path: "/suppliers/:id",
       element: <fromSuppliers.UpdateSupplier />,
     },

@@ -123,10 +123,10 @@ export const UpdateSale = () => {
     },
     schema: frEditSaleSchema,
   });
-
   const saleData = saleQuery.data;
   const { findById } = useProductsSelectorHook();
   const { setLines } = useHandleLineSale();
+
   useEffect(() => {
     if (saleData) {
       const lines: any[] = (saleData.lines as any[]).map((line) => {

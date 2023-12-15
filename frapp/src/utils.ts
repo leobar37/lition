@@ -33,3 +33,11 @@ export const transform = <T = any>(
   });
   return newObj;
 };
+
+export const formatPhone = (phone?: string) => {
+  return phone ? (phone.startsWith("+51") ? phone : "+51" + phone) : "";
+};
+
+export type AnyFunction = (
+  ...args: any[]
+) => any | ((...args: any) => Promise<any>);

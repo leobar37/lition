@@ -131,6 +131,7 @@ model Transaction {
   createdAt DateTime @default(now()) @map("created_at")
   totalPaid Float    @map("total_paid")
   totalDebt Float    @map("total_debt")
+  isSilent  Boolean? @default(false) @map("is_silent")
 }
 
 model TransactionSupplier {
@@ -142,6 +143,7 @@ model TransactionSupplier {
   createdAt  DateTime  @default(now()) @map("created_at")
   totalPaid  Float     @map("total_paid")
   totalDebt  Float     @map("total_debt")
+  isSilent   Boolean?  @default(false) @map("is_silent")
 }
 
 model Unit {

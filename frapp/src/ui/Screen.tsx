@@ -13,6 +13,17 @@ import { IoIosArrowBack } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
 
+export const useBackUrl = () => {
+  const [searchParams] = useSearchParams();
+  const backUrl = searchParams.get("back");
+  return (url: string) => {
+    if (backUrl) {
+      return backUrl;
+    }
+    return url;
+  };
+};
+
 const BackButton: FC<ButtonProps> = ({ ...props }) => {
   return (
     <Button fontSize={"medium"} colorScheme="blue" {...props}>

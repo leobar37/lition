@@ -180,7 +180,6 @@ export const PaymentsTab = () => {
   );
 
   const { toast, wrapAsync } = useLitionFeedback();
-
   const debtClientQueryQueryKey = getQueryKey(api.clients.myDebt, undefined);
   const queryClient = useQueryClient();
 
@@ -238,6 +237,7 @@ export const PaymentsTab = () => {
   }, tu deuda total es de ${moneyStrategyFormat.format(
     debtClientQuery.data?.debt
   )}`;
+
   return (
     <VStack alignItems={"flex-start"} w="full">
       {debtElement}

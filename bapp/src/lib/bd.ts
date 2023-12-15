@@ -1,4 +1,4 @@
-import { PrismaClient, Transaction, TransactionSupplier } from "bd";
+import { PrismaClient, Transaction, TransactionSupplier, Prisma } from "bd";
 
 export const addTransactions = async (
   bd: PrismaClient,
@@ -13,7 +13,6 @@ export const addTransactions = async (
       createdAt: "desc",
     },
   });
-
   let totalDebt = lasTransaction?.totalDebt ?? 0;
   let totalPaid = lasTransaction?.totalPaid ?? 0;
   for await (const transaction of transactions) {
@@ -46,7 +45,7 @@ export const addSupplierTransactions = async (
       createdAt: "desc",
     },
   });
-
+  let createTransactions: Array<TransactionSupplier> = [];
   let totalDebt = lasTransaction?.totalDebt ?? 0;
   let totalPaid = lasTransaction?.totalPaid ?? 0;
   for await (const transaction of transactions) {
@@ -56,28 +55,53 @@ export const addSupplierTransactions = async (
     } else {
       totalPaid += transaction.total ?? 0;
     }
-
-    await bd.transactionSupplier.create({
+    const created = await bd.transactionSupplier.create({
       data: {
         ...transaction,
         totalDebt,
         totalPaid,
       } as any,
     });
+    createTransactions.push(created);
   }
 };
 
-export const prismaClient = new PrismaClient().$extends({
-  model: {
-    transaction: {
-      insertAndCalculate: (transactions: Partial<Transaction>[]) =>
-        addTransactions(prismaClient as any, transactions),
+const fullNameResult = {
+  needs: {
+    name: true,
+    lastName: true,
+  },
+  compute: ({ name, lastName }: { name: string; lastName: string }) => {
+    return `${name} ${lastName}`;
+  },
+};
+const fullNameExtension = Prisma.defineExtension({
+  result: {
+    user: {
+      fullName: fullNameResult,
     },
-    transactionSupplier: {
-      insertAndCalculate: (transactions: Partial<TransactionSupplier>[]) =>
-        addSupplierTransactions(prismaClient as any, transactions),
+    supplier: {
+      fullName: fullNameResult,
+    },
+    client: {
+      fullName: fullNameResult,
     },
   },
 });
+export const prismaClient = new PrismaClient()
+  .$extends({
+    model: {
+      transaction: {
+        insertAndCalculate: (transactions: Partial<Transaction>[]) =>
+          addTransactions(prismaClient as any, transactions),
+      },
+      transactionSupplier: {
+        insertAndCalculate: (transactions: Partial<TransactionSupplier>[]) =>
+          addSupplierTransactions(prismaClient as any, transactions),
+      },
+    },
+  })
+  .$extends(fullNameExtension);
 
+export type BdType = typeof prismaClient;
 export default prismaClient;

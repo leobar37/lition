@@ -21,6 +21,7 @@ export const clientsRouter = router({
       });
       return transactions;
     }),
+
   addPayment: publicProcedure
     .input(addPaymentSchema.and(z.object({ clientId: z.number() })))
     .mutation(async ({ ctx, input: { amount, clientId } }) => {
