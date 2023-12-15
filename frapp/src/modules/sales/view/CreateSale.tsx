@@ -17,6 +17,7 @@ import {
   SwitchFormInput,
   WrapperForm,
   useWrapperForm,
+  useBackUrl,
 } from "~/ui";
 import ItemsProducts from "../components/ItemsProducts";
 import { ToAccount } from "../components/ToAccount";
@@ -40,6 +41,7 @@ export const CreateSale = () => {
   const { lines, clear, getTotal } = useHandleLineSale();
   const { wrapAsync } = useLitionFeedback();
 
+  const withBackUrl = useBackUrl();
   const form = useWrapperForm<CreateSaleForm>({
     defaultValues: {
       isDispatched: false,
@@ -83,7 +85,8 @@ export const CreateSale = () => {
           };
         }
         await createdSale.mutateAsync(finalData);
-        navigate("/sales");
+        navigate(withBackUrl("/sales"));
+
         form.reset();
         clear();
       };

@@ -86,6 +86,16 @@ export const Suppliers = () => {
         </Button>
       </HStack>
       <List
+        search={{
+          props: {
+            name: {
+              label: "Nombre",
+            },
+            lastName: {
+              label: "Apellidos",
+            },
+          },
+        }}
         isLoading={suppliersQuery.isLoading}
         data={suppliersQuery.data ?? []}
         renderItem={(supplier) => (

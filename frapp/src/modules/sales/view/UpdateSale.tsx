@@ -6,19 +6,13 @@ import {
   StatLabel,
   StatNumber,
 } from "@chakra-ui/react";
-import {
-  FORMAT_SIMPLE_DATE,
-  StatusSaleType,
-  createSaleSchema,
-  isNill,
-} from "@lition/common";
+import { FORMAT_SIMPLE_DATE, StatusSaleType, isNill } from "@lition/common";
 import { useQueryClient } from "@tanstack/react-query";
 import { getQueryKey } from "@trpc/react-query";
 import dayjs from "dayjs";
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { z } from "zod";
-import { ClientsSelector, api } from "~/lib";
+import { ClientsSelector, api, useLitionFeedback } from "~/lib";
 import { useProductsSelectorHook } from "~/lib/selectors/ProductSelector";
 import {
   Screen,
@@ -26,10 +20,13 @@ import {
   WrapperForm,
   moneyStrategyFormat,
   useWrapperForm,
+  useConfirmDialog,
+  useBackUrl,
 } from "~/ui";
 import ItemsProducts from "../components/ItemsProducts";
+import { EditSaleForm, frEditSaleSchema } from "../domain";
 import { useHandleLineSale } from "../helpers/useHandleLineSale";
-
+import { useNavigate } from "react-router-dom";
 const useCurrentSale = () => {
   const { id = "-1" } = useParams();
   const saleQuery = api.sales.sale.useQuery(
@@ -42,22 +39,6 @@ const useCurrentSale = () => {
   );
   return saleQuery;
 };
-
-const frEditSaleSchema = createSaleSchema
-  .omit({
-    paymentSource: true,
-    total: true,
-    usedAlias: true,
-    paymentState: true,
-    lines: true,
-  })
-  .and(
-    z.object({
-      toAccount: z.number().optional().nullable(),
-    })
-  );
-
-type EditSaleForm = z.infer<typeof frEditSaleSchema>;
 
 const DispatchButton = () => {
   const dispatchMutation = api.sales.updateFlags.useMutation();
@@ -89,23 +70,42 @@ const DispatchButton = () => {
 };
 
 const CancelButton = () => {
+  const navigate = useNavigate();
   const dispatchMutation = api.sales.updateFlags.useMutation();
   const currentSale = useCurrentSale();
   const queryClient = useQueryClient();
   const queryKey = getQueryKey(api.sales.sale);
+  const listQueryKey = getQueryKey(api.sales.list);
+  const confirmDialog = useConfirmDialog();
+  const { wrapAsync } = useLitionFeedback();
+
+  const withBackUrl = useBackUrl();
+
   if (!isNill(currentSale.data?.canceledAt)) {
     return null;
   }
+
   return (
     <Button
       colorScheme="blue"
       isLoading={dispatchMutation.isLoading}
       onClick={async () => {
-        await dispatchMutation.mutateAsync({
-          id: currentSale.data?.id!,
-          type: StatusSaleType.CANCEL,
+        const action = async () => {
+          await dispatchMutation.mutateAsync({
+            id: currentSale.data?.id!,
+            type: StatusSaleType.CANCEL,
+          });
+          queryClient.invalidateQueries(queryKey);
+          queryClient.invalidateQueries(listQueryKey);
+        };
+        confirmDialog.open({
+          title: "Cancelar venta",
+          description: "¿Está seguro que desea cancelar la venta?",
+          onConfirm: async () => {
+            await wrapAsync(action());
+            navigate(withBackUrl("/sales"));
+          },
         });
-        queryClient.invalidateQueries(queryKey);
       }}
     >
       Cancelar venta

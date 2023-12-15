@@ -4,7 +4,11 @@ import { updateClientSchema, addPaymentSchema } from "@lition/common";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { Transaction } from "bd";
+import { getDebt } from "./helpers";
 
+export const shared = {
+  getDebt,
+};
 export const clientsRouter = router({
   myPayments: publicProcedure
     .input(
@@ -40,24 +44,7 @@ export const clientsRouter = router({
       })
     )
     .query(async ({ ctx, input }) => {
-      const lastTransaction = await ctx.bd.transaction.findFirst({
-        where: {
-          clientId: input.clientId,
-        },
-        orderBy: {
-          createdAt: "desc",
-        },
-      });
-      if (!lastTransaction) {
-        return {
-          debt: 0,
-        };
-      }
-      const debt = lastTransaction?.totalDebt - lastTransaction?.totalPaid;
-
-      return {
-        debt: debt,
-      };
+      return getDebt(input.clientId, ctx.bd);
     }),
   one: publicProcedure.input(z.number()).query(async ({ ctx, input }) => {
     const id = input;

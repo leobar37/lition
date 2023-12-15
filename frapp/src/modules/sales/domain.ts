@@ -26,3 +26,19 @@ export const frCreateSaleSchema = createSaleSchema
       ? omit(data, ["toAccount"])
       : data;
   });
+
+export const frEditSaleSchema = createSaleSchema
+  .omit({
+    paymentSource: true,
+    total: true,
+    usedAlias: true,
+    paymentState: true,
+    lines: true,
+  })
+  .and(
+    z.object({
+      toAccount: z.number().optional().nullable(),
+    })
+  );
+
+export type EditSaleForm = z.infer<typeof frEditSaleSchema>;

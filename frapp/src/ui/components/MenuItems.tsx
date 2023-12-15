@@ -10,8 +10,9 @@ import {
 import { DotsIcon } from "../icons";
 import { FC } from "react";
 
+export type ItemAction = { label: string; action: () => void };
 export type MenuItemsProps = {
-  items: { label: string; action: () => void }[];
+  items: ItemAction[];
 };
 export const MenuItems: FC<MenuItemsProps> = ({ items }) => {
   return (

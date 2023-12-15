@@ -3,6 +3,7 @@ import {
   InputGroup,
   Text,
   Textarea,
+  TextareaProps,
   VStack,
   useClipboard,
 } from "@chakra-ui/react";
@@ -21,8 +22,13 @@ export const buildWhatsappMessage = (text: string, options?: Options) => {
 type TextSenderProps = {
   text: string;
   phone?: string;
+  textAreaProps?: TextareaProps;
 };
-export const TextSender: FC<TextSenderProps> = ({ text, phone = "" }) => {
+export const TextSender: FC<TextSenderProps> = ({
+  text,
+  phone = "",
+  textAreaProps = {},
+}) => {
   const { hasCopied, onCopy, value, setValue } = useClipboard(text, {});
   const { toast } = useLitionFeedback();
 
@@ -61,6 +67,7 @@ export const TextSender: FC<TextSenderProps> = ({ text, phone = "" }) => {
           onChange={(e) => {
             setValue(e.target.value);
           }}
+          {...textAreaProps}
         />
       </InputGroup>
     </VStack>

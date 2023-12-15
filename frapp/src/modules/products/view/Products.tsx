@@ -82,6 +82,13 @@ export const Products = () => {
       </HStack>
 
       <List
+        search={{
+          props: {
+            name: {
+              label: "Nombre",
+            },
+          },
+        }}
         data={productsQuery?.data ?? []}
         isLoading={productsQuery.isLoading}
         renderItem={(product) => (
