@@ -1,10 +1,10 @@
-import { publicProcedure } from "../../router";
+import { isAuthedProcedure } from "../../router";
 import { z } from "zod";
 import { createUnitAliasSchema, updateUnitAliasSchema } from "@lition/common";
 import { TRPCError } from "@trpc/server";
 
 export const unitAliasSub = {
-  oneUnitAlias: publicProcedure
+  oneUnitAlias: isAuthedProcedure
     .input(z.object({ id: z.number() }))
     .query(async ({ ctx, input }) => {
       return await ctx.bd.unitAlias.findUnique({
@@ -13,7 +13,7 @@ export const unitAliasSub = {
         },
       });
     }),
-  unitAlias: publicProcedure
+  unitAlias: isAuthedProcedure
     .input(
       z.object({
         productId: z.number(),
@@ -26,7 +26,7 @@ export const unitAliasSub = {
         },
       });
     }),
-  createUnitAlias: publicProcedure
+  createUnitAlias: isAuthedProcedure
     .input(
       z.object({
         productId: z.number(),
@@ -54,7 +54,7 @@ export const unitAliasSub = {
         },
       });
     }),
-  updateUnitAlias: publicProcedure
+  updateUnitAlias: isAuthedProcedure
     .input(
       z.object({
         id: z.number(),
@@ -71,7 +71,7 @@ export const unitAliasSub = {
         },
       });
     }),
-  deleteUnitAlias: publicProcedure
+  deleteUnitAlias: isAuthedProcedure
     .input(z.object({ id: z.number() }))
     .mutation(async ({ ctx, input }) => {
       return await ctx.bd.unitAlias.delete({

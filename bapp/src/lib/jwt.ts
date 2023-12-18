@@ -1,6 +1,6 @@
 import * as jwt from "jsonwebtoken";
 
-const SECRET = "secret";
+const SECRET = process.env.JWT_SECRET || "secret";
 
 const jwtSign = (payload: Record<string, any>) => {
   return jwt.sign(payload, SECRET, {
@@ -9,7 +9,13 @@ const jwtSign = (payload: Record<string, any>) => {
 };
 
 const jwtVerify = (token: string) => {
-  return jwt.verify(token, SECRET);
+  try {
+    return jwt.verify(token, SECRET);
+  } catch (e) {
+    console.log("error", e);
+
+    return false;
+  }
 };
 
 const decode = (

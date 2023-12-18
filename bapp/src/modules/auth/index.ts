@@ -1,8 +1,8 @@
-import { publicProcedure, router } from "../../router";
 import { loginSchema } from "@lition/common";
-import { passwordHandleStrategy } from "../../lib";
 import { TRPCError } from "@trpc/server";
 import { omit } from "radash";
+import { passwordHandleStrategy } from "../../lib";
+import { publicProcedure, router } from "../../router";
 
 export const authRouter = router({
   login: publicProcedure.input(loginSchema).mutation(async ({ ctx, input }) => {

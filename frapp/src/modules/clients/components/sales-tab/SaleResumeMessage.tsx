@@ -13,22 +13,19 @@ const SaleResumenMessage: FC<{
   const saleQuery = api.sales.sale.useQuery({
     id: saleId,
   });
-
   const sale = saleQuery.data;
-
   const resume = useMemo(() => {
     if (!sale || !client) {
       return "";
     }
     const msgBuilder = createMsgBuilder();
     msgBuilder
-      .addTitle("Resumen de venta")
+      .addTitle("Resumen de venta:")
       .addProp(`Fecha`, dayjs(sale.createdAt).format(FORMAT_SIMPLE_DATE))
       .addProp(`Monto`, moneyStrategyFormat.format(sale.total))
-      .addProp(`Cliente`, client.name ?? "")
+      .addProp(`Cliente`, client.name + " " + client.lastName)
       .addProp(`Telefono`, formatPhone(client?.phone))
-      .addTitle(`Productos`);
-
+      .addTitle(`Items:`);
     const lines = ((sale?.lines as any[]) ?? []).map((item) => {
       const msg = `${(item as any).product.name} x ${
         item.amount
@@ -36,6 +33,7 @@ const SaleResumenMessage: FC<{
       return msg;
     });
     msgBuilder.list(lines);
+    msgBuilder.addProp(`Total`, moneyStrategyFormat.format(sale.total));
     return msgBuilder.build();
     // @ts-ignore
   }, [sale, client]);

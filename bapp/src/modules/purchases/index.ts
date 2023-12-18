@@ -5,11 +5,10 @@ import {
 } from "@lition/common";
 import { Purchase, PurchaseLineItem, TransactionSupplier } from "bd";
 import { z } from "zod";
-import { publicProcedure, router } from "../../router";
-import { TRPCError } from "@trpc/server";
+import { isAuthedProcedure, router } from "../../router";
 
 export const purchases = router({
-  list: publicProcedure
+  list: isAuthedProcedure
     .input(
       z
         .object({
@@ -33,7 +32,7 @@ export const purchases = router({
       });
       return sales;
     }),
-  one: publicProcedure
+  one: isAuthedProcedure
     .input(
       z.object({
         id: z.number(),
@@ -52,7 +51,7 @@ export const purchases = router({
       return purchase;
     }),
 
-  updateFlags: publicProcedure
+  updateFlags: isAuthedProcedure
     .input(
       z.object({
         id: z.number(),
@@ -64,23 +63,6 @@ export const purchases = router({
       let updatedPurchase: Purchase | null = null;
       switch (type) {
         case StatusSaleType.CANCEL: {
-          const purchase = await ctx.bd.purchase.findFirst({
-            where: {
-              id: input.id,
-            },
-          });
-
-          const { debt } = await ctx.shared.suppliers.getDebt(
-            purchase?.supplierId!,
-            ctx.bd
-          );
-          if ((purchase?.total ?? 0) > debt) {
-            // cannot cancel this purchase, because the debt is less than the total
-            throw new TRPCError({
-              code: "BAD_REQUEST",
-              message: "cannot-delete-purchase",
-            });
-          }
           updatedPurchase = await ctx.bd.purchase.update({
             where: {
               id: input.id,
@@ -89,20 +71,12 @@ export const purchases = router({
               canceledAt: new Date(),
             },
           });
-          // create a transaction
-          const transaction: Partial<TransactionSupplier> = {
-            paid: true,
-            total: purchase?.total,
-            supplierId: purchase?.supplierId,
-            isSilent: true,
-          };
-          await ctx.bd.transactionSupplier.insertAndCalculate([transaction]);
           break;
         }
       }
       return updatedPurchase;
     }),
-  create: publicProcedure
+  create: isAuthedProcedure
     .input(createPurchaseSchema)
     .mutation(async ({ ctx, input }) => {
       const bd = ctx.bd;
@@ -166,9 +140,7 @@ export const purchases = router({
           supplierId,
         });
       }
-
       await bd.transactionSupplier.insertAndCalculate(transactions);
-
       return {
         purchase: createdPurchase,
       };

@@ -1,8 +1,8 @@
 import { PaymentState, createSaleSchema } from "@lition/common";
 import { SaleLineItem, Transaction } from "bd";
-import { publicProcedure } from "../../../router";
+import { isAuthedProcedure } from "../../../router";
 
-export const create = publicProcedure
+export const create = isAuthedProcedure
   .input(createSaleSchema)
   .mutation(async ({ ctx, input }) => {
     const bd = ctx.bd;

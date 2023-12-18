@@ -6,92 +6,177 @@ import * as products from "../modules/products";
 import * as fromSales from "../modules/sales";
 import * as fromSuppliers from "../modules/suppliers";
 import * as fromPurchases from "../modules/purchases";
+import { TrpcIntegration } from "~/lib";
 
 export const router = createHashRouter(
   [
     {
       path: "/",
-      element: <Dashboard />,
+      element: (
+        <TrpcIntegration>
+          <Dashboard />
+        </TrpcIntegration>
+      ),
     },
     {
       path: "/clients",
-      element: <fromClints.Clients />,
+      element: (
+        <TrpcIntegration>
+          <fromClints.Clients />
+        </TrpcIntegration>
+      ),
     },
     {
       path: "/clients/new",
-      element: <fromClints.NewClient />,
+      element: (
+        <TrpcIntegration>
+          <fromClints.NewClient />
+        </TrpcIntegration>
+      ),
     },
     {
       path: "/clients/see/:id",
-      element: <fromClints.SeeClient />,
+      element: (
+        <TrpcIntegration>
+          <fromClints.SeeClient />
+        </TrpcIntegration>
+      ),
     },
     {
       path: "/clients/:id",
-      element: <fromClints.UpdateClient />,
+      element: (
+        <TrpcIntegration>
+          <fromClints.UpdateClient />
+        </TrpcIntegration>
+      ),
     },
     {
       path: "/auth/login",
-      element: <fromAuth.Login />,
+      element: (
+        <TrpcIntegration>
+          <fromAuth.Login />
+        </TrpcIntegration>
+      ),
     },
     {
       path: "/products",
-      element: <products.Products />,
+      element: (
+        <TrpcIntegration>
+          <products.Products />
+        </TrpcIntegration>
+      ),
     },
     {
       path: "/products/new",
-      element: <products.NewProduct />,
+      element: (
+        <TrpcIntegration>
+          <products.NewProduct />
+        </TrpcIntegration>
+      ),
     },
     {
       path: "/products/:id",
-      element: <products.UpdateProduct />,
+      element: (
+        <TrpcIntegration>
+          <products.UpdateProduct />
+        </TrpcIntegration>
+      ),
     },
     {
       path: "/products/:productId/create-alias",
-      element: <products.UnitAliasCreate />,
+      element: (
+        <TrpcIntegration>
+          <products.UnitAliasCreate />
+        </TrpcIntegration>
+      ),
     },
     {
       path: "/products/:productId/alias/:id",
-      element: <products.UnitAliasUpdate />,
+      element: (
+        <TrpcIntegration>
+          <products.UnitAliasUpdate />
+        </TrpcIntegration>
+      ),
     },
     {
       path: "/sales",
-      element: <fromSales.Sales />,
+      element: (
+        <TrpcIntegration>
+          <fromSales.Sales />
+        </TrpcIntegration>
+      ),
     },
     {
       path: "/sales/new",
-      element: <fromSales.CreateSale />,
+      element: (
+        <TrpcIntegration>
+          <fromSales.CreateSale />
+        </TrpcIntegration>
+      ),
     },
     {
       path: "/sales/:id",
-      element: <fromSales.UpdateSale />,
+      element: (
+        <TrpcIntegration>
+          <fromSales.UpdateSale />
+        </TrpcIntegration>
+      ),
     },
     {
       path: "/suppliers",
-      element: <fromSuppliers.Suppliers />,
+      element: (
+        <TrpcIntegration>
+          <fromSuppliers.Suppliers />
+        </TrpcIntegration>
+      ),
     },
     {
       path: "/suppliers/new",
-      element: <fromSuppliers.CreateSupplier />,
+      element: (
+        <TrpcIntegration>
+          <fromSuppliers.CreateSupplier />
+        </TrpcIntegration>
+      ),
     },
     {
       path: "/suppliers/see/:id",
-      element: <fromSuppliers.SeeSupplier />,
+      element: (
+        <TrpcIntegration>
+          <fromSuppliers.SeeSupplier />
+        </TrpcIntegration>
+      ),
     },
     {
       path: "/suppliers/:id",
-      element: <fromSuppliers.UpdateSupplier />,
+      element: (
+        <TrpcIntegration>
+          <fromSuppliers.UpdateSupplier />
+        </TrpcIntegration>
+      ),
     },
     {
       path: "/purchases",
-      element: <fromPurchases.Purchases />,
+      element: (
+        <TrpcIntegration>
+          <fromPurchases.Purchases />
+        </TrpcIntegration>
+      ),
     },
     {
       path: "/purchases/new",
-      element: <fromPurchases.CreatePurchase />,
+      element: (
+        <TrpcIntegration>
+          <fromPurchases.CreatePurchase />
+        </TrpcIntegration>
+      ),
     },
     {
       path: "/purchases/:id",
-      element: <fromPurchases.UpdatePurchase />,
+      element: (
+        <TrpcIntegration>
+          <fromPurchases.UpdatePurchase />
+        </TrpcIntegration>
+      ),
     },
   ],
   {

@@ -7,7 +7,7 @@ import { TRPCError } from "@trpc/server";
 import { TransactionSupplier } from "bd";
 import { pick } from "radash";
 import { z } from "zod";
-import { publicProcedure, router } from "../../router";
+import { isAuthedProcedure, router } from "../../router";
 import { getDebt } from "./helpers";
 
 export const shared = {
@@ -15,7 +15,7 @@ export const shared = {
 };
 
 export const suppliersRouter = router({
-  myPayments: publicProcedure
+  myPayments: isAuthedProcedure
     .input(
       z.object({
         supplierId: z.number(),
@@ -34,7 +34,7 @@ export const suppliersRouter = router({
       });
       return transactions;
     }),
-  addPayment: publicProcedure
+  addPayment: isAuthedProcedure
     .input(addPaymentSchema.and(z.object({ supplierId: z.number() })))
     .mutation(async ({ ctx, input: { amount, supplierId } }) => {
       const transaction: Partial<TransactionSupplier> = {
@@ -45,7 +45,7 @@ export const suppliersRouter = router({
       await ctx.bd.transactionSupplier.insertAndCalculate([transaction]);
       return true;
     }),
-  myDebt: publicProcedure
+  myDebt: isAuthedProcedure
     .input(
       z.object({
         id: z.number(),
@@ -54,7 +54,7 @@ export const suppliersRouter = router({
     .query(async ({ ctx: { bd }, input: { id } }) => {
       return getDebt(id, bd);
     }),
-  delete: publicProcedure
+  delete: isAuthedProcedure
     .input(
       z.object({
         id: z.number(),
@@ -83,7 +83,7 @@ export const suppliersRouter = router({
       });
       return updated;
     }),
-  update: publicProcedure
+  update: isAuthedProcedure
     .input(
       z.object({
         id: z.number(),
@@ -121,7 +121,7 @@ export const suppliersRouter = router({
       });
       return updatedSupplier;
     }),
-  one: publicProcedure
+  one: isAuthedProcedure
     .input(
       z.object({
         id: z.number(),
@@ -134,7 +134,7 @@ export const suppliersRouter = router({
         },
       });
     }),
-  list: publicProcedure.query(async ({ ctx }) => {
+  list: isAuthedProcedure.query(async ({ ctx }) => {
     const bussiness = ctx.bussiness;
     const suppliers = await ctx.bd.supplier.findMany({
       where: {
@@ -147,7 +147,7 @@ export const suppliersRouter = router({
     });
     return suppliers;
   }),
-  create: publicProcedure
+  create: isAuthedProcedure
     .input(createSupplierSchema)
     .mutation(async ({ ctx, input }) => {
       const bd = ctx.bd;

@@ -43,36 +43,38 @@ export type AnyFunction = (
   ...args: any[]
 ) => any | ((...args: any) => Promise<any>);
 
+const LINE_SALT = "\r\n\r\n";
+
 export const createMsgBuilder = () => {
   const msgBuilder = {
     tokens: [] as Array<string>,
     line: (msg: string) => {
       msgBuilder.tokens.push(msg);
+      msgBuilder.tokens.push(LINE_SALT);
       return msgBuilder;
     },
     build: () => {
-      return msgBuilder.tokens.join("\n");
+      const result = msgBuilder.tokens.join(" ");
+      return result;
     },
     addTitle: (title: string) => {
-      msgBuilder.tokens.push(`${title}`);
-      msgBuilder.tokens.push(
-        title
-          .split("")
-          .map(() => "-")
-          .join("")
-      );
+      msgBuilder.tokens.push(`*-${title}-*`);
+      msgBuilder.tokens.push(LINE_SALT);
+
       return msgBuilder;
     },
     lineEmpty: () => {
-      msgBuilder.tokens.push("\n");
+      msgBuilder.tokens.push(LINE_SALT);
       return msgBuilder;
     },
     list: (items: string[]) => {
-      msgBuilder.tokens.push(items.map((item) => `- ${item}`).join("\n"));
+      msgBuilder.tokens.push(items.map((item) => `- ${item}`).join(LINE_SALT));
+      msgBuilder.tokens.push(LINE_SALT);
       return msgBuilder;
     },
     addProp: (prop: string, value: string | number) => {
       msgBuilder.tokens.push(`*${prop}*: ${value}`);
+      msgBuilder.tokens.push(LINE_SALT);
       return msgBuilder;
     },
   };

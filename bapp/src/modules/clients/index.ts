@@ -1,5 +1,5 @@
 import { createClientSchema } from "@lition/common";
-import { publicProcedure, router } from "../../router";
+import { isAuthedProcedure, router } from "../../router";
 import { updateClientSchema, addPaymentSchema } from "@lition/common";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
@@ -10,7 +10,7 @@ export const shared = {
   getDebt,
 };
 export const clientsRouter = router({
-  myPayments: publicProcedure
+  myPayments: isAuthedProcedure
     .input(
       z.object({
         clientId: z.number(),
@@ -26,7 +26,7 @@ export const clientsRouter = router({
       return transactions;
     }),
 
-  addPayment: publicProcedure
+  addPayment: isAuthedProcedure
     .input(addPaymentSchema.and(z.object({ clientId: z.number() })))
     .mutation(async ({ ctx, input: { amount, clientId } }) => {
       const transaction: Partial<Transaction> = {
@@ -37,7 +37,7 @@ export const clientsRouter = router({
       await ctx.bd.transaction.insertAndCalculate([transaction]);
       return true;
     }),
-  myDebt: publicProcedure
+  myDebt: isAuthedProcedure
     .input(
       z.object({
         clientId: z.number(),
@@ -46,7 +46,7 @@ export const clientsRouter = router({
     .query(async ({ ctx, input }) => {
       return getDebt(input.clientId, ctx.bd);
     }),
-  one: publicProcedure.input(z.number()).query(async ({ ctx, input }) => {
+  one: isAuthedProcedure.input(z.number()).query(async ({ ctx, input }) => {
     const id = input;
     const client = await ctx.bd.client.findUnique({
       where: {
@@ -62,7 +62,7 @@ export const clientsRouter = router({
     }
     return client;
   }),
-  create: publicProcedure
+  create: isAuthedProcedure
     .input(createClientSchema)
     .mutation(async ({ ctx, input }) => {
       const client = await ctx.bd.client.create({
@@ -73,7 +73,7 @@ export const clientsRouter = router({
       });
       return client;
     }),
-  list: publicProcedure.query(async ({ ctx }) => {
+  list: isAuthedProcedure.query(async ({ ctx }) => {
     const business = ctx.bussiness;
     return await ctx.bd.client.findMany({
       where: {
@@ -85,7 +85,7 @@ export const clientsRouter = router({
       },
     });
   }),
-  update: publicProcedure
+  update: isAuthedProcedure
     .input(
       z.object({
         id: z.number(),
@@ -102,25 +102,27 @@ export const clientsRouter = router({
       });
       return client;
     }),
-  delete: publicProcedure.input(z.number()).mutation(async ({ ctx, input }) => {
-    const id = input;
-    const client = await ctx.bd.client.update({
-      where: {
-        id: id,
-      },
-      data: {
-        deletedAt: new Date(),
-      },
-    });
-    // update sales to canceled
-    await ctx.bd.sale.updateMany({
-      where: {
-        clientId: id,
-      },
-      data: {
-        canceledAt: new Date(),
-      },
-    });
-    return client;
-  }),
+  delete: isAuthedProcedure
+    .input(z.number())
+    .mutation(async ({ ctx, input }) => {
+      const id = input;
+      const client = await ctx.bd.client.update({
+        where: {
+          id: id,
+        },
+        data: {
+          deletedAt: new Date(),
+        },
+      });
+      // update sales to canceled
+      await ctx.bd.sale.updateMany({
+        where: {
+          clientId: id,
+        },
+        data: {
+          canceledAt: new Date(),
+        },
+      });
+      return client;
+    }),
 });

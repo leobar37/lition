@@ -1,44 +1,20 @@
 import { CreateFastifyContextOptions } from "@trpc/server/adapters/fastify";
-import { prismaClient } from "./lib/bd";
 import { jwtHandleStrategy } from "./lib";
-import { isEmpty } from "radash";
-import { Business, User } from "bd";
-import * as fromSuppliers from "./modules/suppliers";
+import { prismaClient } from "./lib/bd";
 import * as fromClients from "./modules/clients";
+import * as fromSuppliers from "./modules/suppliers";
 export const shared = {
   suppliers: fromSuppliers.shared,
   clients: fromClients.shared,
 };
 export async function createContext({ req, res }: CreateFastifyContextOptions) {
-  const headerAuthorization = req.headers["authorization"];
-
-  const token = headerAuthorization?.split(" ")[1];
-  // verify token if this is valid
-
-  const infoAuth = jwtHandleStrategy.decode(token ?? "");
-  let user: User | null = null;
-  let bussiness: Business | null = null;
-  if (token && !isEmpty(token) && infoAuth) {
-    user = await prismaClient.user.findUnique({
-      where: {
-        id: infoAuth.id,
-      },
-    });
-    bussiness = await prismaClient.business.findUnique({
-      where: {
-        id: infoAuth.bussinessId,
-      },
-    });
-  }
-
   return {
     req,
     res,
     bd: prismaClient,
     jwt: jwtHandleStrategy,
-    user,
-    bussiness,
     shared,
   };
 }
+
 export type Context = Awaited<ReturnType<typeof createContext>>;

@@ -1,7 +1,7 @@
-import { publicProcedure } from "../../../router";
+import { isAuthedProcedure } from "../../../router";
 import { z } from "zod";
 
-export const sale = publicProcedure
+export const sale = isAuthedProcedure
   .input(
     z.object({
       id: z.number(),

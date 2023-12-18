@@ -1,11 +1,11 @@
-import { publicProcedure } from "../../router";
+import { isAuthedProcedure } from "../../router";
 import { z } from "zod";
 
 export const unitSub = {
-  units: publicProcedure.query(({ ctx }) => {
+  units: isAuthedProcedure.query(({ ctx }) => {
     return ctx.bd.unit.findMany();
   }),
-  unitOne: publicProcedure
+  unitOne: isAuthedProcedure
     .input(
       z.object({
         id: z.number(),

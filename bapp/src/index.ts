@@ -11,6 +11,12 @@ import { sales } from "./modules/sales";
 import { suppliersRouter } from "./modules/suppliers";
 import { router } from "./router";
 export type * from "bd";
+import { passwordHandleStrategy } from "./lib/bcrypt";
+console.log(
+  passwordHandleStrategy.encrypt("tanchi123@").then((d) => {
+    console.log(d);
+  })
+);
 
 // fastify cors
 

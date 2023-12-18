@@ -46,7 +46,10 @@ export const TextSender: FC<TextSenderProps> = ({
       <Button
         colorScheme="whatsapp"
         onClick={() => {
-          window.open(buildWhatsappMessage(text, { phone }), "_blank");
+          window.open(
+            buildWhatsappMessage(encodeURIComponent(value), { phone }),
+            "_blank"
+          );
         }}
       >
         Enviar a WhatsApp

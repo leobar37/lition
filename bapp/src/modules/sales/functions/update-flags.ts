@@ -1,11 +1,10 @@
 import { StatusSaleType } from "@lition/common";
-import { TRPCError } from "@trpc/server";
-import { Sale, Transaction } from "bd";
-import { publicProcedure } from "../../../router";
+import { Sale } from "bd";
+import { isAuthedProcedure } from "../../../router";
 
 import { z } from "zod";
 
-export const updateFlags = publicProcedure
+export const updateFlags = isAuthedProcedure
   .input(
     z.object({
       id: z.number(),
@@ -23,16 +22,6 @@ export const updateFlags = publicProcedure
     let updatedSale: Sale | null = null;
     switch (type) {
       case StatusSaleType.CANCEL: {
-        const { debt } = await ctx.shared.clients.getDebt(
-          sale?.clientId!,
-          ctx.bd
-        );
-        if (sale?.total! > debt) {
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: "cannot-cancel-this-purchase",
-          });
-        }
         updatedSale = await ctx.bd.sale.update({
           where: {
             id: input.id,
@@ -41,13 +30,6 @@ export const updateFlags = publicProcedure
             canceledAt: new Date(),
           },
         });
-        const discountTransaction: Partial<Transaction> = {
-          clientId: sale?.clientId!,
-          paid: true,
-          total: sale?.total!,
-          isSilent: true,
-        };
-        await ctx.bd.transaction.insertAndCalculate([discountTransaction]);
         break;
       }
       case StatusSaleType.TOGGLE_DISPATCH: {
