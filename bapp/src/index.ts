@@ -11,7 +11,6 @@ import { sales } from "./modules/sales";
 import { suppliersRouter } from "./modules/suppliers";
 import { router } from "./router";
 export type * from "bd";
-import { passwordHandleStrategy } from "./lib/bcrypt";
 
 // fastify cors
 
