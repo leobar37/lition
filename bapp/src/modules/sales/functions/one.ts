@@ -14,7 +14,11 @@ export const sale = publicProcedure
       },
       include: {
         client: true,
-        lines: true,
+        lines: {
+          include: {
+            product: true,
+          },
+        },
       },
     });
     return sale;

@@ -5,13 +5,13 @@
   "main": "./dist/index.cjs.js",
   "module": "./dist/index.esm.js",
   "scripts": {
-    "db:generate": "prisma generate",
-    "db:push": "doppler run -- prisma db push --skip-generate",
+    "db:generate": "doppler run -- prisma generate",
+    "db:push": "doppler run -- prisma db push --skip-generate ",
     "studio": "doppler run -- prisma studio",
-    "reset": "pnpm run db:push && pnpm run dkb:generate && pnpm run seed",
+    "reset": "pnpm run db:push --force-reset && pnpm run db:generate && pnpm run seed",
     "dev": "tsup",
     "build": "tsup --env.NODE_ENV production",
-    "seed": "tsup --env.NODE_ENV seed"
+    "seed": "doppler run -- tsup --env.NODE_ENV seed"
   },
   "keywords": [],
   "author": "",

@@ -1,4 +1,5 @@
 import {
+  Box,
   Center,
   FormControl,
   FormLabel,
@@ -15,6 +16,7 @@ import { isEmpty } from "radash";
 import { FC, useEffect, useMemo, useState } from "react";
 import { Scrollbars } from "react-custom-scrollbars-2";
 import { Spinner } from "~/ui";
+
 const ScrollbarsChakra = chakra(Scrollbars);
 
 export type ListProps<T = any> = {
@@ -84,6 +86,7 @@ export const useSearch = ({ data, search }: Props) => {
     ...props,
   };
 };
+
 const SearchComp: FC<ReturnType<typeof useSearch>> = ({
   query,
   setQuery,
@@ -150,40 +153,50 @@ export const List = <T = any,>({
   const searchProps = useSearch({ data, search });
 
   const content = (
-    <ListsPropsProvider value={{ data, renderItem, isLoading, search }}>
-      <VStack spacing={5} px="5" py="4">
-        <SearchComp {...searchProps} />
-        {searchProps.filteredData.map((item) => {
-          return renderItem(item);
-        })}
-        {isEmpty && !isLoading && <Text my="4">No hay elementos</Text>}
-        {isLoading && (
-          <Center>
-            <VStack alignItems={"center"}>
-              <Spinner />
-              <Text fontWeight={"semibold"} fontSize={"x-large"}>
-                Cargando...
-              </Text>
-            </VStack>
-          </Center>
-        )}
-      </VStack>
-    </ListsPropsProvider>
+    <VStack spacing={5} px="5" py="4">
+      {searchProps.filteredData.map((item) => {
+        return renderItem(item);
+      })}
+      {isEmpty && !isLoading && <Text my="4">No hay elementos</Text>}
+      {isLoading && (
+        <Center>
+          <VStack alignItems={"center"}>
+            <Spinner />
+            <Text fontWeight={"semibold"} fontSize={"x-large"}>
+              Cargando...
+            </Text>
+          </VStack>
+        </Center>
+      )}
+    </VStack>
   );
 
   if (data.length > 6) {
     return (
-      <ScrollbarsChakra
-        px="2"
-        mt="4"
-        style={{
-          height: "calc(100vh - 200px)",
-        }}
-      >
-        {content}
-      </ScrollbarsChakra>
+      <ListsPropsProvider value={{ data, renderItem, isLoading, search }}>
+        <Box>
+          <SearchComp {...searchProps} />
+          <ScrollbarsChakra
+            px="2"
+            mt="5"
+            mx="auto"
+            style={{
+              height: "70vh",
+            }}
+          >
+            {content}
+          </ScrollbarsChakra>
+        </Box>
+      </ListsPropsProvider>
     );
   }
 
-  return content;
+  return (
+    <ListsPropsProvider value={{ data, renderItem, isLoading, search }}>
+      <Box mx={"auto"}>
+        <SearchComp {...searchProps} />
+        {content}
+      </Box>
+    </ListsPropsProvider>
+  );
 };

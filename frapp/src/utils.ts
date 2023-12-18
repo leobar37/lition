@@ -35,9 +35,46 @@ export const transform = <T = any>(
 };
 
 export const formatPhone = (phone?: string) => {
-  return phone ? (phone.startsWith("+51") ? phone : "+51" + phone) : "";
+  const result = phone ? (phone.startsWith("+51") ? phone : "+51" + phone) : "";
+  return result.replace(/\s/g, "");
 };
 
 export type AnyFunction = (
   ...args: any[]
 ) => any | ((...args: any) => Promise<any>);
+
+export const createMsgBuilder = () => {
+  const msgBuilder = {
+    tokens: [] as Array<string>,
+    line: (msg: string) => {
+      msgBuilder.tokens.push(msg);
+      return msgBuilder;
+    },
+    build: () => {
+      return msgBuilder.tokens.join("\n");
+    },
+    addTitle: (title: string) => {
+      msgBuilder.tokens.push(`${title}`);
+      msgBuilder.tokens.push(
+        title
+          .split("")
+          .map(() => "-")
+          .join("")
+      );
+      return msgBuilder;
+    },
+    lineEmpty: () => {
+      msgBuilder.tokens.push("\n");
+      return msgBuilder;
+    },
+    list: (items: string[]) => {
+      msgBuilder.tokens.push(items.map((item) => `- ${item}`).join("\n"));
+      return msgBuilder;
+    },
+    addProp: (prop: string, value: string | number) => {
+      msgBuilder.tokens.push(`*${prop}*: ${value}`);
+      return msgBuilder;
+    },
+  };
+  return msgBuilder;
+};

@@ -50,7 +50,7 @@ const createSupplier = ({
 const UNITS: Partial<Unit>[] = [
   {
     allow_decimal: true,
-    name: "Kilogram",
+    name: "Kilogramo",
     symbol: "kg",
   },
   {
@@ -76,11 +76,11 @@ const PRODUCTS: Partial<
 >[] = [
   {
     name: "Pollo",
-    unitName: "Kilogram",
+    unitName: "Kilogramo",
   },
   {
     name: "Huevos",
-    unitName: "Unit",
+    unitName: "Unidad",
   },
 ];
 
@@ -136,7 +136,7 @@ async function main() {
   }
 
   // clients
-  for await (const _iter of range(0, 10)) {
+  for await (const _iter of range(0, 50)) {
     const fakeClient = createClient({
       businessId: businessResult.id,
       bussinessName: businessResult.name,
@@ -147,7 +147,7 @@ async function main() {
   }
 
   // suppliers
-  for await (const _iter of range(0, 10)) {
+  for await (const _iter of range(0, 50)) {
     const fakeClient = createSupplier({
       businessId: businessResult.id,
       bussinessName: businessResult.name,

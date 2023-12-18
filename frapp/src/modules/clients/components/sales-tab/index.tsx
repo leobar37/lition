@@ -2,7 +2,7 @@ import { Box, Button, VStack } from "@chakra-ui/react";
 import { FORMAT_SIMPLE_DATE } from "@lition/common";
 import { Sale } from "@server";
 import dayjs from "dayjs";
-import { FC, Suspense, useMemo } from "react";
+import { FC } from "react";
 import { createSearchParams, useLocation, useNavigate } from "react-router-dom";
 import { api } from "~/lib";
 import {
@@ -10,96 +10,21 @@ import {
   List,
   ListItem,
   MenuItems,
-  TextSender,
   item,
   moneyStrategyFormat,
   useSimpleModal,
 } from "~/ui";
-
-import { formatPhone } from "~/utils";
 import { useClient } from "../../helpers";
-const createMsgBuilder = () => {
-  const msgBuilder = {
-    tokens: [] as Array<string>,
-    line: (msg: string) => {
-      msgBuilder.tokens.push(msg);
-      return msgBuilder;
-    },
-    build: () => {
-      return msgBuilder.tokens.join("\n");
-    },
-    addTitle: (title: string) => {
-      msgBuilder.tokens.push(`${title}`);
-      msgBuilder.tokens.push(
-        Array.from({ length: title.length })
-          .map((_) => "-")
-          .join("")
-      );
-      return msgBuilder;
-    },
-    list: (items: string[]) => {
-      msgBuilder.tokens.push(items.map((item) => `- ${item}`).join("\n"));
-      return msgBuilder;
-    },
-    addProp: (prop: string, value: string | number) => {
-      msgBuilder.tokens.push(`*${prop}*: ${value}`);
-      return msgBuilder;
-    },
-  };
-  return msgBuilder;
-};
-const SaleReumenMessage: FC<{
-  saleId: number;
-}> = ({ saleId }) => {
-  const saleQuery = api.sales.sale.useQuery({
-    id: saleId,
-  });
+import SaleResumeMessage from "./SaleResumeMessage";
 
-  const clientQuery = useClient();
-
-  const sale = saleQuery.data;
-
-  const resume = useMemo(() => {
-    if (!sale) {
-      return "";
-    }
-    const msgBuilder = createMsgBuilder();
-    msgBuilder
-      .addTitle("Resumen de venta")
-      .addProp(`Fecha`, dayjs(sale.createdAt).format(FORMAT_SIMPLE_DATE))
-      .addProp(`Monto`, moneyStrategyFormat.format(sale.total))
-      .addProp(`Cliente`, clientQuery.data?.name ?? "")
-      .addProp(`Telefono`, formatPhone(clientQuery.data?.phone))
-      .addTitle(`Productos`);
-    const lines = ((sale?.lines as any[]) ?? []).map((item) => {
-      const msg = `${item.productId} x ${
-        item.amount
-      } = ${moneyStrategyFormat.format(item.amount * item.price)}`;
-      return msg;
-    });
-    msgBuilder.list(lines);
-    return msgBuilder.build();
-  }, [sale]);
-
-  if (saleQuery.isLoading) {
-    return <div>Cargando...</div>;
-  }
-  return (
-    <TextSender
-      text={resume}
-      phone={formatPhone(clientQuery.data?.phone)}
-      textAreaProps={{
-        rows: 10,
-      }}
-    />
-  );
-};
 export const SaleLine: FC<{
   sale: Sale;
 }> = ({ sale }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const simpleModal = useSimpleModal();
+  const clientQuery = useClient();
+
   const items: ItemAction[] = [
     {
       label: "Ver",
@@ -117,7 +42,12 @@ export const SaleLine: FC<{
       action: () => {
         simpleModal.open({
           title: "Resumen de venta",
-          content: <SaleReumenMessage saleId={sale.id} />,
+          content: (
+            <SaleResumeMessage
+              client={clientQuery.data as any}
+              saleId={sale.id}
+            />
+          ),
         });
       },
     },
@@ -130,11 +60,7 @@ export const SaleLine: FC<{
           {item("Monto", moneyStrategyFormat.format(sale.total))}
         </VStack>
       }
-      actions={
-        <>
-          <MenuItems items={items} />
-        </>
-      }
+      actions={<MenuItems items={items} />}
     />
   );
 };

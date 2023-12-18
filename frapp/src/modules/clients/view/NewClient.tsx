@@ -13,7 +13,7 @@ import {
   WrapperForm,
   useWrapperForm,
 } from "~/ui";
-import { transform } from "~/utils";
+import { formatPhone, transform } from "~/utils";
 
 export const NewClient: FC = () => {
   const form = useWrapperForm<CreateClientInput>({
@@ -31,7 +31,7 @@ export const NewClient: FC = () => {
     const action = async () => {
       await createClientMutation.mutateAsync(
         transform(input, {
-          phone: (phone) => phone.replace(/\s/g, ""),
+          phone: (phone) => formatPhone(phone),
         })
       );
       form.reset();
