@@ -11,7 +11,7 @@ export type UpdateUnitAliasInput = z.infer<typeof updateUnitAliasSchema>;
 
 export const createProductSchema = z.object({
   name: z.string(),
-  description: z.string().nullable(),
+  description: z.string().nullable().optional(),
   unitId: z.number(),
 });
 export type CreateProductInput = z.infer<typeof createProductSchema>;

@@ -48,34 +48,18 @@ export const create = isAuthedProcedure
         total: total,
         clientId: clientId,
       });
-
-      transactions.push({
-        paid: false,
-        total: total,
-        clientId: clientId,
-      });
     }
     if (paymentState === PaymentState.PAY_PARTIAL && paymentSource) {
       const { toAccount } = paymentSource;
-      transactions.push({
-        clientId: clientId,
-        paid: false,
-        total: total,
-      });
       transactions.push({
         paid: true,
         total: toAccount,
         clientId: clientId,
       });
     }
-    if (paymentState === PaymentState.DEBT) {
-      transactions.push({
-        paid: false,
-        total: total,
-        clientId: clientId,
-      });
-    }
-    await bd.transaction.insertAndCalculate(transactions);
+    await bd.transaction.createMany({
+      data: transactions as any[],
+    });
 
     return {
       sale: createdSale,

@@ -1,11 +1,33 @@
-import { Box, Button, HStack, Switch, VStack } from "@chakra-ui/react";
-import { FORMAT_SIMPLE_DATE, MONEY_PEN_SYMBOL } from "@lition/common";
+import {
+  Box,
+  Button,
+  HStack,
+  Switch,
+  VStack,
+  Tab,
+  TabList,
+  TabPanels,
+  TabPanel,
+  Tabs,
+  StatGroup,
+  Stat,
+  StatNumber,
+  StatLabel,
+  Text,
+  Select,
+  Spinner,
+} from "@chakra-ui/react";
+import {
+  DateIntervalType,
+  FORMAT_SIMPLE_DATE,
+  MONEY_PEN_SYMBOL,
+} from "@lition/common";
 import { Client, Product, Sale } from "@server";
 import dayjs from "dayjs";
-import { FC, ReactNode } from "react";
+import { FC, ReactNode, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "~/lib";
-import { List, ListItem, Screen } from "~/ui";
+import { List, ListItem, Screen, moneyStrategyFormat } from "~/ui";
 import { useHandleLineSale } from "../helpers/useHandleLineSale";
 
 const SaleItem: FC<{
@@ -56,31 +78,112 @@ const SaleItem: FC<{
   );
 };
 
+const SaleResumen = () => {
+  const [interval, setInterval] = useState(DateIntervalType.DAY);
+  const saleResumeQuery = api.sales.allSaleResume.useQuery({
+    mode: interval,
+  });
+
+  if (saleResumeQuery.isLoading) return <Spinner />;
+  const saleResume = saleResumeQuery.data;
+
+  const mapperNames = {
+    [DateIntervalType.DAY]: "Día",
+    [DateIntervalType.WEEK]: "Semana",
+    [DateIntervalType.MONTH]: "Mes",
+  };
+
+  console.log("transaction", {
+    saleResume,
+  });
+
+  return (
+    <VStack alignItems={"flex-start"} spacing={4}>
+      <Box>
+        <Text fontSize={"medium"} fontWeight={"semibold"}>
+          Resumen de ventas
+        </Text>
+        <Select
+          mt="3"
+          value={interval}
+          onChange={(e) => {
+            setInterval(e.target.value as any);
+          }}
+        >
+          {Object.entries(mapperNames).map(([key, value]) => {
+            return <option value={key}>{value}</option>;
+          })}
+        </Select>
+      </Box>
+      <StatGroup w="full">
+        <Stat variant={"notable"}>
+          <StatLabel>Ventas</StatLabel>
+          <StatNumber>{saleResume?.count}</StatNumber>
+        </Stat>
+        <Stat variant={"notable"}>
+          <StatLabel>Total</StatLabel>
+          <StatNumber>
+            {moneyStrategyFormat.format(saleResume?.total ?? 0)}
+          </StatNumber>
+        </Stat>
+      </StatGroup>
+      <StatGroup w="full">
+        <Stat variant={"notable"}>
+          <StatLabel>Monto ingresado</StatLabel>
+          <StatNumber>
+            {moneyStrategyFormat.format(saleResume?.paid)}
+          </StatNumber>
+        </Stat>
+        <Stat variant={"notable"}>
+          <StatLabel>Deuda</StatLabel>
+          <StatNumber>
+            {moneyStrategyFormat.format(saleResume?.debt)}
+          </StatNumber>
+        </Stat>
+      </StatGroup>
+    </VStack>
+  );
+};
 export const Sales = () => {
   const navigate = useNavigate();
+
   const salesQuery = api.sales.list.useQuery();
+
   const { clear } = useHandleLineSale();
 
   return (
     <Screen back="/" title="Ventas">
-      <HStack spacing={4} justifyContent={"flex-end"} mt={3}>
-        <Button
-          colorScheme="blue"
-          onClick={() => {
-            navigate("/sales/new");
-            clear();
-          }}
-        >
-          Nuevo
-        </Button>
-      </HStack>
-      <List
-        data={salesQuery.data ?? []}
-        isLoading={salesQuery.isLoading}
-        renderItem={(sale) => {
-          return <SaleItem sale={sale as any} />;
-        }}
-      />
+      <Tabs>
+        <TabList>
+          <Tab>Resumen</Tab>
+          <Tab>Ventas</Tab>
+        </TabList>
+        <TabPanels>
+          <TabPanel>
+            <SaleResumen />
+          </TabPanel>
+          <TabPanel>
+            <HStack spacing={4} justifyContent={"flex-end"} mt={3}>
+              <Button
+                colorScheme="blue"
+                onClick={() => {
+                  navigate("/sales/new");
+                  clear();
+                }}
+              >
+                Nuevo
+              </Button>
+            </HStack>
+            <List
+              data={salesQuery.data ?? []}
+              isLoading={salesQuery.isLoading}
+              renderItem={(sale) => {
+                return <SaleItem sale={sale as any} />;
+              }}
+            />
+          </TabPanel>
+        </TabPanels>
+      </Tabs>
     </Screen>
   );
 };

@@ -5,3 +5,9 @@ export enum StatusSaleType {
 export enum StatusPurchaseType {
   CANCEL = "CANCEL",
 }
+
+export enum DateIntervalType {
+  DAY = "DAY",
+  WEEK = "WEEK",
+  MONTH = "MONTH",
+}

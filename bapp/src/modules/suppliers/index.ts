@@ -4,7 +4,6 @@ import {
   updateSupplierSchema,
 } from "@lition/common";
 import { TRPCError } from "@trpc/server";
-import { TransactionSupplier } from "bd";
 import { pick } from "radash";
 import { z } from "zod";
 import { isAuthedProcedure, router } from "../../router";
@@ -26,7 +25,6 @@ export const suppliersRouter = router({
         where: {
           supplierId: input.supplierId,
           paid: true,
-          isSilent: false,
         },
         orderBy: {
           createdAt: "desc",
@@ -37,12 +35,13 @@ export const suppliersRouter = router({
   addPayment: isAuthedProcedure
     .input(addPaymentSchema.and(z.object({ supplierId: z.number() })))
     .mutation(async ({ ctx, input: { amount, supplierId } }) => {
-      const transaction: Partial<TransactionSupplier> = {
-        supplierId: supplierId,
-        paid: true,
-        total: amount,
-      };
-      await ctx.bd.transactionSupplier.insertAndCalculate([transaction]);
+      await ctx.bd.transactionSupplier.create({
+        data: {
+          supplierId: supplierId,
+          paid: true,
+          total: amount,
+        },
+      });
       return true;
     }),
   myDebt: isAuthedProcedure

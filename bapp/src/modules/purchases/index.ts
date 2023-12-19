@@ -110,11 +110,6 @@ export const purchases = router({
 
       if (paymentState === PaymentState.PAY_ENTIRE) {
         transactions.push({
-          paid: false,
-          total: total,
-          supplierId: supplierId,
-        });
-        transactions.push({
           paid: true,
           total: total,
           supplierId: supplierId,
@@ -123,24 +118,16 @@ export const purchases = router({
       if (paymentState === PaymentState.PAY_PARTIAL && paymentSource) {
         const { toAccount } = paymentSource;
         transactions.push({
-          supplierId,
-          paid: false,
-          total: total,
-        });
-        transactions.push({
           paid: true,
           total: toAccount,
           supplierId,
         });
       }
-      if (paymentState === PaymentState.DEBT) {
-        transactions.push({
-          paid: false,
-          total: total,
-          supplierId,
-        });
-      }
-      await bd.transactionSupplier.insertAndCalculate(transactions);
+
+      await bd.transactionSupplier.createMany({
+        data: transactions as any[],
+      });
+
       return {
         purchase: createdPurchase,
       };

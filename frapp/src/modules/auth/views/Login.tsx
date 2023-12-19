@@ -12,6 +12,7 @@ import { api } from "~/lib/trpc";
 import { useAuthInfo } from "~/lib/auth";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import { useLitionFeedback } from "~/lib";
 
 export const Login = () => {
   const form = useWrapperForm<LoginInput>({
@@ -21,6 +22,8 @@ export const Login = () => {
   const loginMutation = api.auth.login.useMutation();
   const { setAuthInfo, isAuthenticated } = useAuthInfo();
 
+  const { wrapAsync } = useLitionFeedback();
+
   useEffect(() => {
     if (isAuthenticated) {
       navigate("/");
@@ -29,9 +32,17 @@ export const Login = () => {
 
   const onSubmit = form.handleSubmit(
     async (data) => {
-      const result = await loginMutation.mutateAsync(data);
-      setAuthInfo(result);
-      navigate("/");
+      const action = async () => {
+        const result = await loginMutation.mutateAsync(data);
+        setAuthInfo(result);
+        navigate("/");
+      };
+      await wrapAsync(action(), {
+        successConfig: {
+          title: "Bienvenido",
+          description: "Has ingresado correctamente",
+        },
+      });
     },
     (errors) => {
       console.log("error", errors);
@@ -49,6 +60,7 @@ export const Login = () => {
             <Button
               isDisabled={isDisabled}
               w="full"
+              isLoading={loginMutation.isLoading}
               type="button"
               onClick={onSubmit}
             >

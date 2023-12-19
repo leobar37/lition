@@ -115,9 +115,6 @@ Table Transaction {
   client Client
   clientId Int
   createdAt DateTime [default: `now()`, not null]
-  totalPaid Float [not null]
-  totalDebt Float [not null]
-  isSilent Boolean [default: false]
 }
 
 Table TransactionSupplier {
@@ -127,9 +124,6 @@ Table TransactionSupplier {
   supplier Supplier
   supplierId Int
   createdAt DateTime [default: `now()`, not null]
-  totalPaid Float [not null]
-  totalDebt Float [not null]
-  isSilent Boolean [default: false]
 }
 
 Table Unit {

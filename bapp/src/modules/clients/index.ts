@@ -1,9 +1,11 @@
-import { createClientSchema } from "@lition/common";
-import { isAuthedProcedure, router } from "../../router";
-import { updateClientSchema, addPaymentSchema } from "@lition/common";
-import { z } from "zod";
+import {
+  addPaymentSchema,
+  createClientSchema,
+  updateClientSchema,
+} from "@lition/common";
 import { TRPCError } from "@trpc/server";
-import { Transaction } from "bd";
+import { z } from "zod";
+import { isAuthedProcedure, router } from "../../router";
 import { getDebt } from "./helpers";
 
 export const shared = {
@@ -29,12 +31,13 @@ export const clientsRouter = router({
   addPayment: isAuthedProcedure
     .input(addPaymentSchema.and(z.object({ clientId: z.number() })))
     .mutation(async ({ ctx, input: { amount, clientId } }) => {
-      const transaction: Partial<Transaction> = {
-        clientId: clientId,
-        paid: true,
-        total: amount,
-      };
-      await ctx.bd.transaction.insertAndCalculate([transaction]);
+      await ctx.bd.transaction.create({
+        data: {
+          clientId: clientId,
+          paid: true,
+          total: amount,
+        },
+      });
       return true;
     }),
   myDebt: isAuthedProcedure

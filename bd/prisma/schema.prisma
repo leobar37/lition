@@ -129,9 +129,6 @@ model Transaction {
   client    Client?  @relation(fields: [clientId], references: [id])
   clientId  Int?     @map("client_id")
   createdAt DateTime @default(now()) @map("created_at")
-  totalPaid Float    @map("total_paid")
-  totalDebt Float    @map("total_debt")
-  isSilent  Boolean? @default(false) @map("is_silent")
 }
 
 model TransactionSupplier {
@@ -141,9 +138,6 @@ model TransactionSupplier {
   supplier   Supplier? @relation(fields: [supplierId], references: [id])
   supplierId Int?      @map("supplier_id")
   createdAt  DateTime  @default(now()) @map("created_at")
-  totalPaid  Float     @map("total_paid")
-  totalDebt  Float     @map("total_debt")
-  isSilent   Boolean?  @default(false) @map("is_silent")
 }
 
 model Unit {

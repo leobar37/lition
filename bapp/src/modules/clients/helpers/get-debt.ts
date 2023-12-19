@@ -1,20 +1,29 @@
 import { BdType } from "../../../lib/bd";
 export const getDebt = async (clientId: number, prisma: BdType) => {
-  const lastTransaction = await prisma.transaction.findFirst({
+  const {
+    _sum: { total: totalPaid },
+  } = await prisma.transaction.aggregate({
+    where: {
+      clientId: clientId,
+      paid: true,
+    },
+    _sum: {
+      total: true,
+    },
+  });
+
+  const {
+    _sum: { total: totalSale },
+  } = await prisma.sale.aggregate({
     where: {
       clientId: clientId,
     },
-    orderBy: {
-      createdAt: "desc",
+    _sum: {
+      total: true,
     },
   });
-  if (!lastTransaction) {
-    return {
-      debt: 0,
-    };
-  }
-  const debt = lastTransaction?.totalDebt - lastTransaction?.totalPaid;
+
   return {
-    debt: debt,
+    debt: (totalSale ?? 0) - (totalPaid ?? 0),
   };
 };
