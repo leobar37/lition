@@ -19,13 +19,16 @@ const SaleResumenMessage: FC<{
       return "";
     }
     const msgBuilder = createMsgBuilder();
+
     msgBuilder
       .addTitle("Resumen de venta:")
       .addProp(`Fecha`, dayjs(sale.createdAt).format(FORMAT_SIMPLE_DATE))
+      .addProp(`Hora`, dayjs(sale.createdAt).format("HH:mm"))
       .addProp(`Monto`, moneyStrategyFormat.format(sale.total))
       .addProp(`Cliente`, client.name + " " + client.lastName)
-      .addProp(`Telefono`, formatPhone(client?.phone))
-      .addTitle(`Items:`);
+      .addTitle(`Items:`)
+      .addProp(`Total`, moneyStrategyFormat.format(sale.total));
+
     const lines = ((sale?.lines as any[]) ?? []).map((item) => {
       const msg = `${(item as any).product.name} x ${
         item.amount
@@ -33,7 +36,6 @@ const SaleResumenMessage: FC<{
       return msg;
     });
     msgBuilder.list(lines);
-    msgBuilder.addProp(`Total`, moneyStrategyFormat.format(sale.total));
     return msgBuilder.build();
     // @ts-ignore
   }, [sale, client]);

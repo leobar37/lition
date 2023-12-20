@@ -68,10 +68,12 @@ export const allSaleResume = isAuthedProcedure
       { paid: 0, debt: 0 }
     );
 
+    const debt = (salesInfo._sum?.total ?? 0) - paid;
+
     return {
       count: salesInfo._count._all,
       total: salesInfo._sum.total,
-      debt: (salesInfo._sum?.total ?? 0) - paid,
+      debt: debt > 0 ? debt : 0,
       paid,
       transactions,
     };

@@ -182,6 +182,9 @@ export const PaymentsTab = () => {
   const { toast, wrapAsync } = useLitionFeedback();
   const debtClientQueryQueryKey = getQueryKey(api.clients.myDebt, undefined);
   const queryClient = useQueryClient();
+  const listPaymentQueryKey = getQueryKey(api.clients.myPayments, {
+    clientId: Number(clientQuery.data?.id),
+  });
 
   const openPaymentDrawer = useOpenPaymentDrawer();
 
@@ -194,20 +197,21 @@ export const PaymentsTab = () => {
 
   const pay = form.handleSubmit(
     async (values: AddPaymentInput) => {
+      const debt = debtClientQuery?.data?.debt ?? 0;
+      if (values.amount > debt) {
+        toast({
+          title: "El monto a cuenta no puede ser mayor a la deuda",
+        });
+        return;
+      }
       const action = async () => {
-        if (values.amount > (debtClientQuery?.data?.debt ?? 0)) {
-          toast({
-            title: "El monto a cuenta no puede ser mayor a la deuda",
-            icon: "warning",
-          });
-          return;
-        }
         await addPaymentMutation.mutateAsync({
           clientId: clientQuery.data?.id!,
           amount: values.amount,
         });
         form.reset();
         queryClient.invalidateQueries(debtClientQueryQueryKey);
+        queryClient.invalidateQueries(listPaymentQueryKey);
         openPaymentDrawer.onClose();
       };
       await wrapAsync(action());
@@ -238,6 +242,7 @@ export const PaymentsTab = () => {
     debtClientQuery.data?.debt
   )}`;
 
+  const isFormValid = form.formState.isValid;
   return (
     <VStack alignItems={"flex-start"} w="full">
       {debtElement}
@@ -280,7 +285,11 @@ export const PaymentsTab = () => {
             name="amount"
           />
           <HStack mt={4} justifyContent={"flex-end"}>
-            <Button onClick={pay} isLoading={addPaymentMutation.isLoading}>
+            <Button
+              isDisabled={!isFormValid}
+              onClick={pay}
+              isLoading={addPaymentMutation.isLoading}
+            >
               Agregar pago
             </Button>
           </HStack>

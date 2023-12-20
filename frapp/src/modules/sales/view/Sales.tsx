@@ -93,10 +93,6 @@ const SaleResumen = () => {
     [DateIntervalType.MONTH]: "Mes",
   };
 
-  console.log("transaction", {
-    saleResume,
-  });
-
   return (
     <VStack alignItems={"flex-start"} spacing={4}>
       <Box>
@@ -153,7 +149,7 @@ export const Sales = () => {
 
   return (
     <Screen back="/" title="Ventas">
-      <Tabs>
+      <Tabs mt="4">
         <TabList>
           <Tab>Resumen</Tab>
           <Tab>Ventas</Tab>

@@ -30,6 +30,7 @@ const ListItemProduct: FC<{
       actions={
         <>
           <Button
+            size={"xs"}
             colorScheme="blue"
             onClick={() => {
               navigate(`/products/${product.id}`);
@@ -38,6 +39,7 @@ const ListItemProduct: FC<{
             <EditIcon />
           </Button>
           <Button
+            size={"xs"}
             onClick={async () => {
               const action = async () => {
                 await deleteMutation.mutateAsync({

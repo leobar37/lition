@@ -13,8 +13,10 @@ import { isString } from "radash";
 export const item = (label: string, content: string | ReactNode) => {
   return (
     <HStack>
-      <Box fontWeight={"semibold"}>{label}:</Box>
-      <Box>{content}</Box>
+      <Box as="p" fontWeight={"semibold"}>
+        {label}:
+      </Box>
+      <Box as="p">{content}</Box>
     </HStack>
   );
 };

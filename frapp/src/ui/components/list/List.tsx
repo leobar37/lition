@@ -153,7 +153,7 @@ export const List = <T = any,>({
   const searchProps = useSearch({ data, search });
 
   const content = (
-    <VStack spacing={5} px="5" py="4">
+    <VStack spacing={5} px="2" py="4">
       {searchProps.filteredData.map((item) => {
         return renderItem(item);
       })}
