@@ -37,6 +37,7 @@ import {
   useSimpleModal,
 } from "~/ui";
 import { useHandleLineSale } from "../helpers/useHandleLineSale";
+import { normFloat } from "~/utils";
 
 const SaleItem: FC<{
   sale: (Sale & {
@@ -143,7 +144,7 @@ const SaleResumen = () => {
         <Stat variant={"notable"}>
           <StatLabel>Total</StatLabel>
           <StatNumber>
-            {moneyStrategyFormat.format(saleResume?.total ?? 0)}
+            {moneyStrategyFormat.format(normFloat(saleResume?.total ?? 0))}
           </StatNumber>
         </Stat>
       </StatGroup>
@@ -151,13 +152,13 @@ const SaleResumen = () => {
         <Stat variant={"notable"}>
           <StatLabel>Monto ingresado</StatLabel>
           <StatNumber>
-            {moneyStrategyFormat.format(saleResume?.paid)}
+            {moneyStrategyFormat.format(normFloat(saleResume?.paid ?? 0))}
           </StatNumber>
         </Stat>
         <Stat variant={"notable"}>
           <StatLabel>Deuda</StatLabel>
           <StatNumber>
-            {moneyStrategyFormat.format(saleResume?.debt)}
+            {moneyStrategyFormat.format(normFloat(saleResume?.debt ?? 0))}
           </StatNumber>
         </Stat>
       </StatGroup>
