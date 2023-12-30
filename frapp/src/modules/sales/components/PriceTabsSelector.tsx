@@ -25,6 +25,7 @@ import {
 } from "~/ui";
 import { useUnitAliasSourceInForm } from "../helpers/useUnitAliasSourceInForm";
 import { validId } from "@lition/common";
+import { normFloat } from "~/utils";
 
 type PriceTabsSelectorProps = {
   index: number;
@@ -39,8 +40,7 @@ const UnitAliasSelector = () => {
 const PriceDisplay: FC = () => {
   const { watch } = useFormContext();
   const [amount, price] = watch(["amount", "price", "aliasId"]);
-
-  const total = amount * price;
+  const total = normFloat(amount * price);
   return (
     <Stat>
       <StatLabel>Precio</StatLabel>
@@ -89,7 +89,6 @@ export const PriceTabsSelector: FC<PriceTabsSelectorProps> = ({
         <Text>Cantidad</Text>
       </FormLabel>
       <Tabs
-        variant={"soft-rounded"}
         isLazy
         index={index}
         onChange={(index) => {

@@ -69,6 +69,7 @@ const LineSaleItem: FC<{
     ? pluralize(line?.symbol ?? "", line.amount, true)
     : line.amount + (line?.symbol ?? "");
 
+  const note = (line as any)?.note ? (line as any).note : "-";
   return (
     <ListItem
       label={
@@ -77,6 +78,7 @@ const LineSaleItem: FC<{
           {item("Total", moneyStrategyFormat.format(line.total))}
           {item("Cantidad", amountLabel)}
           {item("Precio", moneyStrategyFormat.format(line.price))}
+          {item("Nota", note)}
         </VStack>
       }
       actions={actions}

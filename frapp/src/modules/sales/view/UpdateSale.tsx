@@ -11,7 +11,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { getQueryKey } from "@trpc/react-query";
 import dayjs from "dayjs";
 import { useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { ClientsSelector, api, useLitionFeedback } from "~/lib";
 import { useProductsSelectorHook } from "~/lib/selectors/ProductSelector";
 import {
@@ -19,24 +19,25 @@ import {
   ScreenLoading,
   WrapperForm,
   moneyStrategyFormat,
-  useWrapperForm,
-  useConfirmDialog,
   useBackUrl,
+  useConfirmDialog,
+  useWrapperForm,
 } from "~/ui";
 import ItemsProducts from "../components/ItemsProducts";
 import { EditSaleForm, frEditSaleSchema } from "../domain";
 import { useHandleLineSale } from "../helpers/useHandleLineSale";
-import { useNavigate } from "react-router-dom";
 const useCurrentSale = () => {
   const { id = "-1" } = useParams();
   const saleQuery = api.sales.sale.useQuery(
     {
       id: Number(id),
+      withDebt: true,
     },
     {
       enabled: Number(id) > 0,
     }
   );
+
   return saleQuery;
 };
 
@@ -139,8 +140,10 @@ export const UpdateSale = () => {
           price: line.price,
           aliasId: line.aliasId,
           id: line.id,
+          note: line?.meta?.note,
         };
       });
+
       setLines(lines);
       form.reset({
         isDispatched: saleData.isDispatched,
@@ -169,6 +172,7 @@ export const UpdateSale = () => {
         </StatGroup>
         <ClientsSelector isDisabled label="Cliente" name="clientId" />
         <ItemsProducts isEdit={false} />
+
         <HStack mt="2">
           <DispatchButton />
           <CancelButton />

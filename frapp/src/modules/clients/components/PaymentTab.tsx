@@ -43,7 +43,7 @@ import {
   useSimpleModal,
   TextSender,
 } from "~/ui";
-import { makeDisclosure } from "~/utils";
+import { makeDisclosure, normFloat } from "~/utils";
 import { useClient } from "../helpers";
 
 type MenuItemsProps = {
@@ -225,7 +225,7 @@ export const PaymentsTab = () => {
     <Stat>
       <StatLabel>Deuda:</StatLabel>
       <StatNumber>
-        {moneyStrategyFormat.format(debtClientQuery.data?.debt)}
+        {moneyStrategyFormat.format(normFloat(debtClientQuery.data?.debt ?? 0))}
       </StatNumber>
     </Stat>
   );
@@ -239,7 +239,7 @@ export const PaymentsTab = () => {
   const textDebt = `Hola ${
     clientQuery.data?.name
   }, tu deuda total es de ${moneyStrategyFormat.format(
-    debtClientQuery.data?.debt
+    normFloat(debtClientQuery.data?.debt ?? 0)
   )}`;
 
   const isFormValid = form.formState.isValid;

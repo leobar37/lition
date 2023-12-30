@@ -5,6 +5,7 @@ export const sale = isAuthedProcedure
   .input(
     z.object({
       id: z.number(),
+      withDebt: z.boolean().optional().default(false),
     })
   )
   .query(async ({ ctx, input }) => {
@@ -21,5 +22,12 @@ export const sale = isAuthedProcedure
         },
       },
     });
-    return sale;
+    const { debt } = input.withDebt
+      ? await ctx.shared.clients.getDebt(sale?.clientId!, ctx.bd)
+      : { debt: -1 };
+
+    return {
+      ...sale,
+      debt,
+    };
   });

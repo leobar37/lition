@@ -8,6 +8,7 @@ export const lineSaleSchema = z.object({
   productId: z.number(),
   amount: z.number(),
   price: z.number(),
+  note: z.string().optional(),
 });
 
 export type LineSale = z.infer<typeof lineSaleSchema> & {

@@ -11,6 +11,7 @@ export const lineSaleSchema = z.object({
   total: z.number().positive(),
   productId: z.number(),
   aliasId: z.number().optional().nullable(),
+  note: z.string().optional(),
 });
 
 export const createSaleSchema = z.object({
@@ -24,6 +25,7 @@ export const createSaleSchema = z.object({
     })
     .optional(),
   lines: z.array(lineSaleSchema),
+  note: z.string().optional(),
 });
 
 export const updateSaleSchema = createSaleSchema

@@ -16,8 +16,8 @@ import {
   Screen,
   SwitchFormInput,
   WrapperForm,
-  useWrapperForm,
   useBackUrl,
+  useWrapperForm,
 } from "~/ui";
 import ItemsProducts from "../components/ItemsProducts";
 import { ToAccount } from "../components/ToAccount";
@@ -73,6 +73,7 @@ export const CreateSale = () => {
               productId: line.productId,
               total: line.total,
               aliasId: line.aliasId,
+              note: line.note,
             };
           }),
         };
@@ -122,7 +123,7 @@ export const CreateSale = () => {
                   <Radio value={PaymentState.PAY_PARTIAL}>A cuenta</Radio>
                   <ToAccount />
                 </VStack>
-                <Radio value={PaymentState.DEBT}>Deuda</Radio>
+                <Radio value={PaymentState.DEBT}>No pago</Radio>
               </VStack>
             </FormRadioGroup>
           </FormControl>

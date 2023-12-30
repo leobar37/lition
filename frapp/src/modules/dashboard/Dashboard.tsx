@@ -32,14 +32,14 @@ export const Dashboard = () => {
       name: "Ventas",
       path: "/sales",
     },
-    {
-      name: "Proveedores",
-      path: "/suppliers",
-    },
-    {
-      name: "Compras",
-      path: "/purchases",
-    },
+    // {
+    //   name: "Proveedores",
+    //   path: "/suppliers",
+    // },
+    // {
+    //   name: "Compras",
+    //   path: "/purchases",
+    // },
   ];
 
   const { authInfo } = useAuthInfo();

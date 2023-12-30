@@ -22,6 +22,7 @@ export const moneyStrategyFormat = {
   format: (value?: string | number) => {
     return "S/" + value || 0;
   },
+
   parse: (value: string) => {
     return value.replace("S/", "");
   },

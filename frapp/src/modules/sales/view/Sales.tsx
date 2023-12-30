@@ -2,20 +2,19 @@ import {
   Box,
   Button,
   HStack,
-  Switch,
-  VStack,
-  Tab,
-  TabList,
-  TabPanels,
-  TabPanel,
-  Tabs,
-  StatGroup,
-  Stat,
-  StatNumber,
-  StatLabel,
-  Text,
   Select,
   Spinner,
+  Stat,
+  StatGroup,
+  StatLabel,
+  StatNumber,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tabs,
+  Text,
+  VStack,
 } from "@chakra-ui/react";
 import {
   DateIntervalType,
@@ -25,9 +24,18 @@ import {
 import { Client, Product, Sale } from "@server";
 import dayjs from "dayjs";
 import { FC, ReactNode, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { createSearchParams, useLocation, useNavigate } from "react-router-dom";
 import { api } from "~/lib";
-import { List, ListItem, Screen, moneyStrategyFormat } from "~/ui";
+import SaleResumenMessage from "~/modules/clients/components/sales-tab/SaleResumeMessage";
+import {
+  ItemAction,
+  List,
+  ListItem,
+  MenuItems,
+  Screen,
+  moneyStrategyFormat,
+  useSimpleModal,
+} from "~/ui";
 import { useHandleLineSale } from "../helpers/useHandleLineSale";
 
 const SaleItem: FC<{
@@ -48,6 +56,33 @@ const SaleItem: FC<{
     );
   };
 
+  const location = useLocation();
+
+  const simpleModal = useSimpleModal();
+
+  const items: ItemAction[] = [
+    {
+      label: "Ver",
+      action: () => {
+        navigate({
+          pathname: `/sales/${sale.id}`,
+          search: createSearchParams({
+            back: location.pathname + location.search,
+          }).toString(),
+        });
+      },
+    },
+    {
+      label: "(M) Resumen",
+      action: () => {
+        simpleModal.open({
+          title: "Resumen de venta",
+          content: <SaleResumenMessage saleId={sale.id} />,
+        });
+      },
+    },
+  ];
+
   return (
     <ListItem
       label={
@@ -55,23 +90,12 @@ const SaleItem: FC<{
           {item("Cliente", sale?.client?.name + " " + sale?.client?.lastName)}
           {item("Fecha", dayjs(sale.createdAt).format(FORMAT_SIMPLE_DATE))}
           {item("Total", `${MONEY_PEN_SYMBOL} ${sale.total ?? 0}`)}
-          {item(
-            "Despachado",
-            <Switch disabled isChecked={sale.isDispatched} />
-          )}
         </VStack>
       }
       directionActions={"column"}
       actions={
         <>
-          <Button
-            colorScheme="blue"
-            onClick={() => {
-              navigate(`/sales/${sale.id}`);
-            }}
-          >
-            Ver
-          </Button>
+          <MenuItems items={items} />
         </>
       }
     />

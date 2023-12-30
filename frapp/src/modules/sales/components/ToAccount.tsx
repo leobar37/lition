@@ -12,6 +12,7 @@ import { useFormContext } from "react-hook-form";
 import { api } from "~/lib";
 import { FormNumberInput, moneyStrategyFormat } from "~/ui";
 import { useHandleLineSale } from "../helpers/useHandleLineSale";
+import { normFloat } from "~/utils";
 type ToAccountProps = {
   ignorePaymentState?: boolean;
 };
@@ -50,7 +51,9 @@ export const ToAccount: FC<ToAccountProps> = ({
         <Stat>
           <StatLabel>Deuda</StatLabel>
           <StatNumber>
-            {moneyStrategyFormat.format(debtClientQuery.data.debt + getTotal())}
+            {moneyStrategyFormat.format(
+              normFloat(debtClientQuery.data.debt) + getTotal()
+            )}
           </StatNumber>
           <StatHelpText>
             Venta actual {moneyStrategyFormat.format(getTotal())}

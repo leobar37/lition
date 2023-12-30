@@ -4,11 +4,12 @@ import { useAtomValue, useSetAtom } from "jotai";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { z } from "zod";
 import { ProductSelector, useProductsSelectorHook } from "~/lib";
-import { CustomDrawer, WrapperForm, useWrapperForm } from "~/ui";
+import { CustomDrawer, FormTextArea, WrapperForm, useWrapperForm } from "~/ui";
 import { LineSale, saleItemAtom } from "../data";
 import { useHandleLineSale } from "../helpers/useHandleLineSale";
 import { useSalelineDisclosure } from "./ItemsProducts";
 import PriceTabsSelector from "./PriceTabsSelector";
+import { normFloat } from "~/utils";
 
 const lineSaleSchemaInput = lineSaleSchema.omit({
   total: true,
@@ -62,7 +63,7 @@ export const MyDrawer = () => {
 
   const handle = () => {
     const values = form.getValues();
-    const total = values.amount * values.price;
+    const total = normFloat(values.amount * values.price);
     const pr = findByIdPr(values.productId);
     const aliasName = !values?.aliasId
       ? null
@@ -129,6 +130,7 @@ export const MyDrawer = () => {
           label="Producto"
           isDisabled={isEdit}
         />
+        <FormTextArea name="note" label="Detalle" />
         <PriceTabsSelector index={index} setTabIndex={setTabIndex} />
       </WrapperForm>
     </CustomDrawer>

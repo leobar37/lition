@@ -1,6 +1,6 @@
 import { useDisclosure } from "@chakra-ui/react";
 import { PrimitiveAtom, useAtom } from "jotai";
-import { get } from "radash";
+import { get, toFloat } from "radash";
 export const makeDisclosure = (atom: PrimitiveAtom<boolean>) => () => {
   const [state, setState] = useAtom(atom);
   return useDisclosure({
@@ -14,8 +14,10 @@ export const makeDisclosure = (atom: PrimitiveAtom<boolean>) => () => {
   });
 };
 
-// create isDev utility using env variable
+export const normFloat = (value: number): number =>
+  toFloat(toFloat(value, 0).toFixed(3));
 
+// create isDev utility using env variable
 export const isDev = process.env?.NODE_ENV === "development";
 
 export const transform = <T = any>(
@@ -74,6 +76,15 @@ export const createMsgBuilder = () => {
     },
     addProp: (prop: string, value: string | number) => {
       msgBuilder.tokens.push(`*${prop}*: ${value}`);
+      msgBuilder.tokens.push(LINE_SALT);
+      return msgBuilder;
+    },
+    addSeparator: (size = 20) => {
+      msgBuilder.tokens.push(
+        Array.from({ length: size })
+          .map(() => "-")
+          .join("")
+      );
       msgBuilder.tokens.push(LINE_SALT);
       return msgBuilder;
     },

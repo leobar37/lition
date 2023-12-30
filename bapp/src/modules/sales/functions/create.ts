@@ -33,6 +33,9 @@ export const create = isAuthedProcedure
         productId: saleLine.productId,
         saleId: createdSale.id,
         aliasId: saleLine.aliasId,
+        meta: {
+          note: saleLine.note,
+        },
       });
     }
 
@@ -41,6 +44,7 @@ export const create = isAuthedProcedure
     });
 
     const transactions: Partial<Transaction>[] = [];
+
     // create transactions
     if (paymentState === PaymentState.PAY_ENTIRE) {
       transactions.push({
@@ -57,11 +61,32 @@ export const create = isAuthedProcedure
         clientId: clientId,
       });
     }
+
+    const { debt } = await ctx.shared.clients.getDebt(clientId, ctx.bd);
+
     await bd.transaction.createMany({
       data: transactions as any[],
     });
 
+    const totalPaid = transactions.reduce((acc, t) => acc + t.total!, 0);
+    let status = {
+      debt: debt,
+      paid: totalPaid,
+      result: debt - totalPaid,
+    };
+    await bd.sale.update({
+      where: {
+        id: createdSale.id,
+      },
+      data: {
+        meta: {
+          ...(createdSale.meta as any),
+          status: status,
+        },
+      },
+    });
     return {
       sale: createdSale,
+      status,
     };
   });

@@ -1,6 +1,7 @@
 import { useAtom } from "jotai";
 import { LineSale, linesSaleAtoms } from "../data";
 import { useMemo } from "react";
+import { normFloat } from "~/utils";
 
 export const useHandleLineSale = () => {
   const [lines, setLines] = useAtom(linesSaleAtoms);
@@ -31,13 +32,15 @@ export const useHandleLineSale = () => {
   };
 
   const getTotal = useMemo(
-    () => () => lines.reduce((acc, line) => acc + line.total!, 0),
+    () => () => normFloat(lines.reduce((acc, line) => acc + line.total!, 0)),
     [lines]
   );
 
   const getTotalAndOmitLineWithId = useMemo(
     () => () =>
-      lines.filter((d) => !d.id).reduce((acc, line) => acc + line.total!, 0),
+      normFloat(
+        lines.filter((d) => !d.id).reduce((acc, line) => acc + line.total!, 0)
+      ),
     [lines]
   );
 

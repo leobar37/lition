@@ -23,7 +23,6 @@ export const SaleLine: FC<{
   const navigate = useNavigate();
   const location = useLocation();
   const simpleModal = useSimpleModal();
-  const clientQuery = useClient();
 
   const items: ItemAction[] = [
     {
@@ -42,16 +41,12 @@ export const SaleLine: FC<{
       action: () => {
         simpleModal.open({
           title: "Resumen de venta",
-          content: (
-            <SaleResumeMessage
-              client={clientQuery.data as any}
-              saleId={sale.id}
-            />
-          ),
+          content: <SaleResumeMessage saleId={sale.id} />,
         });
       },
     },
   ];
+
   return (
     <ListItem
       label={
