@@ -6,6 +6,7 @@ import "./assets/scrollbar.css";
 import { router } from "./router";
 import { ConfirmDialog } from "./ui/components";
 import { theme } from "./ui/theme";
+import "react-tiny-fab/dist/styles.css";
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <ChakraProvider theme={theme}>

@@ -6,6 +6,7 @@ import { LogoutIcon } from "~/ui/icons";
 import { AUTH_INFO_KEY } from "~/lib/auth";
 import storage from "~/lib/storage";
 import { useEffect } from "react";
+import { useMenu } from "~/lib/use-menu";
 
 export const useLogout = () => {
   const navigate = useNavigate();
@@ -19,28 +20,7 @@ export const Dashboard = () => {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuthInfo();
 
-  const items = [
-    {
-      name: "Clientes",
-      path: "/clients",
-    },
-    {
-      name: "Productos",
-      path: "/products",
-    },
-    {
-      name: "Ventas",
-      path: "/sales",
-    },
-    // {
-    //   name: "Proveedores",
-    //   path: "/suppliers",
-    // },
-    // {
-    //   name: "Compras",
-    //   path: "/purchases",
-    // },
-  ];
+  const { items } = useMenu();
 
   const { authInfo } = useAuthInfo();
 
@@ -54,6 +34,7 @@ export const Dashboard = () => {
 
   return (
     <Screen
+      disableMenu
       title={authInfo?.business.name}
       actionRight={
         <Button

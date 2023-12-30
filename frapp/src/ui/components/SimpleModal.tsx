@@ -1,11 +1,11 @@
 import {
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
+  Drawer,
+  DrawerBody,
+  DrawerCloseButton,
+  DrawerContent,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerOverlay,
   useDisclosure,
 } from "@chakra-ui/react";
 import { atom, useAtom, useAtomValue, useSetAtom } from "jotai";
@@ -70,18 +70,18 @@ export const SimpleModal = () => {
   const alertDisclosure = useSimpleModalDisclousure();
 
   return (
-    <Modal
+    <Drawer
       size={"sm"}
       isOpen={simpleModalInfo.isOpen}
       onClose={alertDisclosure.onClose}
     >
-      <ModalOverlay />
-      <ModalContent maxWidth={"80vw"}>
-        <ModalHeader>{simpleModalInfo.title}</ModalHeader>
-        <ModalCloseButton />
-        <ModalBody>{simpleModalInfo.content}</ModalBody>
-        <ModalFooter>{simpleModalInfo.actions}</ModalFooter>
-      </ModalContent>
-    </Modal>
+      <DrawerOverlay />
+      <DrawerContent maxWidth={"98vw"}>
+        <DrawerHeader>{simpleModalInfo.title}</DrawerHeader>
+        <DrawerCloseButton />
+        <DrawerBody>{simpleModalInfo.content}</DrawerBody>
+        <DrawerFooter>{simpleModalInfo.actions}</DrawerFooter>
+      </DrawerContent>
+    </Drawer>
   );
 };

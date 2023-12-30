@@ -4,3 +4,7 @@ export * from "./LogoutIcon";
 export * from "./EyeIcon";
 export * from "./DotsIcon";
 export * from "./Copy";
+export * from "./Menu";
+export * from "./Users";
+export * from "./Box";
+export * from "./Money";

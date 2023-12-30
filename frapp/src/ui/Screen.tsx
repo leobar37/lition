@@ -1,18 +1,20 @@
 import {
+  Box,
+  Button,
+  ButtonProps,
   Container,
   Divider,
   HStack,
-  VStack,
   Text,
-  Button,
-  Box,
-  ButtonProps,
+  VStack,
+  useToken,
 } from "@chakra-ui/react";
-import { ReactNode, FC } from "react";
+import { FC, ReactNode } from "react";
 import { IoIosArrowBack } from "react-icons/io";
-import { useNavigate } from "react-router-dom";
-import { useSearchParams } from "react-router-dom";
-
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { Action, Fab } from "react-tiny-fab";
+import { useMenu } from "~/lib";
+import { MenuIcon } from "./icons/Menu";
 export const useBackUrl = () => {
   const [searchParams] = useSearchParams();
   const backUrl = searchParams.get("back");
@@ -37,13 +39,15 @@ export const Screen: FC<{
   title?: ReactNode | string;
   back?: string;
   actionRight?: ReactNode;
-}> = ({ children, back, title, actionRight }) => {
+  disableMenu?: boolean;
+}> = ({ children, back, title, actionRight, disableMenu = false }) => {
   const navigate = useNavigate();
-
   const [searchParams] = useSearchParams();
-
   const backUrl = searchParams.get("back");
 
+  const { items } = useMenu();
+
+  const orange = useToken("colors", "orange.500");
   const backButton =
     back || backUrl ? (
       <BackButton
@@ -67,11 +71,34 @@ export const Screen: FC<{
       <Divider borderWidth={"2px"} borderColor={"blue.500"} />
     </VStack>
   ) : null;
+
+  const floatActions = !disableMenu && (
+    <Fab
+      icon={<MenuIcon />}
+      mainButtonStyles={{
+        backgroundColor: orange,
+      }}
+    >
+      {items.map((item) => {
+        return (
+          <Action
+            text={item.name}
+            onClick={() => {
+              navigate(item.path);
+            }}
+          >
+            {item.icon}
+          </Action>
+        );
+      })}
+    </Fab>
+  );
   return (
     <HStack justifyContent={"center"}>
       <Container py="4" minHeight={"95vh"} my="5" maxWidth={"md"}>
         {titleNode}
         {children}
+        {floatActions}
       </Container>
     </HStack>
   );
