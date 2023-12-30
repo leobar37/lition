@@ -142,6 +142,7 @@ const SearchComp: FC<ReturnType<typeof useSearch>> = ({
     </FormControl>
   );
 };
+
 export const List = <T = any,>({
   data,
   renderItem,

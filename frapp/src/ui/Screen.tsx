@@ -75,6 +75,10 @@ export const Screen: FC<{
   const floatActions = !disableMenu && (
     <Fab
       icon={<MenuIcon />}
+      style={{
+        bottom: 20,
+        left: 5,
+      }}
       mainButtonStyles={{
         backgroundColor: orange,
       }}

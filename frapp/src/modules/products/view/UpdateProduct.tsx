@@ -95,6 +95,7 @@ const UnitAliasList = () => {
         </Button>
       </HStack>
       <List
+        isLoading={unitAliasQuery.isLoading}
         data={unitAliasQuery.data ?? []}
         renderItem={(unitAlias) => {
           return <UnitAliasItem unitAlias={unitAlias as any} />;
