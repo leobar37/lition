@@ -11,7 +11,8 @@
     "reset": "pnpm run db:push --force-reset && pnpm run db:generate && pnpm run seed",
     "dev": "tsup",
     "build": "tsup --env.NODE_ENV production",
-    "seed": "doppler run -- tsup --env.NODE_ENV seed"
+    "seed": "doppler run -- tsup --env.NODE_ENV seed",
+    "cli": "doppler run -- tsup --env.NODE_ENV cli && doppler run -- node ./dist/cli.cjs.js"
   },
   "keywords": [],
   "author": "",
@@ -27,6 +28,7 @@
     "@prisma/client": "^5.6.0",
     "@types/bcrypt": "^5.0.2",
     "bcrypt": "^5.1.1",
+    "commander": "^11.1.0",
     "dayjs": "^1.11.10",
     "prisma-zod-generator": "^0.8.13",
     "radash": "^11.0.0",

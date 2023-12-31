@@ -51,7 +51,7 @@ export const Login = () => {
   const isDisabled = loginMutation.isLoading || !form.formState.isValid;
 
   return (
-    <Screen title="Ingreso">
+    <Screen disableMenu title="Ingreso">
       <WrapperForm form={form}>
         <Box as="form">
           <FormInput name="username" label="Usuario" />

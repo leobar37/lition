@@ -8,3 +8,5 @@ export * from "./Menu";
 export * from "./Users";
 export * from "./Box";
 export * from "./Money";
+export * from "./Home";
+export * from "./Store";

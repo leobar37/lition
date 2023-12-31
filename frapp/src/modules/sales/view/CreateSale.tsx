@@ -44,7 +44,7 @@ export const CreateSale = () => {
   const withBackUrl = useBackUrl();
   const form = useWrapperForm<CreateSaleForm>({
     defaultValues: {
-      isDispatched: false,
+      isDispatched: true,
     },
     schema: frCreateSaleSchema,
   });

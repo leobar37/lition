@@ -1,6 +1,6 @@
 import { defineConfig, Options } from "tsup";
 
-type Env = "development" | "production" | "seed";
+type Env = "development" | "production" | "seed" | "cli";
 
 export default defineConfig((options) => {
   const envFlag: Env = options.env?.["NODE_ENV"] ?? ("development" as any);
@@ -42,6 +42,16 @@ export default defineConfig((options) => {
         sourcemap: false,
         entry: ["./seed.ts", ...((commonConfig.entry as any[]) ?? [])],
         onSuccess: "node dist/seed.cjs.js",
+      };
+    }
+    case "cli": {
+      return {
+        ...commonConfig,
+        watch: false,
+        dts: false,
+        silent: false,
+        sourcemap: false,
+        entry: ["./cli.ts", ...((commonConfig.entry as any[]) ?? [])],
       };
     }
   }

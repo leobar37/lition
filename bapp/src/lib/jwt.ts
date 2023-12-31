@@ -4,7 +4,7 @@ const SECRET = process.env.JWT_SECRET || "secret";
 
 const jwtSign = (payload: Record<string, any>) => {
   return jwt.sign(payload, SECRET, {
-    expiresIn: "5h",
+    expiresIn: "30d",
   });
 };
 

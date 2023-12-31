@@ -150,30 +150,31 @@ model Unit {
 }
 
 model User {
-  id         Int      @id @default(autoincrement())
-  username   String   @unique
+  id         Int       @id @default(autoincrement())
+  username   String    @unique
   name       String
-  lastName   String   @map("last_name")
+  lastName   String    @map("last_name")
   phone      String?
   meta       Json?
   password   String
   roles      String[]
-  business   Business @relation(fields: [businessId], references: [id])
-  businessId Int      @map("business_id")
-  createdAt  DateTime @default(now()) @map("created_at")
+  business   Business? @relation(fields: [businessId], references: [id])
+  businessId Int?      @map("business_id")
+  createdAt  DateTime  @default(now()) @map("created_at")
 }
 
 model Business {
-  id        Int        @id @default(autoincrement())
-  name      String
-  code      String?    @unique
-  users     User[]
-  clients   Client[]
-  suppliers Supplier[]
-  products  Product[]
-  sales     Sale[]
-  createdAt DateTime   @default(now()) @map("created_at")
-  Purchase  Purchase[]
+  id               Int        @id @default(autoincrement())
+  name             String
+  code             String?    @unique
+  users            User[]
+  clients          Client[]
+  suppliers        Supplier[]
+  products         Product[]
+  sales            Sale[]
+  createdAt        DateTime   @default(now()) @map("created_at")
+  Purchase         Purchase[]
+  anonymusClientId Int?       @map("client_empty_id")
 }
 
 model UnitAlias {

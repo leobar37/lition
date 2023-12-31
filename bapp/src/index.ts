@@ -10,9 +10,8 @@ import { purchases } from "./modules/purchases";
 import { sales } from "./modules/sales";
 import { suppliersRouter } from "./modules/suppliers";
 import { router } from "./router";
+import { users } from "./modules/users";
 export type * from "bd";
-
-// fastify cors
 
 const appRouter = router({
   clients: clientsRouter,
@@ -22,6 +21,7 @@ const appRouter = router({
   suppliers: suppliersRouter,
   purchases: purchases,
   me: me,
+  users,
 });
 
 const server = fastify({

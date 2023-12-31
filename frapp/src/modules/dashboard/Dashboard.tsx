@@ -35,7 +35,7 @@ export const Dashboard = () => {
   return (
     <Screen
       disableMenu
-      title={authInfo?.business.name}
+      title={authInfo?.business?.name ?? "Admin"}
       actionRight={
         <Button
           onClick={() => {
@@ -53,17 +53,19 @@ export const Dashboard = () => {
         templateColumns={"repeat(2,1fr)"}
         gap={3}
       >
-        {items.map(({ path, name }, idx) => (
-          <GridItem>
-            <CardButton
-              onClick={() => {
-                navigate(path);
-              }}
-              key={idx}
-              title={name}
-            />
-          </GridItem>
-        ))}
+        {items
+          .filter((d) => d.path !== "/")
+          .map(({ path, name }, idx) => (
+            <GridItem>
+              <CardButton
+                onClick={() => {
+                  navigate(path);
+                }}
+                key={idx}
+                title={name}
+              />
+            </GridItem>
+          ))}
       </Grid>
     </Screen>
   );

@@ -144,8 +144,8 @@ Table User {
   meta Json
   password String [not null]
   roles String[] [not null]
-  business Business [not null]
-  businessId Int [not null]
+  business Business
+  businessId Int
   createdAt DateTime [default: `now()`, not null]
 }
 
@@ -160,6 +160,7 @@ Table Business {
   sales Sale [not null]
   createdAt DateTime [default: `now()`, not null]
   Purchase Purchase [not null]
+  anonymusClientId Int
 }
 
 Table UnitAlias {

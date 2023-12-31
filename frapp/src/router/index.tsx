@@ -6,6 +6,8 @@ import * as products from "../modules/products";
 import * as fromSales from "../modules/sales";
 import * as fromSuppliers from "../modules/suppliers";
 import * as fromPurchases from "../modules/purchases";
+import * as fromBusiness from "../modules/business";
+import * as fromUsers from "../modules/users";
 import { TrpcIntegration } from "~/lib";
 
 export const router = createHashRouter(
@@ -175,6 +177,54 @@ export const router = createHashRouter(
       element: (
         <TrpcIntegration>
           <fromPurchases.UpdatePurchase />
+        </TrpcIntegration>
+      ),
+    },
+    {
+      path: "/business",
+      element: (
+        <TrpcIntegration>
+          <fromBusiness.ListBusiness />
+        </TrpcIntegration>
+      ),
+    },
+    {
+      path: "/business/new",
+      element: (
+        <TrpcIntegration>
+          <fromBusiness.CreateBusiness />
+        </TrpcIntegration>
+      ),
+    },
+    {
+      path: "/business/update/:id",
+      element: (
+        <TrpcIntegration>
+          <fromBusiness.UpdateBusiness />
+        </TrpcIntegration>
+      ),
+    },
+    {
+      path: "/users",
+      element: (
+        <TrpcIntegration>
+          <fromUsers.ListUsers />
+        </TrpcIntegration>
+      ),
+    },
+    {
+      path: "/users/new",
+      element: (
+        <TrpcIntegration>
+          <fromUsers.CreateUser />
+        </TrpcIntegration>
+      ),
+    },
+    {
+      path: "/users/:id",
+      element: (
+        <TrpcIntegration>
+          <fromUsers.UpdateUser />
         </TrpcIntegration>
       ),
     },
