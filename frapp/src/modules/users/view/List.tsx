@@ -2,7 +2,7 @@ import { Box, Button, HStack } from "@chakra-ui/react";
 import { User } from "@server";
 import { FC } from "react";
 import { useNavigate } from "react-router-dom";
-import { StoreSelector, api } from "~/lib";
+import { StoreSelector, api, useLitionFeedback } from "~/lib";
 import {
   List,
   ListItem,
@@ -10,12 +10,22 @@ import {
   WrapperForm,
   useWrapperForm,
   MenuItems,
+  useConfirmDialog,
 } from "~/ui";
-
+import { getQueryKey } from "@trpc/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 const UserListItem: FC<{
   user: User;
 }> = ({ user }) => {
   const navigate = useNavigate();
+  const deleteUser = api.users.delete.useMutation();
+  const confirmDialog = useConfirmDialog();
+  const { wrapAsync } = useLitionFeedback();
+
+  const usersKey = getQueryKey(api.users.list);
+
+  const queryClient = useQueryClient();
+
   return (
     <ListItem
       label={`${user.username}`}
@@ -26,6 +36,24 @@ const UserListItem: FC<{
               label: "Editar",
               action: () => {
                 navigate(`/users/${user.id}`);
+              },
+            },
+            {
+              label: "Eliminar",
+              action: () => {
+                confirmDialog.open({
+                  title: "Eliminar usuario",
+                  description: "¿Está seguro que desea eliminar este usuario?",
+                  onConfirm: async () => {
+                    const action = async () => {
+                      await deleteUser.mutateAsync({
+                        id: user.id,
+                      });
+                      queryClient.invalidateQueries(usersKey);
+                    };
+                    wrapAsync(action());
+                  },
+                });
               },
             },
           ]}

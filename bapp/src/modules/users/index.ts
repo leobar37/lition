@@ -2,7 +2,7 @@ import { z } from "zod";
 import { isAdminProcedure } from "../../router";
 import { router } from "../../router";
 import { passwordHandleStrategy } from "../../lib/bcrypt";
-import { createUserSchema } from "@lition/common";
+import { ErrorCodes, Roles, createUserSchema } from "@lition/common";
 import { TRPCError } from "@trpc/server";
 
 export const users = router({
@@ -41,6 +41,17 @@ export const users = router({
   create: isAdminProcedure
     .input(createUserSchema)
     .mutation(async ({ ctx, input }) => {
+      const user = await ctx.bd.user.findUnique({
+        where: {
+          username: input.username,
+        },
+      });
+      if (!user) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: ErrorCodes.ALREADY_EXISTS,
+        });
+      }
       const password = await passwordHandleStrategy.encrypt(input.password);
       const createdUser = ctx.bd.user.create({
         data: {
@@ -89,9 +100,10 @@ export const users = router({
       const { businessId } = input;
       const users = await ctx.bd.user.findMany({
         where: {
-          businessId,
+          businessId: businessId,
         },
       });
-      return users;
+
+      return users.filter((user) => !user.roles.includes(Roles.SUPER_ADMIN));
     }),
 });

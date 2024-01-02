@@ -108,6 +108,7 @@ export const CreateSale = () => {
       <WrapperForm form={form}>
         <Box mt="4" as="form">
           <SwitchFormInput label="Despachado" name="isDispatched" />
+
           <ClientsSelector label="Cliente" name="clientId" />
           <ItemsProducts />
           <FormControl mt="2">
